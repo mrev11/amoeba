@@ -1,0 +1,44 @@
+
+struct cell
+{
+    row             sor index
+    col             oszlop index
+    count           tábla index (cella indexe a cells tömbben)
+    figure          ' ' vagy 'O' vagy 'X'
+    pattern[4]      cella alakzat négy iranyban (0=→, 1=↗, 2=↑, 3=↘)
+
+    fieldval[0]     'O' alakzatainak összegzett értéke a cellában
+    fieldval[1]     'X' alakzatainak összegzett értéke a cellában
+    valuedir[0]     a legértékesebb 'O' alakzat iránya (0=→, 1=↗, 2=↑, 3=↘)
+    valuedir[1]     a legértékesebb 'X' alakzat iránya (0=→, 1=↗, 2=↑, 3=↘)
+
+    draw()          kirajzolja magát a táblán
+    set()           ráteszi magát a táblára (a cell->count mezőre)
+    unset()         felszedi magát a tábláról (a cell->count mezőről)
+
+    ertek()         kiszámítja (összegzi) fieldval[]-t, beállítja valuedir[]-t
+
+    amod()          set()-ben és unset()-ben módosítja a szomszéd cellák alakzatait,
+                    és végrehajtja a szomszéd cellákra az ertek() metódust,
+                    tehát fieldval[] és valuedir[] mindig minden cellában aktuális
+    
+    osszertek()     cella értéke  movegen()-ben:  max(fieldval[1],fieldval[0])
+}
+
+
+best_move[0]        movegen() után: 'O' legértékesebb cellája (cella pointer)
+best_move[1]        movegen() után: 'X' legértékesebb cellája (cella pointer)
+second_move[0]      movegen() után: 'O' második legértékesebb cellája (cella pointer)
+second_move[1]      movegen() után: 'X' második legértékesebb cellája (cella pointer)
+
+
+movegen(darab)
+    kikeresi a legperspektivikusabb mezőket, és visszaadja ezek tömbjét
+    a 'perspektivikuság' szempontja: osszertek() nagysága
+    kitölti a best_move[] és second_move[] adatokat
+
+posvalue(depth)     
+    állásértékelés az elemzőfa levelein
+    -PVALUE_INFIN+depth, ha O nyer
+    +PVALUE_INFIN-depth, ha X nyer
+           

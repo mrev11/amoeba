@@ -18,19 +18,27 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#define MAXROW     24  //a tábla sorainak száma  
-#define MAXCOL     24  //a tábla oszlopainak száma   
+#define MAXROW     16  //a tábla sorainak száma  
+#define MAXCOL     16  //a tábla oszlopainak száma   
 
 #define ROWCOL     MAXROW*MAXCOL
 
 
-#define PVALUE_INFIN    1000
-#define PVALUE_EGY      32
-#define PVALUE_KET2     8
-#define PVALUE_KET1     5
-#define PVALUE_HAR2     4
-#define PVALUE_HAR1     3
-#define PVALUE_NEGY2    1
+//#define PVALUE_INFIN    1000
+//#define PVALUE_EGY      32
+//#define PVALUE_KET2     8
+//#define PVALUE_KET1     5
+//#define PVALUE_HAR2     4
+//#define PVALUE_HAR1     3
+//#define PVALUE_NEGY2    1
+
+#define PVALUE_INFIN    9999
+#define PVALUE_EGY      2000
+#define PVALUE_KET2      400
+#define PVALUE_KET1      100
+#define PVALUE_HAR2       30
+#define PVALUE_HAR1        8
+#define PVALUE_NEGY2       2
 
 
 //Athlon-64/3000 processzor sebességével

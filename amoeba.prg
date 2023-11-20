@@ -36,7 +36,7 @@
 #define SX          3
 #define SO          4
 
-static cellsize:=20
+static cellsize:=32
 static tablesize:=MAXROW
 static area
 static twostatelabel
@@ -66,12 +66,12 @@ local mask, button, combo, check
     
     hbox:=gtkhboxNew(.f.,0)
     window:add(hbox)
-    
+
     area:=gtkdrawingareaNew()
     area:set_size_request(cellsize*tablesize+1,cellsize*tablesize+1)
     area:signal_connect("expose_event",{|w,e|cb_expose(w,e)})
     area:signal_connect("button_press_event",{|w,e|cb_button_press(w,e)})
-  //area:signal_connect("button_release_event",{|w,e|cb_button_release(w,e)})
+    area:signal_connect("button_release_event",{|w,e|cb_button_release(w,e)})
   //area:signal_connect("motion_notify_event",{|w,e|cb_motion_notify(w,e)})
     mask:=area:get_events
     mask:=numor(mask,GDK_BUTTON_PRESS_MASK)
@@ -79,6 +79,8 @@ local mask, button, combo, check
     mask:=numor(mask,GDK_POINTER_MOTION_MASK)
     area:set_events(mask)
     hbox:pack_start(area)
+
+    //itt már megvan a négyzetháló
     
     align:=gtkalignmentNew()
     align:set_padding(0,0,12,0)//top,bot,lef,rig
@@ -93,7 +95,7 @@ local mask, button, combo, check
     //---------------------------------------------
     vbox:pack_start(gtkhseparatorNew())
     //---------------------------------------------
-   
+
     button:=gtkbuttonNew_with_mnemonic_from_stock("_Move","gtk-execute") 
     button:signal_connect("clicked",{|w|cb_move(w)})
     vbox:pack_start(button)
@@ -202,21 +204,28 @@ local x,y,but,c,fm,n
             area:set_sensitive(.t.)
             twostatelabel:set_state(.t.)
         elseif( teach() )
+            ? "*";?
             for n:=0 to tablesize**2-1
                 draw(n)
             next
-            fm:=movegen(9)
+            fm:=movegen(5)
             for n:=1 to len(fm)
                 draw(fm[n],,n)
+                c_cb_button_press_stat(fm[n])
             next
             c:=y*tablesize+x
             c_cb_button_press_stat(c)
+            pos_stat()
         end
     end
 
 ******************************************************************************
 static function cb_button_release(area,event)
-    ? "cb_button_release", gtk.main_depth()
+local n
+    for n:=0 to tablesize**2-1
+        draw(n)
+    next
+    //? "cb_button_release", gtk.main_depth()
     if(gtk.main_depth()>1);return NIL;end
 
 ******************************************************************************
@@ -308,14 +317,16 @@ static lo1:={;
 local x:=i*cellsize
 local y:=j*cellsize
 local draw:=area:get_drawable
+local dx:=cellsize/4+2
+local dy:=cellsize/8
 
     gdk.drawable.draw_rectangle(draw,gc[bg],.t.,x,y,cellsize,cellsize)
     gdk.drawable.draw_rectangle(draw,gc[BLACK],.f.,x,y,cellsize,cellsize)
 
     if( fig>0)
-        gdk.drawable.draw_layout(draw,gc[fg],x+5,y+2,lo[fig])
+        gdk.drawable.draw_layout(draw,gc[fg],x+dx,y+dy,lo[fig])
     elseif( fig<0 )
-        gdk.drawable.draw_layout(draw,gc[BLACK],x+6,y+2,lo1[-fig])  //movegen
+        gdk.drawable.draw_layout(draw,gc[BLACK],x+dx,y+dy,lo1[-fig])  //movegen
     end
 
     if( gtk.main_depth()<=1 )

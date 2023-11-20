@@ -20,16 +20,16 @@
 
 
 #include <stdlib.h>
-#include <stdio.h>  
-#include <string.h>  
+#include <stdio.h>
+#include <string.h>
 #include <cccapi.h>
 
-#include <amoeba.ch>  
+#include <amoeba.ch>
 
 typedef char XPATTERN[8];
 
 struct cell;
- 
+
 static cell *best_move[2]={0,0};
 static cell *second_move[2]={0,0};
 
@@ -40,12 +40,12 @@ static cell *second_move[2]={0,0};
 
 static int  movestack[ROWCOL];  //lépések
 static int  movecount = 0;      //lépésszám
-static int  moveforw  = 0; 
+static int  moveforw  = 0;
 static char winner    = ' ';
 static int  DEBUG     = 0;
- 
+
 static cell*  cells[ROWCOL];
-static int    spiral[ROWCOL]; 
+static int    spiral[ROWCOL];
 
 extern void   _clp_go(int argno);
 extern void   _clp_draw(int argno);
@@ -61,7 +61,7 @@ struct cell
     int col;
     int count;
     char figure;
-    
+
     XPATTERN pattern[4]; //négy irány: K,ÉK,É,ÉNy
     int fieldval[2];    //két játékos: [0]='O', [1]='X'
     int valuedir[2];    //milyen irányú az alakzat
@@ -77,7 +77,7 @@ struct cell
         {
             for( int j=0;j<8;j++ )
             {
-                pattern[i][j]='?'; 
+                pattern[i][j]='?';
             }
         }
         fieldval[0]=0;
@@ -85,7 +85,7 @@ struct cell
 
         cells[count]=this;
     }
-    
+
     void draw()
     {
         number(count);
@@ -98,19 +98,19 @@ struct cell
         if( (winner==' ') && (movecount<ROWCOL) )
         {
             movestack[movecount]=count;
-    
+
             if( movecount++&1 )
             {
-                figure='O'; 
-                if( fieldval[0]>=PVALUE_EGY ) //PONTOK!! 
+                figure='O';
+                if( fieldval[0]>=PVALUE_EGY ) //PONTOK!!
                 {
                     winner=figure;
                 }
             }
-            else 
+            else
             {
-                figure='X'; 
-                if( fieldval[1]>=PVALUE_EGY ) //PONTOK!! 
+                figure='X';
+                if( fieldval[1]>=PVALUE_EGY ) //PONTOK!!
                 {
                     winner=figure;
                 }
@@ -195,7 +195,7 @@ struct cell
         valuedir[1]=-1;
 
         int p0=0,p1=0,p;
-        
+
         for( int dir=0; dir<4; dir++ )
         {
             p=ponttab(pattern[dir],'O');
@@ -205,7 +205,7 @@ struct cell
                 p0=p;
                 valuedir[0]=dir;
             }
-        
+
             p=ponttab(pattern[dir],'X');
             fieldval[1]+=p;
             if( p>p1 )
@@ -220,7 +220,7 @@ struct cell
     {
         return max(fieldval[1],fieldval[0]); //X max, O min
     }
-}; 
+};
 
 
 //--------------------------------------------------------------------------
@@ -242,7 +242,89 @@ void _clp_c_cb_button_press(int argno)
         pop();
         moveforw=movecount;
     }
+
+    _ret();
+    CCC_EPILOG();
+}
+
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+static int arrow(int direction)
+{
+    static int a[4]={8594, 8599, 8593, 8600};
+    if( direction<0 || 3<direction )
+    {
+        return ' ';
+    }
+    return a[direction];
+}
+
+static void print_pattern(int dir, XPATTERN pat)
+{
+    printf(" %lc(",arrow(dir));
+    for( int i=0; i<4; i++ )
+    {
+        printf("%c",pat[i]==32?'-':pat[i]);
+
+    }
+    printf(".");
+    for( int i=4; i<8; i++ )
+    {
+        printf("%c",pat[i]==32?'-':pat[i]);
+    }
+    printf(")");
+}
+
+static const char* num0(const char *format, int num)
+{
+    static int x=-1;
+    static const char *ptr[16];
+    if( x==-1 )
+    {
+        x=0;
+        for(int i=0; i<16; i++)
+        {
+            ptr[i]=0;
+        }
+    }
+    const char *p;
+    if( num )
+    {
+        char buf[128];
+        sprintf(buf,format,num);
+        p=strdup(buf);
+
+        if( ptr[x] )
+        {
+            free( (char*)ptr[x] );
+        }
+        ptr[x]=p;
+        x++;
+        x%=16;
+    }
+    else
+    {
+        p="";
+    }
+    return p;
+}
+
+static void print_value( XPATTERN pat)
+{
+    const char *so=num0("%4d",ponttab(pat,'O'));
+    const char *sx=num0("%4d",ponttab(pat,'X'));
+    printf(" %4s %4s   ",so,sx);
+}
+
+//--------------------------------------------------------------------------
+void _clp_pos_stat(int argno)
+{
+    CCC_PROLOG("pos_stat",0);
     
+    printf( "turn:%c\n",movecount&1?'O':'X');
+    printf( "best_move O=%d X=%d\n",BVAL(0),BVAL(1));
+    printf( "scnd_move O=%d X=%d\n",SVAL(0),SVAL(1));
+    printf( "posvalue=%d\n",posvalue(0) );
     _ret();
     CCC_EPILOG();
 }
@@ -257,17 +339,27 @@ void _clp_c_cb_button_press_stat(int argno)
 
     if( c->figure==' ' )
     {
-        printf("\n---------------------------------------\n");
-        printf("x1=%d/%d  ",BVAL(1),BDIR(1));
-        printf("x2=%d/%d  ",SVAL(1),SDIR(1));
-        printf("o1=%d/%d  ",BVAL(0),BDIR(0));
-        printf("o2=%d/%d  ",SVAL(0),SDIR(0));
-        printf("%d",posvalue(0));
-        printf("\n---------------------------------------\n");
-        for(int i=0; i<4; i++)
-        {
-            ponttab_print(c->pattern[i]);
-        }
+        printf("%4d",x);
+        printf("[%2d,%2d]",x%MAXCOL,(x-x%MAXCOL)/MAXCOL);
+        print_pattern( 0, c->pattern[0] );
+        print_pattern( 1, c->pattern[1] );
+        print_pattern( 2, c->pattern[2] );
+        print_pattern( 3, c->pattern[3] );
+        printf("\n");
+
+        printf("             ");
+        print_value( c->pattern[0] );
+        print_value( c->pattern[1] );
+        print_value( c->pattern[2] );
+        print_value( c->pattern[3] );
+
+
+        const char *vo=num0("%4d",c->fieldval[0]);
+        const char *vx=num0("%4d",c->fieldval[1]);
+        int ao=arrow(c->valuedir[0]);
+        int ax=arrow(c->valuedir[1]);
+        printf(" %4s%lc %4s%lc",vo,ao,vx,ax);
+
         printf("\n");
     }
     _ret();
@@ -320,7 +412,7 @@ void _clp_c_cb_forward(int argno)
     _ret();
     CCC_EPILOG();
 }
- 
+
 //--------------------------------------------------------------------------
 void _clp_c_cb_new( int argno )
 {
@@ -329,7 +421,7 @@ void _clp_c_cb_new( int argno )
     while( (c=cell::unset())!=0 );
     for(int n=0; n<ROWCOL; n++ )
     {
-        cells[n]->draw();    
+        cells[n]->draw();
     }
     _ret();
     CCC_EPILOG();
@@ -343,18 +435,18 @@ static int kozepre(const void *x, const void *y)
     cell *b=cells[ *(int*)y ];
     int ca=abs((a->row-MAXROW/2))+abs((a->col-MAXCOL/2));
     int cb=abs((b->row-MAXROW/2))+abs((b->col-MAXCOL/2));
-    
+
     if( ca>cb )
     {
-        return 1;        
+        return 1;
     }
     else if( cb>ca )
     {
-        return -1;        
+        return -1;
     }
     return 0;
 }
- 
+
 //--------------------------------------------------------------------------
 static int posvalue(int depth)
 {
@@ -375,7 +467,7 @@ static int posvalue(int depth)
         int xturn=((movecount&1)==0);
         int bo=BVAL(0),so=SVAL(0);
         int bx=BVAL(1),sx=SVAL(1);
-        
+
         if( xturn )
         {
             if( sx>=bo )
@@ -416,7 +508,7 @@ static int compar(void const *xp, void const *yp)
     int *y=(int*)yp;
 
     int res=0;
-    
+
     if( *x<*y )
     {
         res=1;
@@ -435,26 +527,15 @@ static void store_best(cell *c)
     {
         int v=c->fieldval[x];
         int d=c->valuedir[x];
-        
-        if( v>BVAL(x) && d!=SDIR(x) )
+
+        if( v>BVAL(x) )
         {
+            second_move[x]=best_move[x];
             best_move[x]=c;
-            
-            if( v<SVAL(x) )
-            {
-                best_move[x]=second_move[x];
-                second_move[x]=c;
-            }
         }
-        else if( v>SVAL(x) && d!=BDIR(x) )
+        else if( v>SVAL(x) )
         {
             second_move[x]=c;
-
-            if( v>BVAL(x) )
-            {
-                second_move[x]=best_move[x];
-                best_move[x]=c;
-            }
         }
     }
 }
@@ -466,19 +547,19 @@ void _clp_movegen(int argno)
 
     CCC_PROLOG("movegen",1);
     int darab=min(32,min(_parni(1),ROWCOL-movecount));
-    
-    struct 
+
+    struct
     {
-        int v;  //mezőérték 
+        int v;  //mezőérték
         int x;  //mezőindex
-    } 
+    }
     legjobb[32];
 
     int cnt=0;
     int minx=0;
     int minv=-1;
     int maxv=-1;
-    
+
     for(int i=0; i<ROWCOL; i++)
     {
         int x=spiral[i]; //középről kifelé
@@ -490,7 +571,7 @@ void _clp_movegen(int argno)
             legjobb[minx].x=x;
             legjobb[minx].v=v;
             cnt++;
-            
+
             if( cnt<darab  )
             {
                 minx=cnt;
@@ -498,7 +579,7 @@ void _clp_movegen(int argno)
             else
             {
                 minx=0;
-                minv=legjobb[0].v; 
+                minv=legjobb[0].v;
                 for( int n=1; n<darab; n++ )
                 {
                     if( legjobb[n].v<minv  )
@@ -510,39 +591,24 @@ void _clp_movegen(int argno)
             }
         }
     }
-    
+
     qsort(legjobb,darab,2*sizeof(int),compar); //érdemes rendezni?
 
     //kiszűri az értelmetlen lépések egy részét
     if( maxv>=PVALUE_EGY ) //egylépéses fenyegetés
     {
         minv=PVALUE_EGY;
-        
+
         //1) betömjük (EGY)
         //2) nyerünk máshol (EGY)
     }
-
-#ifdef EZEK_NEM_JOK
-    else if( maxv>=PVALUE_KET2 ) //kétlépéses fenyegetés két irányban
-    {
-        minv=PVALUE_KET1; 
-
-        //1) betömjük (KET2)
-        //2) egy irányt védünk (KET1) 
-        //3) közbeiktatunk (KET1)
-    }
-    else if( maxv>=2*PVALUE_HAR2 )
-    {
-        minv=PVALUE_HAR1; 
-    }
-#endif
 
     int db=0;
     best_move[0]=0;
     best_move[1]=0;
     second_move[0]=0;
     second_move[1]=0;
-    
+
     for( int n=0; n<darab; n++ )
     {
         if( legjobb[n].v>=minv )
@@ -567,7 +633,7 @@ void _clp_posvalue(int argno)
     _retni(posvalue(depth));
     CCC_EPILOG();
 }
- 
+
 //--------------------------------------------------------------------------
 void _clp_forw(int argno)
 {
@@ -673,14 +739,14 @@ void _clp_init_cells(int argno)
     for( i=0; i<MAXROW; i++ )
     for( j=0; j<MAXCOL; j++ )
     {
-        cell *c=new cell(i,j); 
+        cell *c=new cell(i,j);
     }
 
     ponttab_init();
- 
+
     for(int n=0; n<ROWCOL; n++ )
     {
-        spiral[n]=n;    
+        spiral[n]=n;
         cells[n]->amod();
     }
     qsort(spiral,ROWCOL,sizeof(int),kozepre);
@@ -688,5 +754,5 @@ void _clp_init_cells(int argno)
     _ret();
     CCC_EPILOG();
 }
- 
+
 //--------------------------------------------------------------------------
