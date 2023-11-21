@@ -1,2 +1,2 @@
 #!/bin/bash
-amoeba.exe
+amoeba.exe 

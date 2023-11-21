@@ -416,9 +416,22 @@ void _clp_c_cb_forward(int argno)
 //--------------------------------------------------------------------------
 void _clp_c_cb_new( int argno )
 {
-    CCC_PROLOG("c_cb_new",0);
+    CCC_PROLOG("c_cb_new",1);
     cell *c;
     while( (c=cell::unset())!=0 );
+
+    if( !ISNIL(1) )
+    {
+        int len=_paralen(1);
+        for( int i=0; i<len; i++ )
+        {
+            VALUE *v=_parax(1,i);
+            unsigned x=D2UINT(v->data.number);
+            cells[x]->set();
+        }
+        moveforw=movecount;
+    }
+
     for(int n=0; n<ROWCOL; n++ )
     {
         cells[n]->draw();
@@ -731,9 +744,27 @@ void _clp_undercell(int argno)
 }
 
 //--------------------------------------------------------------------------
+void _clp_cell(int argno)
+{
+    CCC_PROLOG("cell",1);
+    int index=_parni(1);
+    if( 0<=index && index<movecount )
+    {
+        _retni(movestack[index]);
+    }
+    else
+    {
+        _ret();
+    }
+    CCC_EPILOG();
+}
+
+//--------------------------------------------------------------------------
 void _clp_init_cells(int argno)
 {
     CCC_PROLOG("init_cells",0);
+
+    //fclose(stderr);
 
     int i,j;
     for( i=0; i<MAXROW; i++ )

@@ -150,7 +150,7 @@ local n,t1
 
             if( teach>=depth )
                 draw(x,1)
-                sleep(300)
+                sleep(500)
             end
 
             v:=minimax( t1:={}, vm )

@@ -41,6 +41,7 @@ static tablesize:=MAXROW
 static area
 static twostatelabel
 
+
 *****************************************************************************
 function main()
     //printpid()
@@ -140,9 +141,18 @@ local mask, button, combo, check
     button:signal_connect("clicked",{|w|cb_new(w,combo)})
     vbox:pack_start(button)
 
+    button:=gtkbuttonNew_with_mnemonic_from_stock("_Load","gtk-open") 
+    button:signal_connect("clicked",{||cb_load(window)})
+    vbox:pack_start(button)
+
+    button:=gtkbuttonNew_with_mnemonic_from_stock("_Save","gtk-save") 
+    button:signal_connect("clicked",{||cb_save(window)})
+    vbox:pack_start(button)
+
     window:show_all
     gtk.main()
     ?
+
 
 ******************************************************************************
 static function cb_move(w)
@@ -171,6 +181,71 @@ static function cb_new(w,combo)
     if(gtk.main_depth()>1);return NIL;end
     combo:set_active(0)
     c_cb_new()
+
+******************************************************************************
+static function cb_load(window)
+local dlg, selected_file,cells,n
+    if(gtk.main_depth()>1);return NIL;end
+    selected_file:=selfil()
+    if( selected_file==NIL )
+        // nem választott
+    elseif( !file(selected_file) )
+        dlg:=gtkmessagedialogNew(window,;
+                GTK_DIALOG_MODAL,;
+                GTK_MESSAGE_WARNING,;
+                GTK_BUTTONS_OK,;
+                selected_file)
+        dlg:set_title("File does not exist!")        
+        dlg:signal_connect('response',{||dlg:destroy})
+        dlg:set_position(GTK_WIN_POS_MOUSE)
+        dlg:run
+        selected_file:=NIL
+    end
+
+    if( selected_file!=NIL .and. !empty(cells:=memoread(selected_file)) )
+        if( cells::left(7)!="amoeba{" .or. cells::right(1)!="}" )
+            // nem amoeba fajl
+        else
+            cells:=cells[8..cells::len-1]::split
+            for n:=1 to len(cells)
+                cells[n]::=val
+            next
+            c_cb_new(cells)
+        end
+    end
+
+
+******************************************************************************
+static function cb_save(window)
+local dlg,selected_file
+local index:=0,cellid,cells:={},name
+    if(gtk.main_depth()>1);return NIL;end
+
+    while( NIL!=(cellid:=cell(index++)) )
+        aadd(cells,cellid)
+    end
+    cells::=any2str
+    cells:="amoeba"+cells
+    name:=cells::str2bin::crc32::l2hex+".amb"
+
+    selected_file:=selfil(name)
+    if( selected_file==NIL )
+        // nem választott
+    elseif( file(selected_file) )
+        dlg:=gtkmessagedialogNew(window,;
+                GTK_DIALOG_MODAL,;
+                GTK_MESSAGE_WARNING,;
+                GTK_BUTTONS_YES_NO,;
+                selected_file)
+        dlg:set_title("File exists, do you want to replace it?")        
+        dlg:signal_connect('response',{|w,r|if(r==GTK_RESPONSE_NO,selected_file:=NIL,NIL),dlg:destroy})
+        dlg:set_position(GTK_WIN_POS_MOUSE)
+        dlg:run
+    end
+
+    if( selected_file!=NIL )
+        memowrit(selected_file,cells)
+    end
 
 ******************************************************************************
 static function cb_teach(w)
@@ -345,10 +420,6 @@ local gc:=gdk.gc.new(area:get_drawable)
 ******************************************************************************
 static function makelayout(x)
 local label:=gtk.label.new(x)
-//Sajnos ezek hatástalanok
-//local fontdesc:=pango.font_description.new_from_string("Courier 24")
-//  gtk.widget.modify_font(label,fontdesc)
-//  pango.font_description.free(fontdesc)
     gtk.label.set_use_markup(label,.t.)
     return gtk.label.get_layout(label)
 
@@ -476,5 +547,20 @@ static function gtktwostateimagelabel.set_state(this, state)
     this:image:show
     this:label:show
     gtk.main_stabilize()
+
+
+******************************************************************************
+static function selfil(fname:="")
+local fs, selected_file
+    fs:=gtkfileselectionNew("File selection")
+    //fs:show_fileop_buttons()
+    fs:hide_fileop_buttons()
+    fs:get_ok_button:signal_connect("clicked",{||selected_file:=fs:get_filename,fs:destroy})
+    fs:get_cancel_button:signal_connect("clicked",{||fs:destroy})
+    fs:set_filename(fname)
+    fs:set_select_multiple(.f.)
+    fs:set_position(GTK_WIN_POS_MOUSE)
+    fs:run
+    return selected_file
 
 ******************************************************************************
