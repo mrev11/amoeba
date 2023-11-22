@@ -689,7 +689,7 @@ void _clp_turn(int argno)
 }
 
 //--------------------------------------------------------------------------
-void _clp_move(int argno)
+void _clp_movecount(int argno)
 {
     CCC_PROLOG("move",0);
     _retni( movecount );

@@ -23,7 +23,7 @@
 
 #include "amoeba.ch"
 
-#define VERSION "Amoeba 1.2.01 for GTK+"
+#define VERSION "Amoeba 1.3.0 for GTK+"
 
 #define BLACK       1
 #define GREY        2
@@ -185,7 +185,9 @@ static function cb_new(w,combo)
 ******************************************************************************
 static function cb_load(window)
 local dlg, selected_file,cells,n
+
     if(gtk.main_depth()>1);return NIL;end
+
     selected_file:=selfil()
     if( selected_file==NIL )
         // nem választott
@@ -219,6 +221,7 @@ local dlg, selected_file,cells,n
 static function cb_save(window)
 local dlg,selected_file
 local index:=0,cellid,cells:={},name
+
     if(gtk.main_depth()>1);return NIL;end
 
     while( NIL!=(cellid:=cell(index++)) )
@@ -226,7 +229,7 @@ local index:=0,cellid,cells:={},name
     end
     cells::=any2str
     cells:="amoeba"+cells
-    name:=cells::str2bin::crc32::l2hex+".amb"
+    name:="amoeba-"+cells::str2bin::crc32::l2hex::padl(8,"0")
 
     selected_file:=selfil(name)
     if( selected_file==NIL )
@@ -371,7 +374,7 @@ static gc:={;
     NIL}
 
 static lo:={;
-    makelayout("<b>X</b>"),;
+    makelayout("<b>X</b>"),;    
     makelayout("<b>O</b>"),;
     makelayout("X"),;
     makelayout("O"),;

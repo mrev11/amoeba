@@ -41,7 +41,7 @@ static teach:=TDEPTH
 *****************************************************************************
 function go()
 
-local x,v,m:=move()
+local x,v,m:=movecount()
 
     if( power!=NIL )
         width:=power
@@ -57,10 +57,8 @@ local x,v,m:=move()
         width:=width5
     elseif( m<=56 )
         width:=width6
-    elseif( m<=72 )
-        width:=width7
     else
-        width:=width8
+        width:=width7
     end
 
     v:=minimax(tree:={})
@@ -150,7 +148,7 @@ local n,t1
 
             if( teach>=depth )
                 draw(x,1)
-                sleep(500)
+                sleep(100)
             end
 
             v:=minimax( t1:={}, vm )

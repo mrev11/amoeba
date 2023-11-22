@@ -44,13 +44,23 @@
 //Athlon-64/3000 processzor sebességével
 //üres táblán nem jó POW6-7-8-cal játszani.
 
+
 #define POW0  "auto"      
-#define POW1  "4,3,2,1"                        // 4-ig
-#define POW2  "6,4,3,2,1"                      // 8-ig
-#define POW3  "8,6,4,3,2,1"                    //16-ig
-#define POW4  "10,8,6,4,3,2,1"                 //24-ig
-#define POW5  "12,10,8,6,4,3,2,1"              //40-ig
-#define POW6  "14,12,10,8,6,4,3,2,1"           //56-ig
-#define POW7  "16,12,10,8,6,4,4,3,2,1"         //72-ig
-#define POW8  "18,12,10,8,6,6,4,4,3,2,1"       //72 lépés felett 
+#define POW1  "4,3,2,2,1,1"                    //  4-ig
+#define POW2  "5,4,4,3,3,2,2,1,1"              //  8-ig
+#define POW3  "5,5,4,4,3,3,2,2,1,1"            // 16-ig
+#define POW4  "6,5,5,4,4,3,3,2,2,1,1"          // 24-ig
+#define POW5  "6,6,5,5,4,4,3,3,2,2,1,1"        // 40-ig
+#define POW6  "7,6,6,5,5,4,4,3,3,2,2,1,1"      // 56-ig
+#define POW7  "7,7,6,6,5,5,4,4,3,3,2,2,1,1"    // 56 fölött
+#define POW8  "8,7,7,6,6,5,5,4,4,3,3,2,2,1,1"  // interaktívan beállítható
+
+
+
+
+
+
+
+
+
 
