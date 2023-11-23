@@ -45,6 +45,7 @@ function printexe()
 function selfil(fname:="")
 local fs, selected_file
     fs:=gtkfileselectionNew("File selection")
+    //fs:liststruct
     //fs:show_fileop_buttons()
     fs:hide_fileop_buttons()
     fs:get_ok_button:signal_connect("clicked",{||selected_file:=fs:get_filename,fs:destroy})

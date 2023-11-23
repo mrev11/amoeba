@@ -284,9 +284,9 @@ static void print_value( XPATTERN pat)
 }
 
 //--------------------------------------------------------------------------
-void _clp_pos_stat(int argno)
+void _clp_c_cb_button_press_pos(int argno)
 {
-    CCC_PROLOG("pos_stat",0);
+    CCC_PROLOG("c_cb_button_press_pos",0);
     
     printf( "turn:%c\n",movecount&1?'O':'X');
     printf( "best_move O=%d X=%d\n",BVAL(0),BVAL(1));
@@ -333,15 +333,8 @@ void _clp_c_cb_button_press_stat(int argno)
     CCC_EPILOG();
 }
 
-//--------------------------------------------------------------------------
-void _clp_setmoveforw(int argno)
-{
-    CCC_PROLOG("setmoveforw",0);
-    moveforw=movecount;
-    _ret();
-    CCC_EPILOG();
-}
 
+//--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 void _clp_c_cb_back(int argno)
 {
@@ -382,7 +375,6 @@ void _clp_c_cb_new( int argno )
         }
         moveforw=movecount;
     }
-
     _ret();
     CCC_EPILOG();
 }
@@ -643,6 +635,16 @@ void _clp_movecount(int argno)
     CCC_EPILOG();
 }
 
+
+//--------------------------------------------------------------------------
+void _clp_markmovecount(int argno)
+{
+    CCC_PROLOG("markmovecount",0);
+    moveforw=movecount;
+    _ret();
+    CCC_EPILOG();
+}
+
 //--------------------------------------------------------------------------
 void _clp_figure(int argno)
 {
@@ -667,21 +669,6 @@ void _clp_topcell(int argno)
     if( movecount>0 )
     {
         _retni(movestack[movecount-1]);
-    }
-    else
-    {
-        _ret();
-    }
-    CCC_EPILOG();
-}
-
-//--------------------------------------------------------------------------
-void _clp_undercell(int argno)
-{
-    CCC_PROLOG("undercell",0);
-    if( movecount>1 )
-    {
-        _retni(movestack[movecount-2]);
     }
     else
     {

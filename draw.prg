@@ -91,12 +91,8 @@ function draw(cx,alt,fmx)
 // ha fmx egy szám, akkor cells[x] heyén a számot jeleníti meg
 
 local top:=topcell()
-local under:=undercell()
 local fig,color
 
-    if( under!=NIL )
-        drawcell(under)
-    end
 
     fig:=figure(cx)
 

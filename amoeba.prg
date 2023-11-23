@@ -183,10 +183,6 @@ local hboxfill
 
 ******************************************************************************
 static function cb_button_release(area,event)
-//local n
-//    for n:=0 to ROWCOL-1
-//        draw(n)
-//    next
 
 
 ******************************************************************************
@@ -210,7 +206,7 @@ local x,y,but,cx,fm,n
             next
             cx:=y*TABLESIZE+x
             c_cb_button_press_stat(cx)
-            pos_stat()
+            c_cb_button_press_pos()
         end
     end
 
@@ -224,7 +220,7 @@ static function cb_move()
     go()
     area:set_sensitive(.t.)
     twostatelabel:set_state(.t.)
-    setmoveforw()
+    markmovecount()
     label_move()
 
 
@@ -362,10 +358,10 @@ function cb_expose(area,event)
 
     EXPOSE:=.t.
 
-    // ? "EXPOSE", movecount(), topcell(), undercell()
+    // ? "EXPOSE", movecount(), topcell()
     // 
     // callstack()
-    // A GTK a program indulásakor kétszer hívja meg ezt kódot
+    // A program indulásakor a GTK kétszer hívja meg ezt kódot
     // a két esetben pontosan ugyanúgy
     //  - ha csak az elsőre futtatom -> üres marad a négyzetháló 
     //  - ha csak a másodikra futtatom -> üres marad a négyzetháló 
