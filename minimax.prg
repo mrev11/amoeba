@@ -69,9 +69,11 @@ local x,v,m:=movecount()
         draw(x)
     end
     
-    if( teach() )
-        ? "minimax",m,int(v)
-    end
+    label_rate(v)
+    //if( teach() )
+    //    ? "minimax",m,int(v)
+    //end
+    
     
 *****************************************************************************
 static function powinit(x)
@@ -147,7 +149,7 @@ local n,t1
         if( forw(x:=fm[n]) )
 
             if( teach>=depth )
-                draw(x,1)
+                draw(x,.t.)
                 sleep(100)
             end
 

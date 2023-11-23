@@ -49,6 +49,8 @@ static int    spiral[ROWCOL];
 
 extern void   _clp_go(int argno);
 extern void   _clp_draw(int argno);
+extern void   _clp_label_move(int argno);
+
 extern void   ponttab_init();
 extern void   ponttab_print(XPATTERN a);
 extern int    ponttab(XPATTERN a, char figure);
@@ -125,7 +127,7 @@ struct cell
     {
         if( movecount>0 )
         {
-            --movecount;
+            movecount--;
             cell *c=cells[movestack[movecount]];
             c->figure=' ';
             c->amod();
@@ -238,8 +240,11 @@ void _clp_c_cb_button_press(int argno)
     else if( c->figure==' ' )
     {
         c->set()->draw();
-        _clp_go(0);
-        pop();
+
+        _clp_label_move(0);pop();
+        _clp_go(0);pop();
+        _clp_label_move(0);pop();
+
         moveforw=movecount;
     }
 
@@ -432,10 +437,6 @@ void _clp_c_cb_new( int argno )
         moveforw=movecount;
     }
 
-    for(int n=0; n<ROWCOL; n++ )
-    {
-        cells[n]->draw();
-    }
     _ret();
     CCC_EPILOG();
 }

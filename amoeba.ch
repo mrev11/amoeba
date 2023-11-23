@@ -18,19 +18,10 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#define MAXROW     16  //a tábla sorainak száma  
-#define MAXCOL     16  //a tábla oszlopainak száma   
-
-#define ROWCOL     MAXROW*MAXCOL
-
-
-//#define PVALUE_INFIN    1000
-//#define PVALUE_EGY      32
-//#define PVALUE_KET2     8
-//#define PVALUE_KET1     5
-//#define PVALUE_HAR2     4
-//#define PVALUE_HAR1     3
-//#define PVALUE_NEGY2    1
+#define TABLESIZE       16
+#define MAXROW          TABLESIZE
+#define MAXCOL          TABLESIZE
+#define ROWCOL          TABLESIZE*TABLESIZE
 
 #define PVALUE_INFIN    9999
 #define PVALUE_EGY      2000
@@ -40,10 +31,8 @@
 #define PVALUE_HAR1        8
 #define PVALUE_NEGY2       2
 
-
 //Athlon-64/3000 processzor sebességével
 //üres táblán nem jó POW6-7-8-cal játszani.
-
 
 #define POW0  "auto"      
 #define POW1  "4,3,2,2,1,1"                    //  4-ig
@@ -54,13 +43,4 @@
 #define POW6  "7,6,6,5,5,4,4,3,3,2,2,1,1"      // 56-ig
 #define POW7  "7,7,6,6,5,5,4,4,3,3,2,2,1,1"    // 56 fölött
 #define POW8  "8,7,7,6,6,5,5,4,4,3,3,2,2,1,1"  // interaktívan beállítható
-
-
-
-
-
-
-
-
-
 
