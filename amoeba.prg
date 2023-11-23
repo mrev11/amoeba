@@ -182,13 +182,49 @@ local hboxfill
 
 
 ******************************************************************************
-static function cb_move(w)
-    //? "cb_move", gtk.main_depth()
+static function cb_button_release(area,event)
+//local n
+//    for n:=0 to ROWCOL-1
+//        draw(n)
+//    next
+
+
+******************************************************************************
+static function cb_button_press(area,event)
+local x,y,but,cx,fm,n
+    if(gtk.main_depth()>1);return NIL;end
+    if( validpos(event,@x,@y,@but) )
+        if( but==1 )
+            //left-button
+            cx:=y*TABLESIZE+x
+            c_cb_button_press(cx)
+            cb_move()
+        elseif( teach() )
+            //right-button
+            ? "*";?
+            drawall()
+            fm:=movegen(5)
+            for n:=1 to len(fm)
+                draw(fm[n],,n)
+                c_cb_button_press_stat(fm[n])
+            next
+            cx:=y*TABLESIZE+x
+            c_cb_button_press_stat(cx)
+            pos_stat()
+        end
+    end
+
+
+******************************************************************************
+static function cb_move()
     if(gtk.main_depth()>1);return NIL;end
     game_over()
     twostatelabel:set_state(.f.)
-    c_cb_move()
+    area:set_sensitive(.f.)
+    go()
+    area:set_sensitive(.t.)
     twostatelabel:set_state(.t.)
+    setmoveforw()
     label_move()
 
 
@@ -313,50 +349,6 @@ static function cb_power(w)
     //if(gtk.main_depth()>1);return NIL;end
     //engedni kell a rekurziót
     power(w:get_active_text)
-
-
-******************************************************************************
-static function cb_button_press(area,event)
-local x,y,but,c,fm,n
-
-    //? "cb_button_press", gtk.main_depth()
-    if(gtk.main_depth()>1);return NIL;end
-
-    game_over()
-
-    if( validpos(event,@x,@y,@but) )
-        if( but==1 )
-            twostatelabel:set_state(.f.)
-            area:set_sensitive(.f.)
-            c:=y*TABLESIZE+x
-            c_cb_button_press(c)
-            area:set_sensitive(.t.)
-            twostatelabel:set_state(.t.)
-        elseif( teach() )
-            ? "*";?
-            for n:=0 to TABLESIZE**2-1
-                draw(n)
-            next
-            fm:=movegen(5)
-            for n:=1 to len(fm)
-                draw(fm[n],,n)
-                c_cb_button_press_stat(fm[n])
-            next
-            c:=y*TABLESIZE+x
-            c_cb_button_press_stat(c)
-            pos_stat()
-        end
-    end
-
-
-******************************************************************************
-static function cb_button_release(area,event)
-local n
-    for n:=0 to TABLESIZE**2-1
-        draw(n)
-    next
-    //? "cb_button_release", gtk.main_depth()
-    if(gtk.main_depth()>1);return NIL;end
 
 
 ******************************************************************************

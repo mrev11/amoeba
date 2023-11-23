@@ -88,13 +88,6 @@ struct cell
         cells[count]=this;
     }
 
-    void draw()
-    {
-        number(count);
-        _clp_draw(1);
-        pop();
-    }
-
     cell *set()
     {
         if( (winner==' ') && (movecount<ROWCOL) )
@@ -230,22 +223,7 @@ void _clp_c_cb_button_press(int argno)
 {
     CCC_PROLOG("c_cb_button_press",1);
     int x=_parni(1);
-
-    cell *c=cells[x];
-
-    if( winner!=' ' )
-    {
-        printf("\ngame over (%c)",winner);
-    }
-    else if( c->figure==' ' )
-    {
-        c->set()->draw();
-        _clp_label_move(0);pop();
-        _clp_go(0);pop();
-        _clp_label_move(0);pop();
-        moveforw=movecount;
-    }
-
+    cells[x]->set();
     _ret();
     CCC_EPILOG();
 }
@@ -370,21 +348,10 @@ void _clp_c_cb_button_press_stat(int argno)
 }
 
 //--------------------------------------------------------------------------
-void _clp_c_cb_move(int argno)
+void _clp_setmoveforw(int argno)
 {
-    CCC_PROLOG("c_cb_move",0);
-
-    if( winner!=' ' )
-    {
-        printf("\ngame over (%c)",winner);
-    }
-    else
-    {
-        _clp_go(0);
-        pop();
-        moveforw=movecount;
-    }
-
+    CCC_PROLOG("setmoveforw",0);
+    moveforw=movecount;
     _ret();
     CCC_EPILOG();
 }
