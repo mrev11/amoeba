@@ -70,9 +70,6 @@ local x,v,m:=movecount()
     end
     
     label_rate(v)
-    //if( teach() )
-    //    ? "minimax",m,int(v)
-    //end
     
     
 *****************************************************************************

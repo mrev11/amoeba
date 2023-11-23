@@ -47,10 +47,6 @@ static int  DEBUG     = 0;
 static cell*  cells[ROWCOL];
 static int    spiral[ROWCOL];
 
-extern void   _clp_go(int argno);
-extern void   _clp_draw(int argno);
-extern void   _clp_label_move(int argno);
-
 extern void   ponttab_init();
 extern void   ponttab_print(XPATTERN a);
 extern int    ponttab(XPATTERN a, char figure);
@@ -217,16 +213,6 @@ struct cell
     }
 };
 
-
-//--------------------------------------------------------------------------
-void _clp_c_cb_button_press(int argno)
-{
-    CCC_PROLOG("c_cb_button_press",1);
-    int x=_parni(1);
-    cells[x]->set();
-    _ret();
-    CCC_EPILOG();
-}
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
@@ -613,7 +599,7 @@ void _clp_forw(int argno)
 {
     CCC_PROLOG("forw",1);
     int x=_parni(1);
-    _retl( cells[x]->set() );
+    _retl(cells[x]->set());
     CCC_EPILOG();
 }
 
@@ -621,7 +607,7 @@ void _clp_forw(int argno)
 void _clp_back(int argno)
 {
     CCC_PROLOG("back",0);
-    _retl( cell::unset() );
+    _retl(cell::unset());
     CCC_EPILOG();
 }
 

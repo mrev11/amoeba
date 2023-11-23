@@ -197,7 +197,7 @@ local x,y,but,cx,fm,n
         if( but==1 )
             //left-button
             cx:=y*TABLESIZE+x
-            c_cb_button_press(cx)
+            forw(cx)
             cb_move()
         elseif( teach() )
             //right-button
