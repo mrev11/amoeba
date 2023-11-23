@@ -165,7 +165,7 @@ local asco:=asc("O")
 
 
 ******************************************************************************
-static function drawcell(cx,fig,color)
+function drawcell(cx,fig,color)
 
 static gc:={;
     makegc("#000000"),; //fekete

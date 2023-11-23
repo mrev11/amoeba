@@ -194,19 +194,26 @@ static function cb_move(w)
 
 ******************************************************************************
 static function cb_back(w)
-    //? "cb_back", gtk.main_depth()
+local cx:=topcell()
     if(gtk.main_depth()>1);return NIL;end
-    c_cb_back()
-    drawtop()
+    if( cx!=NIL )
+        c_cb_back()
+        drawcell(cx)
+        drawtop()
+    end
     label_move()
     label_rate(0)
 
 
 ******************************************************************************
 static function cb_forward(w)
-    //? "cb_forward", gtk.main_depth()
+local cx:=topcell()
     if(gtk.main_depth()>1);return NIL;end
     c_cb_forward()
+    if( cx!=NIL )
+        drawcell(cx)
+    end
+    drawtop()
     label_move()
 
 

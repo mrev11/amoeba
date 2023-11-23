@@ -240,11 +240,9 @@ void _clp_c_cb_button_press(int argno)
     else if( c->figure==' ' )
     {
         c->set()->draw();
-
         _clp_label_move(0);pop();
         _clp_go(0);pop();
         _clp_label_move(0);pop();
-
         moveforw=movecount;
     }
 
@@ -396,10 +394,6 @@ void _clp_c_cb_back(int argno)
 {
     CCC_PROLOG("c_cb_back",0);
     cell *c=cell::unset();
-    if( c )
-    {
-        c->draw();
-    }
     _ret();
     CCC_EPILOG();
 }
@@ -412,7 +406,6 @@ void _clp_c_cb_forward(int argno)
     {
         cell *c=cells[movestack[movecount]];
         c->set();
-        c->draw();
     }
     _ret();
     CCC_EPILOG();
