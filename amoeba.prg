@@ -25,52 +25,14 @@
 
 #define VERSION "Amoeba 1.3.0 for GTK+"
 
-
-static cellsize:=32
-static tablesize:=MAXROW
-
 static area
 static twostatelabel
 static label_move
 static label_turn
 static label_rate
 
-
-#define BLACK       1
-#define GREY        2
-#define LTGREY      3
-#define YELLOW      4
-#define WHITE       5
-
-#define FIG_X       1
-#define FIG_O       2
-#define FIG_XA      3
-#define FIG_OA      4
-
-
-#define LEGACYx
-#ifdef  LEGACY
-  static legacy:=.t.
-  static SHAPE_X:="<span size='x-large'><b>X</b></span>"    // FIG_X  
-  static SHAPE_O:="<span size='x-large'><b>O</b></span>"    // FIG_O  
-  static SHAPE_XA:="<span size='x-large'>X</span>"          // FIG_XA 
-  static SHAPE_OA:="<span size='x-large'>O</span>"          // FIG_OA 
-#else
-  static legacy:=.f.
-  static SHAPE_X:="<span size='x-large'><b>"+"25cf"::hex2l::chr+"</b></span>"    // FIG_X  
-  static SHAPE_XA:="<span size='x-large'>"+"29bf"::hex2l::chr+"</span>"   // FIG_XA 
-  //static SHAPE_XA:="<span size='x-large'><b>"+"29bf"::hex2l::chr+"</b></span>"   // FIG_XA 
-  //static SHAPE_XA:="<span size='xx-large'>"+"2299"::hex2l::chr+"</span>"
-  //static SHAPE_XA:="<span size='xx-large'>"+"2d54"::hex2l::chr+"</span>"
-  //static SHAPE_XA:="<span size='xx-large'>"+"2d59"::hex2l::chr+"</span>"
-  //static SHAPE_XA:="<span size='xx-large'>"+"2609"::hex2l::chr+"</span>"
-  //static SHAPE_XA:="<span size='xx-large'>"+"29be"::hex2l::chr+"</span>"
-  //static SHAPE_XA:="<span size='xx-large'>"+"29bf"::hex2l::chr+"</span>"
-  static SHAPE_O:=SHAPE_X
-  static SHAPE_OA:=SHAPE_XA
-#endif
-
 static EXPOSE:=.f.
+
 
 *****************************************************************************
 function main()
@@ -80,8 +42,9 @@ function main()
     init_cells()
     amoeba_gui()
 
+
 ******************************************************************************
-function amoeba_gui()
+static function amoeba_gui()
 
 local window
 local wcolor
@@ -141,7 +104,7 @@ local hboxfill
     hboxlab:pack_start( label_rate:=gtklabelNew() )
 
 
-    area:set_size_request(cellsize*tablesize+1,cellsize*tablesize+1)
+    area:set_size_request(CELLSIZE*TABLESIZE+1,CELLSIZE*TABLESIZE+1)
     area:signal_connect("expose_event",{|w,e|cb_expose(w,e)})
     area:signal_connect("button_press_event",{|w,e|cb_button_press(w,e)})
     area:signal_connect("button_release_event",{|w,e|cb_button_release(w,e)})
@@ -228,6 +191,7 @@ static function cb_move(w)
     twostatelabel:set_state(.t.)
     label_move()
 
+
 ******************************************************************************
 static function cb_back(w)
     //? "cb_back", gtk.main_depth()
@@ -237,12 +201,14 @@ static function cb_back(w)
     label_move()
     label_rate(0)
 
+
 ******************************************************************************
 static function cb_forward(w)
     //? "cb_forward", gtk.main_depth()
     if(gtk.main_depth()>1);return NIL;end
     c_cb_forward()
     label_move()
+
 
 ******************************************************************************
 static function cb_new(w,combo)
@@ -253,6 +219,7 @@ static function cb_new(w,combo)
     drawall()
     label_move()
     label_rate(0)
+
 
 ******************************************************************************
 static function cb_load(window)
@@ -324,6 +291,7 @@ local index:=0,cellid,cells:={},name
         memowrit(selected_file,cells)
     end
 
+
 ******************************************************************************
 static function cb_teach(w)
     //? "cb_teach", gtk.main_depth()
@@ -331,12 +299,14 @@ static function cb_teach(w)
     //engedni kell a rekurziót
     teach(w:get_active)
 
+
 ******************************************************************************
 static function cb_power(w)
     //? "cb_power", gtk.main_depth()
     //if(gtk.main_depth()>1);return NIL;end
     //engedni kell a rekurziót
     power(w:get_active_text)
+
 
 ******************************************************************************
 static function cb_button_press(area,event)
@@ -351,13 +321,13 @@ local x,y,but,c,fm,n
         if( but==1 )
             twostatelabel:set_state(.f.)
             area:set_sensitive(.f.)
-            c:=y*tablesize+x
+            c:=y*TABLESIZE+x
             c_cb_button_press(c)
             area:set_sensitive(.t.)
             twostatelabel:set_state(.t.)
         elseif( teach() )
             ? "*";?
-            for n:=0 to tablesize**2-1
+            for n:=0 to TABLESIZE**2-1
                 draw(n)
             next
             fm:=movegen(5)
@@ -365,25 +335,28 @@ local x,y,but,c,fm,n
                 draw(fm[n],,n)
                 c_cb_button_press_stat(fm[n])
             next
-            c:=y*tablesize+x
+            c:=y*TABLESIZE+x
             c_cb_button_press_stat(c)
             pos_stat()
         end
     end
 
+
 ******************************************************************************
 static function cb_button_release(area,event)
 local n
-    for n:=0 to tablesize**2-1
+    for n:=0 to TABLESIZE**2-1
         draw(n)
     next
     //? "cb_button_release", gtk.main_depth()
     if(gtk.main_depth()>1);return NIL;end
 
+
 ******************************************************************************
 static function cb_motion_notify(area,event)
     //? "cb_motion_notify", gtk.main_depth()
     if(gtk.main_depth()>1);return NIL;end
+
 
 ******************************************************************************
 function cb_expose(area,event)
@@ -419,9 +392,9 @@ local m:=movecount()
 function label_turn()
 local m:=movecount()
     if( (m%2)==0 )
-        label_turn:set_markup( "Turn: <span color='black'>"+SHAPE_X+"</span>" )
+        label_turn:set_markup( "Turn: <span color='black'>"+SHAPE_X()+"</span>" )
     else
-        label_turn:set_markup( "Turn: <span color='white'>"+SHAPE_O+"</span>" )
+        label_turn:set_markup( "Turn: <span color='white'>"+SHAPE_O()+"</span>" )
     end
 
 
@@ -429,184 +402,6 @@ local m:=movecount()
 function label_rate(x)
     label_rate:set_markup( "Rating: <b>"+x::int::str::alltrim+"</b>" )
 
-
-******************************************************************************
-function drawall()
-
-local cx
-local fig,color
-local ascx:=asc("X")
-local asco:=asc("O")
-
-    for cx:=0 to ROWCOL-1
-        fig:=figure(cx)
-        if( fig==ascx )
-            fig:=FIG_X
-            color:=BLACK
-        elseif( fig==asco )
-            fig:=FIG_O
-            color:=WHITE
-        else
-            fig:=0
-            color:=GREY
-        end
-        drawcell(cx,fig,color)
-    next
-
-    drawtop()
-
-    gtk.main_stabilize()
-
-
-******************************************************************************
-function drawtop()
-
-local top
-local fig,color
-local ascx:=asc("X")
-local asco:=asc("O")
-
-    if( (top:=topcell())!=NIL )
-        fig:=figure(top)
-        if( fig==ascx )
-            fig:=if(legacy,FIG_X,FIG_XA)
-            color:=if(legacy,YELLOW,BLACK)
-        elseif( fig==asco )
-            fig:=if(legacy,FIG_O,FIG_OA)
-            color:=if(legacy,YELLOW,WHITE)
-        else
-            fig:=0
-            color:=GREY
-        end
-        drawcell(top,fig,color)
-    end
-
-
-******************************************************************************
-function draw(cx,alt,fmx)
-
-// kirajzolja cells[cx]-et
-//
-// egy cella lehet üres vagy lehet benne
-//
-//  - 'X' (mindig fekete)
-//  - 'x' (X alternatív alakja, fekete/sárga)
-//  - 'O' (mindig fehér)
-//  - 'o' (O alternatív alakja, fehér/sárga)
-//
-// ha fmx egy szám, akkor cells[x] heyén a számot jeleníti meg
-
-local top:=topcell()
-local under:=undercell()
-local fig,color
-
-    if( !EXPOSE .and. under!=NIL )
-        //? "UNDER",figure(under)::chr
-        if( figure(under)==asc("X") )
-            fig:=FIG_X
-            color:=BLACK
-        else
-            fig:=FIG_O
-            color:=WHITE
-        end
-        drawcell(under,fig,color)
-    end
-    
-    fig:=figure(cx)
-
-    if( fig==asc(" ") )
-        fig:=if(fmx==NIL,0,-fmx )
-        color:=GREY
-
-    elseif( fig==asc("X") )
-        if( legacy )
-            fig:=if(alt==NIL,FIG_X,FIG_XA)
-            color:=if(cx==top,YELLOW,BLACK)
-        else
-            fig:=if(alt==NIL.and.cx<top,FIG_X,FIG_XA)
-            color:=BLACK
-        end
-
-    elseif( fig==asc("O") )
-        if( legacy )
-            fig:=if(alt==NIL,FIG_O,FIG_OA)
-            color:=if(cx==top,YELLOW,WHITE)
-        else
-            fig:=if(alt==NIL.and.cx<top,FIG_O,FIG_OA)
-            color:=WHITE
-        end
-    else
-        break("IDE NEM JOHET")
-    end
-
-    drawcell(cx,fig,color)  
-
-    gtk.main_stabilize()
-
-
-******************************************************************************
-static function drawcell(cx,fig,color)
-
-static gc:={;
-    makegc("#000000"),; //fekete
-    makegc("#b0b0b0"),; //szürke
-    makegc("#d0d0d0"),; //világosszürke
-    makegc("#ffff00"),; //sárga
-    makegc("#ffffff"),; //fehér
-    NIL}
-
-static lo:={;
-    makelayout(SHAPE_X),;
-    makelayout(SHAPE_O),;
-    makelayout(SHAPE_XA),;
-    makelayout(SHAPE_OA),;
-    NIL}
-
-static lo1:={;
-    makelayout("1"),;
-    makelayout("2"),;
-    makelayout("3"),;
-    makelayout("4"),;
-    makelayout("5"),;
-    makelayout("6"),;
-    makelayout("7"),;
-    makelayout("8"),;
-    makelayout("9"),;
-    NIL}
-
-local i:=cx%tablesize
-local j:=int(cx/tablesize)
-
-local x:=i*cellsize
-local y:=j*cellsize
-local draw:=area:get_drawable
-local dx:=5
-local dy:=1
-
-    gdk.drawable.draw_rectangle(draw,gc[GREY],.t.,x,y,cellsize,cellsize)
-    gdk.drawable.draw_rectangle(draw,gc[BLACK],.f.,x,y,cellsize,cellsize)
-
-    if( fig>0)
-        gdk.drawable.draw_layout(draw,gc[color],x+dx,y+dy,lo[fig])
-    elseif( fig<0 )
-        gdk.drawable.draw_layout(draw,gc[BLACK],x+dx,y+dy,lo1[-fig]) //movegen
-    end
-
-
-******************************************************************************
-static function makegc(colorspec)
-local color:=gdk.color.new()
-local gc:=gdk.gc.new(area:get_drawable)
-    gdk.color.parse(colorspec,color)
-    gdk.gc.set_rgb_fg_color(gc,color)
-    gdk.color.free(color)
-    return gc
-
-******************************************************************************
-static function makelayout(x)
-local label:=gtk.label.new(x)
-    gtk.label.set_use_markup(label,.t.)
-    return gtk.label.get_layout(label)
 
 ******************************************************************************
 static function validpos(event,x,y,but)
@@ -617,117 +412,30 @@ local xy:=gdk.event.get_coords(event)
     y:=xy[2]
     but:=gdk.event_button.get_button(event) //1,2,3 -- bal,köz,jobb
 
-    if( x%cellsize<2 .or. x%cellsize>cellsize-2 )
+    if( x%CELLSIZE<2 .or. x%CELLSIZE>CELLSIZE-2 )
         return .f.
-    elseif( y%cellsize<2 .or. y%cellsize>cellsize-2 )
+    elseif( y%CELLSIZE<2 .or. y%CELLSIZE>CELLSIZE-2 )
         return .f.
     end
 
-    x:=int(x/cellsize)
-    y:=int(y/cellsize)
+    x:=int(x/CELLSIZE)
+    y:=int(y/CELLSIZE)
 
-    if( x>=tablesize )
+    if( x>=TABLESIZE )
         return .f.
-    elseif( y>=tablesize )
+    elseif( y>=TABLESIZE )
         return .f.
-    elseif( figure(y*tablesize+x)!=32 )
+    elseif( figure(y*TABLESIZE+x)!=32 )
         return .f.
     end
 
     return  .t.
 
-******************************************************************************
-static function printpid()
-    set printer to pid
-    set printer on
-    ?? getpid()
-    set printer to
-    set printer off
 
 ******************************************************************************
-static function printexe()
-    set printer to exe
-    set printer on
-    ?? exename()
-    set printer to
-    set printer off
-
-******************************************************************************
-static function gtkbuttonNew_with_mnemonic_from_stock(label_text,stock_id)
-local button,box,label,image
-    box:=gtkhboxNew(.f.,0)
-    box:set_border_width(2)
-    image:=gtkimageNew_from_stock(stock_id,1)
-    label:=gtklabelNew(label_text)
-    label:set_use_underline(.t.)
-    box:pack_start(image, .f., .f., 3)
-    box:pack_start(label, .f., .f., 3)
-    button:=gtkbuttonNew()
-    button:add(box)
-    return button
-
+function drawingarea()
+    return area
 
 
 ******************************************************************************
-class gtktwostateimagelabel(gtkhbox)
-    method initialize
-    attrib state
-    attrib image
-    attrib label
-    attrib active_state_text
-    attrib passive_state_text
-    method set_state
-
-
-static function gtktwostateimagelabel.initialize(this,state,text1,text2)
-    this:gobject:=gtk.hbox.new(.f.,0)
-    this:state:=state!=.f.
-    this:active_state_text:=text1
-    this:passive_state_text:=text2
-    this:set_state(this:state)
-    return this
-
-
-static function gtktwostateimagelabel.set_state(this, state)
-
-    this:state:=state
-
-    if( this:image!=NIL )
-        this:remove(this:image)
-        this:image:=NIL
-    end
-    if( this:label!=NIL )
-        this:remove(this:label)
-        this:label:=NIL
-    end
-
-    if( state )
-        this:label:=gtklabelNew(this:active_state_text)
-        this:image:=gtkimageNew_from_stock("gtk-yes",1)
-    else
-        this:label:=gtklabelNew(this:passive_state_text)
-        this:image:=gtkimageNew_from_stock("gtk-no",1)
-    end
-
-    this:pack_start(this:image, .f., .f., 3)
-    this:pack_start(this:label, .f., .f., 3)
-    this:image:show
-    this:label:show
-    gtk.main_stabilize()
-
-
-******************************************************************************
-static function selfil(fname:="")
-local fs, selected_file
-    fs:=gtkfileselectionNew("File selection")
-    //fs:show_fileop_buttons()
-    fs:hide_fileop_buttons()
-    fs:get_ok_button:signal_connect("clicked",{||selected_file:=fs:get_filename,fs:destroy})
-    fs:get_cancel_button:signal_connect("clicked",{||fs:destroy})
-    fs:set_filename(fname)
-    fs:set_select_multiple(.f.)
-    fs:set_position(GTK_WIN_POS_MOUSE)
-    fs:run
-    return selected_file
-
-******************************************************************************
+    

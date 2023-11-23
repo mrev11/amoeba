@@ -18,10 +18,13 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
 #define TABLESIZE       16
 #define MAXROW          TABLESIZE
 #define MAXCOL          TABLESIZE
 #define ROWCOL          TABLESIZE*TABLESIZE
+
+#define CELLSIZE        32
 
 #define PVALUE_INFIN    9999
 #define PVALUE_EGY      2000
