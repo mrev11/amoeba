@@ -77,58 +77,6 @@ function shape_o()
 
 
 ******************************************************************************
-function drawall()
-
-local cx
-local fig,color
-local ascx:=asc("X")
-local asco:=asc("O")
-
-    for cx:=0 to ROWCOL-1
-        fig:=figure(cx)
-        if( fig==ascx )
-            fig:=FIG_X
-            color:=BLACK
-        elseif( fig==asco )
-            fig:=FIG_O
-            color:=WHITE
-        else
-            fig:=0
-            color:=GREY
-        end
-        drawcell(cx,fig,color)
-    next
-
-    drawtop()
-
-    gtk.main_stabilize()
-
-
-******************************************************************************
-function drawtop()
-
-local top
-local fig,color
-local ascx:=asc("X")
-local asco:=asc("O")
-
-    if( (top:=topcell())!=NIL )
-        fig:=figure(top)
-        if( fig==ascx )
-            fig:=if(legacy,FIG_X,FIG_XA)
-            color:=if(legacy,YELLOW,BLACK)
-        elseif( fig==asco )
-            fig:=if(legacy,FIG_O,FIG_OA)
-            color:=if(legacy,YELLOW,WHITE)
-        else
-            fig:=0
-            color:=GREY
-        end
-        drawcell(top,fig,color)
-    end
-
-
-******************************************************************************
 function draw(cx,alt,fmx)
 
 // kirajzolja cells[cx]-et
@@ -147,15 +95,7 @@ local under:=undercell()
 local fig,color
 
     if( under!=NIL )
-        //? "UNDER",figure(under)::chr
-        if( figure(under)==asc("X") )
-            fig:=FIG_X
-            color:=BLACK
-        else
-            fig:=FIG_O
-            color:=WHITE
-        end
-        drawcell(under,fig,color)
+        drawcell(under)
     end
 
     fig:=figure(cx)
@@ -191,6 +131,40 @@ local fig,color
 
 
 ******************************************************************************
+function drawall()
+local cx
+    for cx:=0 to ROWCOL-1
+        drawcell(cx)
+    next
+    drawtop()
+    gtk.main_stabilize()
+
+
+******************************************************************************
+function drawtop()
+
+local top
+local fig,color
+local ascx:=asc("X")
+local asco:=asc("O")
+
+    if( (top:=topcell())!=NIL )
+        fig:=figure(top)
+        if( fig==ascx )
+            fig:=if(legacy,FIG_X,FIG_XA)
+            color:=if(legacy,YELLOW,BLACK)
+        elseif( fig==asco )
+            fig:=if(legacy,FIG_O,FIG_OA)
+            color:=if(legacy,YELLOW,WHITE)
+        else
+            fig:=0
+            color:=GREY
+        end
+        drawcell(top,fig,color)
+    end
+
+
+******************************************************************************
 static function drawcell(cx,fig,color)
 
 static gc:={;
@@ -220,6 +194,9 @@ static lo1:={;
     makelayout("9"),;
     NIL}
 
+static ascx:=asc("X")
+static asco:=asc("O")
+
 local i:=cx%TABLESIZE
 local j:=int(cx/TABLESIZE)
 
@@ -228,6 +205,20 @@ local y:=j*CELLSIZE
 local draw:=area:get_drawable
 local dx:=5
 local dy:=1
+
+    if( fig==NIL .and. color==NIL )
+        fig:=figure(cx)
+        if( fig==ascx )
+            fig:=FIG_X
+            color:=BLACK
+        elseif( fig==asco )
+            fig:=FIG_O
+            color:=WHITE
+        else
+            fig:=0
+            color:=GREY
+        end
+    end
 
     gdk.drawable.draw_rectangle(draw,gc[GREY],.t.,x,y,CELLSIZE,CELLSIZE)
     gdk.drawable.draw_rectangle(draw,gc[BLACK],.f.,x,y,CELLSIZE,CELLSIZE)
