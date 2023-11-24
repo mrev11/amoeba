@@ -263,6 +263,7 @@ static function cb_new(w,combo)
 ******************************************************************************
 static function cb_load(window)
 local dlg, selected_file,cells,n
+local amoeba:="amoeba"+TABLESIZE::str::alltrim
 
     if(gtk.main_depth()>1);return NIL;end
 
@@ -282,18 +283,31 @@ local dlg, selected_file,cells,n
         selected_file:=NIL
     end
 
-    if( selected_file!=NIL .and. !empty(cells:=memoread(selected_file)) )
-        if( cells::left(7)!="amoeba{" .or. cells::right(1)!="}" )
-            // nem amoeba fajl
-        else
-            cells:=cells[8..cells::len-1]::split
-            for n:=1 to len(cells)
-                cells[n]::=val
-            next
-            c_cb_new(cells)
-            drawall()
-            label_rate(0)
-        end
+    if( selected_file==NIL )
+        // nem választott
+
+    elseif( empty(cells:=memoread(selected_file)) )
+        // nem létezik vagy üres
+
+    elseif( at(amoeba,cells)!=1  )
+        // nem amoeba fájl
+
+    //elseif( cells::str2bin::crc32::l2hex::padl(8,"0")!=selected_file::right(8)  )
+    // hibás CRC32
+    // így lehetne ellenőrizni a tartalom sértetlenségét
+    // de akkor kötelező volna a CRC32-es neveket használni
+
+    elseif( cells::=strtran(amoeba,""), cells::left(1)!="{" .or. cells::right(1)!="}" )
+        // hibás formátum
+
+    else
+        cells::=substr(2,len(cells)-2)::split
+        for n:=1 to len(cells)
+             cells[n]::=val
+        next
+        c_cb_new(cells)
+        drawall()
+        label_rate(0)
     end
 
 
@@ -301,6 +315,7 @@ local dlg, selected_file,cells,n
 static function cb_save(window)
 local dlg,selected_file
 local index:=0,cellid,cells:={},name
+local amoeba:="amoeba"+TABLESIZE::str::alltrim
 
     if(gtk.main_depth()>1);return NIL;end
 
@@ -308,8 +323,8 @@ local index:=0,cellid,cells:={},name
         aadd(cells,cellid)
     end
     cells::=any2str
-    cells:="amoeba"+cells
-    name:="amoeba-"+cells::str2bin::crc32::l2hex::padl(8,"0")
+    cells:=amoeba+cells
+    name:=amoeba+"-"+cells::str2bin::crc32::l2hex::padl(8,"0")
 
     selected_file:=selfil(name)
     if( selected_file==NIL )
