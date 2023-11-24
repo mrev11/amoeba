@@ -132,7 +132,7 @@ local text
     elseif( winner()==asc('O') )
         text:="White won!"
     else
-        return NIL     
+        return .f.     
     end
 
     dlg:=gtkmessagedialogNew(window,;
@@ -144,6 +144,8 @@ local text
     dlg:signal_connect('response',{||dlg:destroy})
     dlg:set_position(GTK_WIN_POS_MOUSE)
     dlg:run
+
+    return .t.     
 
 
 ******************************************************************************

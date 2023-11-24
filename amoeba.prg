@@ -197,12 +197,22 @@ static function cb_button_release(area,event)
 static function cb_button_press(area,event)
 local x,y,but,cx,fm,n
     if(gtk.main_depth()>1);return NIL;end
+
     if( validpos(event,@x,@y,@but) )
         if( but==1 )
             //left-button
-            cx:=y*TABLESIZE+x
-            forw(cx)
-            cb_move()
+            if( !game_over() )
+                if( topcell()!=NIL )
+                    drawcell(topcell()) // -> normal shape
+                end
+                cx:=y*TABLESIZE+x
+                forw(cx)
+                drawtop(cx)
+            end
+            if( winner()==32 )
+                cb_move()
+            end
+
         elseif( teach() )
             //right-button
             ? "*";?
@@ -222,14 +232,15 @@ local x,y,but,cx,fm,n
 ******************************************************************************
 static function cb_move()
     if(gtk.main_depth()>1);return NIL;end
-    game_over()
-    twostatelabel:set_state(.f.)
-    area:set_sensitive(.f.)
-    go()
-    area:set_sensitive(.t.)
-    twostatelabel:set_state(.t.)
-    markmovecount()
-    label_move()
+    if( !game_over() )
+        twostatelabel:set_state(.f.)
+        area:set_sensitive(.f.)
+        go()
+        area:set_sensitive(.t.)
+        twostatelabel:set_state(.t.)
+        markmovecount()
+        label_move()
+    end
 
 
 ******************************************************************************

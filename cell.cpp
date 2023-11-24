@@ -88,9 +88,9 @@ struct cell
     {
         if( (winner==' ') && (movecount<ROWCOL) )
         {
-            movestack[movecount]=count;
+            movestack[movecount++]=count;
 
-            if( movecount++&1 )
+            if( (movecount&1)==0 )
             {
                 figure='O';
                 if( fieldval[0]>=PVALUE_EGY ) //PONTOK!!
