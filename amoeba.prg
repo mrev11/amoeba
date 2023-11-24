@@ -215,16 +215,17 @@ local x,y,but,cx,fm,n
 
         elseif( teach() )
             //right-button
-            ? "*";?
-            drawall()
-            fm:=movegen(5)
-            for n:=1 to len(fm)
-                drawnum(fm[n],n)
-                c_cb_button_press_stat(fm[n])
-            next
-            cx:=y*TABLESIZE+x
-            c_cb_button_press_stat(cx)
-            c_cb_button_press_pos()
+            if( winner()==32 )
+                drawall()
+                fm:=movegen(5)
+                for n:=1 to len(fm)
+                    drawnum(fm[n],n)
+                    c_cb_button_press_stat(fm[n])
+                next
+                cx:=y*TABLESIZE+x
+                c_cb_button_press_stat(cx)
+                c_cb_button_press_pos()
+            end
         end
     end
 
@@ -398,9 +399,9 @@ function cb_expose(area,event)
     // (akkor ez itt rekurzív?)
 
     drawall()
- 
+
     EXPOSE:=.f.
- 
+
 ******************************************************************************
 function label_move()
 local m:=movecount()
@@ -458,4 +459,3 @@ function drawingarea()
 
 
 ******************************************************************************
-    

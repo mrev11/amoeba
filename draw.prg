@@ -66,9 +66,9 @@
   static SHAPE_OA:="<span size='x-large'>O</span>"          // FIG_OA
 #else
   static legacy:=.f.
-  static SHAPE_X :="<span size='x-large'><b>"+CIRCLE1+"</b></span>"  // FIG_X
-  static SHAPE_XT:="<span size='x-large'><b>"+CIRCLE2+"</b></span>"  // FIG_XT (top)
-  static SHAPE_XA:="<span size='x-large'><b>"+CIRCLE3+"</b></span>"  // FIG_XA (alt)
+  static SHAPE_X :="<span size='x-large'><b>"+CIRCLE1+"</b></span>" // FIG_X
+  static SHAPE_XT:="<span size='x-large'><b>"+CIRCLE2+"</b></span>" // FIG_XT (top)
+  static SHAPE_XA:="<span size='x-large'>"+CIRCLE3+"</span>"        // FIG_XA (alt)
 
   static SHAPE_O:=SHAPE_X
   static SHAPE_OT:=SHAPE_XT

@@ -292,6 +292,8 @@ void _clp_c_cb_button_press_pos(int argno)
     printf( "best_move O=%d X=%d\n",BVAL(0),BVAL(1));
     printf( "scnd_move O=%d X=%d\n",SVAL(0),SVAL(1));
     printf( "posvalue=%d\n",posvalue(0) );
+    printf("\n");
+    fflush(0);
     _ret();
     CCC_EPILOG();
 }
