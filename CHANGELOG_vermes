@@ -1,3 +1,5 @@
+2023-11-24 game_over() jelzi a megtelt táblát;
+
 2023-11-24 game_over() glade implementációja helyett sima GTK;
 
 2023-11-24 táblaméret beleírva a mentett amoeba fájlba;
