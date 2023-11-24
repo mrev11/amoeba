@@ -219,7 +219,7 @@ local x,y,but,cx,fm,n
             drawall()
             fm:=movegen(5)
             for n:=1 to len(fm)
-                draw(fm[n],,n)
+                drawnum(fm[n],n)
                 c_cb_button_press_stat(fm[n])
             next
             cx:=y*TABLESIZE+x

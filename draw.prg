@@ -32,39 +32,53 @@
 
 #define FIG_X       1
 #define FIG_O       2
-#define FIG_XA      3
-#define FIG_OA      4
+#define FIG_XT      3
+#define FIG_OT      4
+#define FIG_XA      5
+#define FIG_OA      6
 
 
 // ilyen körök vannak
-// #define CIRCLE1  chr(0x2299)
-// #define CIRCLE2  chr(0x25cf) 
-// #define CIRCLE3  chr(0x2609)
-// #define CIRCLE4  chr(0x29be)
-// #define CIRCLE5  chr(0x29bf)
-// #define CIRCLE6  chr(0x2d54)
-// #define CIRCLE7  chr(0x2d59)
+//
+//  chr(0x2299)
+//  chr(0x25cf) 
+//  chr(0x2609)
+//  chr(0x29be)
+//  chr(0x29bf)
+//  chr(0x2d54)
+//  chr(0x2d59)
+
 
 #define CIRCLE1  chr(0x25cf) 
 #define CIRCLE2  chr(0x29bf)
+#define CIRCLE3  chr(0x2d54)
 
 #define LEGACYx
 #ifdef  LEGACY
   static legacy:=.t.
-  static SHAPE_X:="<span size='x-large'><b>X</b></span>"    // FIG_X
-  static SHAPE_O:="<span size='x-large'><b>O</b></span>"    // FIG_O
+  static SHAPE_X :="<span size='x-large'><b>X</b></span>"   // FIG_X
+  static SHAPE_O :="<span size='x-large'><b>O</b></span>"   // FIG_O
+
+  static SHAPE_XT:=SHAPE_X                                  // FIG_XT
+  static SHAPE_OT:=SHAPE_O                                  // FIG_OT
+
   static SHAPE_XA:="<span size='x-large'>X</span>"          // FIG_XA
   static SHAPE_OA:="<span size='x-large'>O</span>"          // FIG_OA
 #else
   static legacy:=.f.
-  static SHAPE_X:= "<span size='x-large'><b>"+CIRCLE1+"</b></span>"  // FIG_X
-  static SHAPE_XA:="<span size='x-large'><b>"+CIRCLE2+"</b></span>"  // FIG_XA
+  static SHAPE_X :="<span size='x-large'><b>"+CIRCLE1+"</b></span>"  // FIG_X
+  static SHAPE_XT:="<span size='x-large'><b>"+CIRCLE2+"</b></span>"  // FIG_XT (top)
+  static SHAPE_XA:="<span size='x-large'><b>"+CIRCLE3+"</b></span>"  // FIG_XA (alt)
+
   static SHAPE_O:=SHAPE_X
+  static SHAPE_OT:=SHAPE_XT
   static SHAPE_OA:=SHAPE_XA
 #endif
 
 
 static area:=drawingarea()
+static ascx:=asc("X")
+static asco:=asc("O")
 
 
 ******************************************************************************
@@ -77,63 +91,12 @@ function shape_o()
 
 
 ******************************************************************************
-function draw(cx,alt,fmx)
-
-// kirajzolja cells[cx]-et
-//
-// egy cella lehet üres vagy lehet benne
-//
-//  - 'X' (mindig fekete)
-//  - 'x' (X alternatív alakja, fekete/sárga)
-//  - 'O' (mindig fehér)
-//  - 'o' (O alternatív alakja, fehér/sárga)
-//
-// ha fmx egy szám, akkor cells[x] heyén a számot jeleníti meg
-
-local top:=topcell()
-local fig,color
-
-
-    fig:=figure(cx)
-
-    if( fig==asc(" ") )
-        fig:=if(fmx==NIL,0,-fmx )
-        color:=GREY
-
-    elseif( fig==asc("X") )
-        if( legacy )
-            fig:=if(alt==NIL,FIG_X,FIG_XA)
-            color:=if(cx==top,YELLOW,BLACK)
-        else
-            fig:=if(alt==NIL.and.cx<top,FIG_X,FIG_XA)
-            color:=BLACK
-        end
-
-    elseif( fig==asc("O") )
-        if( legacy )
-            fig:=if(alt==NIL,FIG_O,FIG_OA)
-            color:=if(cx==top,YELLOW,WHITE)
-        else
-            fig:=if(alt==NIL.and.cx<top,FIG_O,FIG_OA)
-            color:=WHITE
-        end
-    else
-        break("IDE NEM JOHET")
-    end
-
-    drawcell(cx,fig,color)
-
-    gtk.main_stabilize()
-
-
-******************************************************************************
 function drawall()
 local cx
     for cx:=0 to ROWCOL-1
         drawcell(cx)
     next
     drawtop()
-    gtk.main_stabilize()
 
 
 ******************************************************************************
@@ -141,22 +104,51 @@ function drawtop()
 
 local top
 local fig,color
-local ascx:=asc("X")
-local asco:=asc("O")
 
     if( (top:=topcell())!=NIL )
         fig:=figure(top)
         if( fig==ascx )
-            fig:=if(legacy,FIG_X,FIG_XA)
+            fig:=FIG_XT
             color:=if(legacy,YELLOW,BLACK)
         elseif( fig==asco )
-            fig:=if(legacy,FIG_O,FIG_OA)
+            fig:=FIG_OT
             color:=if(legacy,YELLOW,WHITE)
         else
             fig:=0
             color:=GREY
         end
         drawcell(top,fig,color)
+    end
+
+
+******************************************************************************
+function drawalt(cx)
+
+local fig,color
+
+    fig:=figure(cx)
+    if( fig==ascx )
+        fig:=FIG_XA
+        color:=if(legacy,YELLOW,BLACK)
+    elseif( fig==asco )
+        fig:=FIG_OA
+        color:=if(legacy,YELLOW,WHITE)
+    else
+        fig:=0
+        color:=GREY
+    end
+
+    drawcell(cx,fig,color)
+
+
+******************************************************************************
+function drawnum(cx,num)
+local fig,color
+    fig:=figure(cx)
+    if( fig==asc(" ") .and. num<=9 )
+        fig:=-num
+        color:=GREY
+        drawcell(cx,fig,color)
     end
 
 
@@ -174,6 +166,8 @@ static gc:={;
 static lo:={;
     makelayout(SHAPE_X),;
     makelayout(SHAPE_O),;
+    makelayout(SHAPE_XT),;
+    makelayout(SHAPE_OT),;
     makelayout(SHAPE_XA),;
     makelayout(SHAPE_OA),;
     NIL}
@@ -190,8 +184,6 @@ static lo1:={;
     makelayout("9"),;
     NIL}
 
-static ascx:=asc("X")
-static asco:=asc("O")
 
 local i:=cx%TABLESIZE
 local j:=int(cx/TABLESIZE)
@@ -224,6 +216,8 @@ local dy:=1
     elseif( fig<0 )
         gdk.drawable.draw_layout(draw,gc[BLACK],x+dx,y+dy,lo1[-fig]) //movegen
     end
+
+    gtk.main_stabilize()
 
 
 ******************************************************************************

@@ -66,7 +66,7 @@ local x,v,m:=movecount()
     x:=atail(tree)
     if( NIL!=x )
         forw(x)
-        draw(x)
+        drawtop(x)
     end
     
     label_rate(v)
@@ -146,7 +146,7 @@ local n,t1
         if( forw(x:=fm[n]) )
 
             if( teach>=depth )
-                draw(x,.t.)
+                drawalt(x)
                 sleep(100)
             end
 
@@ -184,7 +184,7 @@ local n,t1
             back()
 
             if( teach>=depth )
-                draw(x)
+                drawalt(x)
             end
         end
     next

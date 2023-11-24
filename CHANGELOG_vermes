@@ -1,3 +1,8 @@
+2023-11-24
+    draw funkciók szétválasztva -> drawtop,drawalt,drawnum;
+    3 alak megkülönböztetve: normal, top, alt; 
+
+
 2023-11-24 game_over() jelzi a megtelt táblát;
 
 2023-11-24 game_over() glade implementációja helyett sima GTK;
