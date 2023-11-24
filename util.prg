@@ -121,3 +121,29 @@ static function gtktwostateimagelabel.set_state(this, state)
 
 
 ******************************************************************************
+function game_over()
+
+local dlg
+local window:=mainwindow()
+local text
+
+    if( winner()==asc('X') )
+        text:="Black won!"
+    elseif( winner()==asc('O') )
+        text:="White won!"
+    else
+        return NIL     
+    end
+
+    dlg:=gtkmessagedialogNew(window,;
+            GTK_DIALOG_MODAL,;
+            GTK_MESSAGE_ERROR,;
+            GTK_BUTTONS_OK,;
+            text )
+    dlg:set_title("GAME OVER")
+    dlg:signal_connect('response',{||dlg:destroy})
+    dlg:set_position(GTK_WIN_POS_MOUSE)
+    dlg:run
+
+
+******************************************************************************

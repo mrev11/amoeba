@@ -176,10 +176,18 @@ local hboxfill
     hboxsep2:set_size_request(-1,10)
     hboxfill:set_size_request(-1,100)
 
+    mainwindow(window)
     window:show_all
     gtk.main()
     ?
 
+******************************************************************************
+function mainwindow(w)
+static window
+    if( w!=NIL )
+        window:=w
+    end
+    return window
 
 ******************************************************************************
 static function cb_button_release(area,event)

@@ -12,7 +12,6 @@ struct cell
     valuedir[0]     a legértékesebb 'O' alakzat iránya (0=→, 1=↗, 2=↑, 3=↘)
     valuedir[1]     a legértékesebb 'X' alakzat iránya (0=→, 1=↗, 2=↑, 3=↘)
 
-    draw()          kirajzolja magát a táblán
     set()           ráteszi magát a táblára (a cell->count mezőre)
     unset()         felszedi magát a tábláról (a cell->count mezőről)
 
@@ -37,8 +36,9 @@ movegen(darab)
     a 'perspektivikuság' szempontja: osszertek() nagysága
     kitölti a best_move[] és second_move[] adatokat
 
+
 posvalue(depth)     
     állásértékelés az elemzőfa levelein
-    -PVALUE_INFIN+depth, ha O nyer
-    +PVALUE_INFIN-depth, ha X nyer
+    -PVALUE_INFIN+depth, ha O nyerését látja 
+    +PVALUE_INFIN-depth, ha X nyerését látja 
            
