@@ -53,7 +53,7 @@
 #define CIRCLE2  chr(0x29bf)
 #define CIRCLE3  chr(0x2d54)
 
-#define LEGACYx
+#define xLEGACY
 #ifdef  LEGACY
   static legacy:=.t.
   static SHAPE_X :="<span size='x-large'><b>X</b></span>"   // FIG_X
@@ -80,6 +80,8 @@ static area:=drawingarea()
 static ascx:=asc("X")
 static asco:=asc("O")
 
+static altflag:=.f.
+
 
 ******************************************************************************
 function shape_x()
@@ -92,11 +94,27 @@ function shape_o()
 
 ******************************************************************************
 function drawall()
-local cx
+local cx,top
+
+    top:=topcell()
+
     for cx:=0 to ROWCOL-1
-        drawcell(cx)
+        if( cx!=top )
+            drawcell(cx)
+        end
     next
-    drawtop()
+
+    if( top!=NIL )
+        if(altflag,drawalt(top),drawtop())
+    end
+
+// Probléma, hogy gtk.main_stabilize()-ból általában (de nem mindig) 
+// meghívódik cb_expose(), aminek újra kell tudnia rajzolni a képet.
+//
+// main_stabilize -> cb_expose -> drawall -> drawcell -> main_stabilize
+//
+// (Tehát ebben eleve van egy rekurzió, amit a rendszer valahogy kivéd.)
+// Tudni kell, milyen alakzat van a top-ban, ezért kell az altflag-es szarság.
 
 
 ******************************************************************************
@@ -119,21 +137,23 @@ local fig,color
         end
         drawcell(top,fig,color)
     end
-
+        
 
 ******************************************************************************
 function drawalt(cx)
-
 local fig,color
 
     fig:=figure(cx)
     if( fig==ascx )
+        altflag:=.t.
         fig:=FIG_XA
         color:=if(legacy,YELLOW,BLACK)
     elseif( fig==asco )
+        altflag:=.t.
         fig:=FIG_OA
         color:=if(legacy,YELLOW,WHITE)
     else
+        altflag:=.f.
         fig:=0
         color:=GREY
     end

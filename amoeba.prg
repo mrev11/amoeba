@@ -392,23 +392,14 @@ function cb_expose(area,event)
 
     EXPOSE:=.t.
 
-    // ? "EXPOSE", movecount(), topcell()
-    // 
-    // callstack()
-    // A program indulásakor a GTK kétszer hívja meg ezt kódot
-    // a két esetben pontosan ugyanúgy
-    //  - ha csak az elsőre futtatom -> üres marad a négyzetháló 
-    //  - ha csak a másodikra futtatom -> üres marad a négyzetháló 
-    //
-    // később is rendszeresen meghívódik
-    // a tapasztalat szerint 
-    // - egér klikk után meghívódik
-    // - move/back/forward után nem hívódik meg
+    // tapasztalat szerint
+    // gtk.main_stabilize()-ból
+    // meghívódik cb_expose()
+    // (akkor ez itt rekurzív?)
 
     drawall()
  
     EXPOSE:=.f.
-
  
 ******************************************************************************
 function label_move()
