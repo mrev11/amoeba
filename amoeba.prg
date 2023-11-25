@@ -218,6 +218,7 @@ local x,y,but,cx,fm,n
             if( winner()==32 )
                 drawall()
                 fm:=movegen(5)
+                ? "###";?//;fflush()
                 for n:=1 to len(fm)
                     drawnum(fm[n],n)
                     c_cb_button_press_stat(fm[n])

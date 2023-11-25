@@ -24,21 +24,17 @@ struct cell
     osszertek()     cella értéke  movegen()-ben:  max(fieldval[1],fieldval[0])
 }
 
-
 best_move[0]        movegen() után: 'O' legértékesebb cellája (cella pointer)
 best_move[1]        movegen() után: 'X' legértékesebb cellája (cella pointer)
 second_move[0]      movegen() után: 'O' második legértékesebb cellája (cella pointer)
 second_move[1]      movegen() után: 'X' második legértékesebb cellája (cella pointer)
 
+movegen(darab)      elkészíti a perspektivikus mezők (cellák) tömbjét
+                    egy mező 'perspektivikus', ha az osszertek()-e nagy
+                    kitölti a best_move[] és second_move[] adatokat
 
-movegen(darab)
-    kikeresi a legperspektivikusabb mezőket, és visszaadja ezek tömbjét
-    a 'perspektivikuság' szempontja: osszertek() nagysága
-    kitölti a best_move[] és second_move[] adatokat
+posvalue(depth)     állásértékelés az elemzőfa levelein
+                    -PVALUE_INFIN+depth, ha O nyerését látja 
+                    +PVALUE_INFIN-depth, ha X nyerését látja 
 
-
-posvalue(depth)     
-    állásértékelés az elemzőfa levelein
-    -PVALUE_INFIN+depth, ha O nyerését látja 
-    +PVALUE_INFIN-depth, ha X nyerését látja 
            

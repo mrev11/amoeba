@@ -60,9 +60,9 @@ struct cell
     int count;
     char figure;
 
-    XPATTERN pattern[4]; //négy irány: K,ÉK,É,ÉNy
-    int fieldval[2];    //két játékos: [0]='O', [1]='X'
-    int valuedir[2];    //milyen irányú az alakzat
+    XPATTERN pattern[4];    //négy irány: K,ÉK,É,ÉNy
+    int fieldval[2];        //két játékos: [0]='O', [1]='X'
+    int valuedir[2];        //milyen irányú az alakzat
 
     cell(int r, int c)
     {
@@ -292,7 +292,6 @@ void _clp_c_cb_button_press_pos(int argno)
     printf( "best_move O=%d X=%d\n",BVAL(0),BVAL(1));
     printf( "scnd_move O=%d X=%d\n",SVAL(0),SVAL(1));
     printf( "posvalue=%d\n",posvalue(0) );
-    printf("\n");
     fflush(0);
     _ret();
     CCC_EPILOG();
