@@ -34,7 +34,6 @@ static width8:=powinit(POW8)
 static width:=width1
 static power
  
-static depth:=0
 static tree:={}
 static teach:=TDEPTH
 
@@ -61,7 +60,7 @@ local x,v,m:=movecount()
         width:=width7
     end
 
-    v:=minimax(tree:={})
+    v:=minimax(0,tree:={})
 
     x:=atail(tree)
     if( NIL!=x )
@@ -125,17 +124,18 @@ local n
     return NIL
 
 *****************************************************************************
-static function minimax(t0,cut)
+static function minimax(depth,t0,cut)
 
 local fm,x,v,xm,vm
 local n,t1
 
-    if( depth>=len(width) )
+    depth++
+
+    if( depth>len(width) )
         movegen(4)
         return posvalue(depth)+rand()/10
     end
-    
-    depth++
+   
 
     fm:=movegen(width[depth]) 
     
@@ -150,7 +150,7 @@ local n,t1
                 sleep(100)
             end
 
-            v:=minimax( t1:={}, vm )
+            v:=minimax(depth,t1:={},vm)
 
             //elemzőfa építés
             if( depth<=ADEPTH ) 
@@ -189,8 +189,6 @@ local n,t1
         end
     next
 
-    depth--
- 
     if( vm==NIL ) //nem lehet lépni
         vm:=if(turn_o(),PVALUE_INFIN-depth,-PVALUE_INFIN+depth)
     end
