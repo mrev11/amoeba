@@ -380,7 +380,7 @@ static function cb_power(w)
     //? "cb_power", gtk.main_depth()
     //if(gtk.main_depth()>1);return NIL;end
     //engedni kell a rekurziót
-    power(w:get_active_text)
+    setpower(w:get_active_text)
 
 
 ******************************************************************************

@@ -82,7 +82,7 @@ local n
     return x
 
 *****************************************************************************
-function power(p)
+function setpower(p)
     if( p=="auto" )
         power:=NIL
     else
@@ -125,7 +125,7 @@ local n
     return NIL
 
 *****************************************************************************
-static function minimax(t,cut)
+static function minimax(t0,cut)
 
 local fm,x,v,xm,vm
 local n,t1
@@ -139,7 +139,7 @@ local n,t1
 
     fm:=movegen(width[depth]) 
     
-    aadd(t,turn())
+    aadd(t0,turn())
     
     for n:=1 to len(fm)
 
@@ -154,9 +154,9 @@ local n,t1
 
             //elemzőfa építés
             if( depth<=ADEPTH ) 
-                aadd(t,str(x,3)+","+str(v,6))
+                aadd(t0,str(x,3)+","+str(v,6))
                 if( depth<ADEPTH )
-                    aadd(t,t1)
+                    aadd(t0,t1)
                 end
             end
  
@@ -195,9 +195,9 @@ local n,t1
         vm:=if(turn_o(),PVALUE_INFIN-depth,-PVALUE_INFIN+depth)
     end
     
-    aadd(t,"best")
-    aadd(t,vm)
-    aadd(t,xm)
+    aadd(t0,"best")
+    aadd(t0,vm)
+    aadd(t0,xm)
 
     return vm
 
