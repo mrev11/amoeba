@@ -25,6 +25,8 @@
 
 #define VERSION "Amoeba 1.3.0 for GTK+"
 
+#define TDEPTH 1
+
 static area
 static twostatelabel
 static label_move
@@ -458,5 +460,13 @@ local xy:=gdk.event.get_coords(event)
 function drawingarea()
     return area
 
+
+*****************************************************************************
+function teach(t)
+static teach:=0
+    if( t!=NIL )
+        teach:=if(t,TDEPTH,0)
+    end
+    return teach
 
 ******************************************************************************

@@ -20,114 +20,100 @@
 
 #include "amoeba.ch"
 
-#define ADEPTH      2
- 
-static tree:={}
 
+static node:=0
+static pruning:=.t.
+static cxbest
 
 *****************************************************************************
-function go()
+function go1()
 
 local x,v
 
-local v1
-
-    ? v1:=go1()::int
-
-
     setwidth(movecount())
-    v:=minimax(0,tree:={})
 
-    ?? v:=go1()::int
+    v:=evaluate(0,-PVALUE_INFIN,PVALUE_INFIN)
 
-    x:=atail(tree)
+/*
     if( NIL!=x )
         forw(x)
         drawtop(x)
     end
     
     label_rate(v)
-    
-    
+*/
+    return v
+
+
 *****************************************************************************
-static function minimax(depth,t0,cut)
+static function evaluate(depth,alfa,beta)
 
 local teach:=teach()
 local width:=width()
 
-local fm,x,v,xm,vm
-local n,t1
+local n,fm,x,v
 
+    node++
     depth++
 
     if( depth>len(width) )
         movegen(4)
         return posvalue(depth)+rand()/10
     end
-   
 
-    fm:=movegen(width[depth]) 
-    
-    aadd(t0,turn())
-    
-    for n:=1 to len(fm)
+    fm:=movegen(width[depth])
 
-        if( forw(x:=fm[n]) )
-
-            if( teach>=depth )
-                drawalt(x)
-                sleep(100)
-            end
-
-            v:=minimax(depth,t1:={},vm)
-
-            //elemzőfa építés
-            if( depth<=ADEPTH ) 
-                aadd(t0,str(x,3)+","+str(v,6))
-                if( depth<ADEPTH )
-                    aadd(t0,t1)
+    if( turn_x() )
+        for n:=1 to len(fm)
+            x:=fm[n]
+            if( forw(x) )
+                if( teach>=depth )
+                    drawalt(x)
+                    sleep(100)
+                end
+                v:=evaluate(depth,alfa,beta)
+                if( v>alfa )
+                    alfa:=v
+                    cxbest:=x
+                end
+                if( pruning .and. beta<=alfa )
+                    //?? "A"
+                    n:=9999
+                end
+                back()
+                if( teach>=depth )
+                    drawalt(x)
                 end
             end
- 
-            if( turn_o() )
-                if( vm==NIL .or. v>vm ) //maximum 
-                    vm:=v
-                    xm:=x
-                end
-
-                if( cut!=NIL .and. cut<vm )
-                    n:=1000 //a-vagas
-                end
-
-            else //if( turn_x() )
-                if( vm==NIL .or. v<vm ) //minimum 
-                    vm:=v
-                    xm:=x
-                end
-
-                if( cut!=NIL .and. vm<cut )
-                    n:=1000 //b-vagas
-                end
-            end
-
-            back()
-
-            if( teach>=depth )
-                drawalt(x)
-            end
-        end
-    next
-
-    if( vm==NIL ) //nem lehet lépni
-        vm:=if(turn_o(),PVALUE_INFIN-depth,-PVALUE_INFIN+depth)
+        next
+        return alfa
     end
-    
-    aadd(t0,"best")
-    aadd(t0,vm)
-    aadd(t0,xm)
 
-    return vm
+    if( turn_o() )
+        for n:=1 to len(fm)
+            x:=fm[n]
+            if( forw(x) )
+                if( teach>=depth )
+                    drawalt(x)
+                    sleep(100)
+                end
+                v:=evaluate(depth,alfa,beta)
+                if( v<beta )
+                    beta:=v
+                    cxbest:=x
+                end
+                if( pruning .and. beta<=alfa )
+                    //?? "B"
+                    n:=9999
+                end
+                back()
+                if( teach>=depth )
+                    drawalt(x)
+                end
+            end
+        next
+        return beta
+    end
+
 
 *****************************************************************************
- 
-   
