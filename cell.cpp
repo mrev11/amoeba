@@ -50,7 +50,7 @@ static int    spiral[ROWCOL];
 extern void   ponttab_init();
 extern void   ponttab_print(XPATTERN a);
 extern int    ponttab(XPATTERN a, char figure);
-static int    posvalue(int);
+static int    posvalue();
 
 //--------------------------------------------------------------------------
 struct cell
@@ -291,7 +291,7 @@ void _clp_c_cb_button_press_pos(int argno)
     printf( "turn:%c\n",movecount&1?'O':'X');
     printf( "best_move O=%d X=%d\n",BVAL(0),BVAL(1));
     printf( "scnd_move O=%d X=%d\n",SVAL(0),SVAL(1));
-    printf( "posvalue=%d\n",posvalue(0) );
+    printf( "posvalue=%d\n",posvalue() );
     fflush(0);
     _ret();
     CCC_EPILOG();
@@ -308,7 +308,7 @@ void _clp_c_cb_button_press_stat(int argno)
     if( c->figure==' ' )
     {
         printf("%4d",x);
-        printf("[%2d,%2d]",x%MAXCOL,(x-x%MAXCOL)/MAXCOL);
+        printf("[%2d,%2d]",x/MAXCOL,x%MAXCOL);
         print_pattern( 0, c->pattern[0] );
         print_pattern( 1, c->pattern[1] );
         print_pattern( 2, c->pattern[2] );
@@ -328,6 +328,7 @@ void _clp_c_cb_button_press_stat(int argno)
         int ax=arrow(c->valuedir[1]);
         printf(" %4s%lc %4s%lc",vo,ao,vx,ax);
 
+        printf("\n");
         printf("\n");
     }
     _ret();
@@ -401,18 +402,18 @@ static int kozepre(const void *x, const void *y)
 }
 
 //--------------------------------------------------------------------------
-static int posvalue(int depth)
+static int posvalue()
 {
     //statikus állásértékelés
     //az elemzőfa levelein
 
     if( winner=='O' )
     {
-        return -PVALUE_INFIN+depth;
+        return -PVALUE_INFIN;
     }
     else if( winner=='X' )
     {
-        return  PVALUE_INFIN-depth;
+        return  PVALUE_INFIN;
     }
     else
     {
@@ -581,9 +582,8 @@ void _clp_movegen(int argno)
 //--------------------------------------------------------------------------
 void _clp_posvalue(int argno)
 {
-    CCC_PROLOG("posvalue",1);
-    int depth=_parni(1);
-    _retni(posvalue(depth));
+    CCC_PROLOG("posvalue",0);
+    _retni(posvalue());
     CCC_EPILOG();
 }
 

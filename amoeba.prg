@@ -215,7 +215,7 @@ local x,y,but,cx,fm,n
                 cb_move()
             end
 
-        elseif( teach() )
+        elseif( teach()>0 )
             //right-button
             if( winner()==32 )
                 drawall()
@@ -276,7 +276,7 @@ local cx:=topcell()
 static function cb_new(w,combo)
     //? "cb_new", gtk.main_depth()
     if(gtk.main_depth()>1);return NIL;end
-    combo:set_active(0)
+    //combo:set_active(0)
     c_cb_new()
     drawall()
     label_move()

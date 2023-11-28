@@ -38,12 +38,12 @@
 //üres táblán nem jó POW6-7-8-cal játszani.
 
 #define POW0  "auto"      
-#define POW1  "4,3,2,2,1,1"                    //  4-ig
+#define POW1  "4,4,3,3,2,2,1,1"                //  4-ig
 #define POW2  "5,4,4,3,3,2,2,1,1"              //  8-ig
 #define POW3  "5,5,4,4,3,3,2,2,1,1"            // 16-ig
 #define POW4  "6,5,5,4,4,3,3,2,2,1,1"          // 24-ig
 #define POW5  "6,6,5,5,4,4,3,3,2,2,1,1"        // 40-ig
 #define POW6  "7,6,6,5,5,4,4,3,3,2,2,1,1"      // 56-ig
 #define POW7  "7,7,6,6,5,5,4,4,3,3,2,2,1,1"    // 56 fölött
-#define POW8  "8,7,7,6,6,5,5,4,4,3,3,2,2,1,1"  // interaktívan beállítható
+#define POW8  "9,8,7,6,6,5,5,4,4,3,3,2,2,1,1"  // interaktívan beállítható
 
