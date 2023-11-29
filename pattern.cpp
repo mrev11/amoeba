@@ -19,17 +19,9 @@
  */
 
 #include <stdio.h>
+#include <pattern.h>
 #include <amoeba.ch>
-
-#define TABSIZE  6561  //3^8 
-
-typedef char XPATTERN[8];
-
-extern void   ponttab_init();
-extern void   ponttab_print(XPATTERN a);
-extern int    ponttab(XPATTERN a, char fig);
  
-
 static char const *egy[]={
 "    XXXX",
 "   XXXX ",

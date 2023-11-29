@@ -41,7 +41,6 @@ function main()
     //printpid()
     //printexe()
     rand(seconds())
-    init_cells()
     amoeba_gui()
 
 
