@@ -60,9 +60,9 @@ struct cell
     int count;
     char figure;
 
-    XPATTERN pattern[4];    //négy irány: K,ÉK,É,ÉNy
-    int fieldval[2];        //két játékos: [0]='O', [1]='X'
-    int valuedir[2];        //milyen irányú az alakzat
+    XPATTERN pattern[4];    // négy irány: K,Ék,É,Dk
+    int fieldval[2];        // két játékos: [0]='O', [1]='X'
+    int valuedir[2];        // milyen irányú az alakzat
 
     cell(int r, int c)
     {
