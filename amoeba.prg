@@ -76,6 +76,7 @@ local hboxfill
 
     window:=gtkwindowNew()
     window:set_title(VERSION)
+    window:set_icon_from_file("amoeba.png")
     window:signal_connect("destroy",{||quit()})
     window:set_border_width(16)
     window:set_resizable(.f.)
