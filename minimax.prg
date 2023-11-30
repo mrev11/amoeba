@@ -45,6 +45,13 @@ local x,v
     label_rate(v)
 
 
+
+*****************************************************************************
+static function perturb()
+static d:=1
+    return rand()*d-d/2
+
+
 *****************************************************************************
 static function minimax(depth,alfa,beta)
 
@@ -57,7 +64,7 @@ local n,fm,v,x,xopt,vopt
 
     if( depth>len(width) )
         movegen(4)
-        vopt:=posvalue()+rand()*2-1
+        vopt:=posvalue()+perturb()
         return vopt
     end
 
@@ -138,6 +145,8 @@ local n,fm,v,x,xopt,vopt
         xbest:=xopt
     end
 
-    return vopt
+    ? vopt+perturb()
+
+    return vopt+perturb()
 
 *****************************************************************************
