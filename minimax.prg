@@ -57,7 +57,7 @@ local n,fm,v,x,xopt,vopt
 
     if( depth>len(width) )
         movegen(4)
-        vopt:=posvalue()+rand()/10
+        vopt:=posvalue()+rand()*2-1
         return vopt
     end
 

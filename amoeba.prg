@@ -219,7 +219,7 @@ local x,y,but,cx,fm,n
             //right-button
             if( winner()==32 )
                 drawall()
-                fm:=movegen(5)
+                fm:=movegen(9)
                 ? "###";?//;fflush()
                 for n:=1 to len(fm)
                     drawnum(fm[n],n)

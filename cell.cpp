@@ -28,21 +28,16 @@
 #include <pattern.h>
 #include <cell.h>
 
-static int  compare_dist_from_centre(const void *x, const void *y);
-static int  compare_value(void const *xp, void const *yp);
-static void store_best(cell *c);
-
-
 //--------------------------------------------------------------------------
 int     cell::init=cell::classinit();       // inicializálja az osztály adatokat
-cell  * cell::cells[ROWCOL];                // az összes cella tömbje (ez maga a tábla)   
-int     cell::spiral[ROWCOL];               // cellák középről kifele sorendben           
-int     cell::movestack[ROWCOL];            // lépések                                    
-int     cell::movecount=0;                  // lépésszám                                  
-int     cell::moveforw=0;                   // eddig lehet előremenni (hátralépések után) 
-cell  * cell::best_move[2]={0,0};           // O és X legjobb lépése                      
-cell  * cell::second_move[2]={0,0};         // O és X második legjobb lépése              
-char    cell::winner= ' ';                  // ' ' vagy 'O' vagy 'X'                      
+cell  * cell::cells[ROWCOL];                // az összes cella tömbje (ez maga a tábla)
+int     cell::spiral[ROWCOL];               // cellák középről kifele sorendben
+int     cell::movestack[ROWCOL];            // lépések
+int     cell::movecount=0;                  // lépésszám
+int     cell::moveforw=0;                   // eddig lehet előremenni (hátralépések után)
+cell  * cell::best_move[2]={0,0};           // O és X legjobb lépése
+cell  * cell::second_move[2]={0,0};         // O és X második legjobb lépése
+char    cell::winner= ' ';                  // ' ' vagy 'O' vagy 'X'
 
 
 //--------------------------------------------------------------------------
@@ -62,20 +57,20 @@ int cell::classinit() // inicializálja az osztály adatokat
         cell::spiral[n]=n;
         cell::cells[n]->modval();
     }
-    qsort(cell::spiral,ROWCOL,sizeof(int),compare_dist_from_centre);
+    qsort(cell::spiral,ROWCOL,sizeof(int),cell::cmp_dist);
 
     return 1;
 }
 
 //--------------------------------------------------------------------------
-cell::cell(int r, int c)  // konstruktor
+cell::cell(int r, int c)  // konstruktor (inicializálja az objektumokat)
 {
     row=r;
     col=c;
     figure=' ';
     count=row*MAXCOL+col;
 
-    for( int i=0;i<4;i++ )
+    for( int i=0; i<4; i++ )
     {
         for( int j=0;j<8;j++ )
         {
@@ -210,7 +205,7 @@ void cell::modval() // újraszámolja a szomszéd cellák értékét
 //--------------------------------------------------------------------------
 // osztály függvények
 //--------------------------------------------------------------------------
-cell *cell::unset()
+cell *cell::unset()  // leveszi az utolsó figurát a tábláról
 {
     if( cell::movecount>0 )
     {
@@ -225,11 +220,8 @@ cell *cell::unset()
 }
 
 //--------------------------------------------------------------------------
-int cell::posvalue()
+int cell::posvalue() //statikus állásértékelés
 {
-    //statikus állásértékelés
-    //az elemzőfa levelein
-
     if( cell::winner=='O' )
     {
         return -PVALUE_INFIN;
@@ -244,7 +236,9 @@ int cell::posvalue()
         int xturn=((cell::movecount&1)==0);
         int bo=BVAL(0),so=SVAL(0);
         int bx=BVAL(1),sx=SVAL(1);
+        int v=0;
 
+#ifndef NOTDEF
         if( xturn )
         {
             if( sx>=bo )
@@ -255,9 +249,13 @@ int cell::posvalue()
             {
                 return(bx);
             }
+            else if( so>bx )
+            {
+                return(-bo-so);
+            }
             else
             {
-                return(-so);
+                return(-bo);
             }
         }
         else //if( oturn )
@@ -275,31 +273,74 @@ int cell::posvalue()
                 return(sx);
             }
         }
+#else
+        if( xturn )
+        {
+            if( bx>=bo )
+            {
+                v=bx;
+                if( sx>=bo )
+                {
+                    v+=sx;
+                }
+            }
+            else
+            {
+                v=-bo;
+                if( so>bx )
+                {
+                    v-=so;
+                }
+            }
+        }
+        else
+        {
+            if( bo>=bx )
+            {
+                v=-bo;
+                if( so>=bx )
+                {
+                    v-=so;
+                }
+            }
+            else
+            {
+                v=bx;
+                if( sx>bo )
+                {
+                    v+=sx;
+                }
+            }
+        }
+        return v;
+#endif
+
+
     }
 }
 
-
 //--------------------------------------------------------------------------
-static int compare_dist_from_centre(const void *x, const void *y)
+void cell::store_best(cell *c) // tárolja a legjobb cellát
 {
-    cell *a=cell::cells[ *(int*)x ];
-    cell *b=cell::cells[ *(int*)y ];
-    int ca=abs((a->row-MAXROW/2))+abs((a->col-MAXCOL/2));
-    int cb=abs((b->row-MAXROW/2))+abs((b->col-MAXCOL/2));
+    for( int x=0; x<=1; x++ )
+    {
+        int v=c->fieldval[x];
+        int d=c->valuedir[x];
 
-    if( ca>cb )
-    {
-        return 1;
+        if( v>BVAL(x) )
+        {
+            cell::second_move[x]=cell::best_move[x];
+            cell::best_move[x]=c;
+        }
+        else if( v>SVAL(x) )
+        {
+            cell::second_move[x]=c;
+        }
     }
-    else if( cb>ca )
-    {
-        return -1;
-    }
-    return 0;
 }
 
 //--------------------------------------------------------------------------
-static int compare_value(void const *xp, void const *yp)
+int cell::cmp_value(void const *xp, void const *yp) // melyik cellában van értékesebb alakzat
 {
     int *x=(int*)xp;
     int *y=(int*)yp;
@@ -319,23 +360,22 @@ static int compare_value(void const *xp, void const *yp)
 
 
 //--------------------------------------------------------------------------
-static void store_best(cell *c)
+int cell::cmp_dist(void const *x, void const *y) // melyik cella van távolabb a középtől
 {
-    for( int x=0; x<=1; x++ )
-    {
-        int v=c->fieldval[x];
-        int d=c->valuedir[x];
+    cell *a=cell::cells[ *(int*)x ];
+    cell *b=cell::cells[ *(int*)y ];
+    int ca=abs((a->row-MAXROW/2))+abs((a->col-MAXCOL/2));
+    int cb=abs((b->row-MAXROW/2))+abs((b->col-MAXCOL/2));
 
-        if( v>BVAL(x) )
-        {
-            cell::second_move[x]=cell::best_move[x];
-            cell::best_move[x]=c;
-        }
-        else if( v>SVAL(x) )
-        {
-            cell::second_move[x]=c;
-        }
+    if( ca>cb )
+    {
+        return 1;
     }
+    else if( cb>ca )
+    {
+        return -1;
+    }
+    return 0;
 }
 
 
@@ -393,7 +433,7 @@ void _clp_movegen(int argno)
         }
     }
 
-    qsort(legjobb,darab,2*sizeof(int),compare_value);
+    qsort(legjobb,darab,2*sizeof(int),cell::cmp_value);
 
     //kiszűri az értelmetlen lépések egy részét
     if( maxv>=PVALUE_EGY ) //egylépéses fenyegetés
@@ -415,7 +455,7 @@ void _clp_movegen(int argno)
         if( legjobb[n].v>=minv )
         {
             cell *c=cell::cells[legjobb[n].x];
-            store_best(c);
+            cell::store_best(c);
             number( c->count );
             db++;
         }
