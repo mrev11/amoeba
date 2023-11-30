@@ -24,6 +24,8 @@ struct cell
     int col;                            // oszlop index (0-tól, balról jobbra)
     int count;                          // index a táblában
     char figure;                        // ' ' vagy 'O' vagy 'X'
+    double dist;                        // középpontól vett távolság
+
 
     XPATTERN pattern[4];                // alakzatok négy irányban: K,Ék,É,Dk
     int fieldval[2];                    // cella értrék a két játékosra: [0]='O', [1]='X'

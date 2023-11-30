@@ -22,11 +22,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <openssl/rand.h>
+
 #include <cccapi.h>
 
 #include <amoeba.ch>
 #include <pattern.h>
 #include <cell.h>
+
 
 //--------------------------------------------------------------------------
 int     cell::init=cell::classinit();       // inicializálja az osztály adatokat
@@ -69,6 +72,10 @@ cell::cell(int r, int c)  // konstruktor (inicializálja az objektumokat)
     col=c;
     figure=' ';
     count=row*MAXCOL+col;
+
+    unsigned char d;
+    RAND_bytes(&d,1); 
+    dist=abs(row-TABLESIZE/2)+abs(col-TABLESIZE/2)+(int)d/256.0;
 
     for( int i=0; i<4; i++ )
     {
@@ -364,14 +371,14 @@ int cell::cmp_dist(void const *x, void const *y) // melyik cella van távolabb a
 {
     cell *a=cell::cells[ *(int*)x ];
     cell *b=cell::cells[ *(int*)y ];
-    int ca=abs((a->row-MAXROW/2))+abs((a->col-MAXCOL/2));
-    int cb=abs((b->row-MAXROW/2))+abs((b->col-MAXCOL/2));
+    double da=a->dist;
+    double db=b->dist;
 
-    if( ca>cb )
+    if( da>db )
     {
         return 1;
     }
-    else if( cb>ca )
+    else if( db>da )
     {
         return -1;
     }
