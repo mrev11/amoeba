@@ -23,7 +23,7 @@
 static node
 static xbest
 
-#define  PRUNING  // .f. .and.
+#define  PRUNING   .f. .and.
 
 *****************************************************************************
 function go()
@@ -36,7 +36,7 @@ local x,v
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN)
     x:=xbest
 
-    ? turn(), int(v), node, x, rc(x)
+    ? turn(), "["+v::int::str(5)+"]", x::str(4), rc(x), node
 
     if( NIL!=x )
         forw(x)
@@ -50,7 +50,7 @@ static function minimax(depth,alfa,beta)
 
 local teach:=teach()
 local width:=width()
-local n,fm,v,x,xopt,vopt
+local n,fm,x,v,xopt,vopt
 
     node++
     depth++
@@ -58,6 +58,7 @@ local n,fm,v,x,xopt,vopt
     if( depth>len(width) )
         movegen(2)
         vopt:=posvalue()
+        leaf(depth,vopt)
         return vopt
     end
 
@@ -85,6 +86,7 @@ local n,fm,v,x,xopt,vopt
                 end
 
                 back()
+                debug(x,v,depth)
                 if( teach>=depth )
                     drawalt(x)
                 end
@@ -120,6 +122,7 @@ local n,fm,v,x,xopt,vopt
                 end
 
                 back()
+                debug(x,v,depth)
                 if( teach>=depth )
                     drawalt(x)
                 end
@@ -139,5 +142,51 @@ local n,fm,v,x,xopt,vopt
     end
 
     return vopt
+
+
+
+*****************************************************************************
+static function debug(x,v,depth)
+static mc
+    if( depth==teach() )
+        if( mc!=movecount() )
+            mc:=movecount()
+            ? "-----------------------------------------------------------------------------";?
+        end
+        ?? turn(),"["+v::str::alltrim+"]";?
+        c_cb_button_press_stat(x)
+        fflush()
+    end
+
+
+*****************************************************************************
+static function leaf(depth,v)
+
+static leaf
+
+local mc:=movecount()
+local md:=mc-depth+1
+local m
+
+    if( leaf==NIL )
+        set channel(leaf) to log-leaf 
+    end
+    set channel(leaf) on
+
+    ? str(md,3), str(depth,2), "["+v::str(5)+"]"
+
+    for m:=md to mc-1
+        ?? str(cell(m),5)
+        
+        if( m==md )
+            ?? "!"
+        elseif( m==md+1 )
+            ?? "?"
+        end
+    next
+
+    set channel(leaf) off
+
+
 
 *****************************************************************************

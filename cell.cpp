@@ -494,7 +494,15 @@ void _clp_forw(int argno)
 void _clp_back(int argno)
 {
     CCC_PROLOG("back",0);
-    _retl(cell::unset());
+    cell *c=cell::unset();
+    if( c )
+    {
+        _retni(c->count);
+    }
+    else
+    {
+        _ret();
+    } 
     CCC_EPILOG();
 }
 

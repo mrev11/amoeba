@@ -167,11 +167,13 @@ local text
 function rc(pos)
 local r,c
     if( pos==NIL )
-        return {-1,-1}
+        r:=-1
+        c:=-1
+    else
+        r:=int(pos/TABLESIZE)
+        c:=pos%TABLESIZE
     end
-    r:=int(pos/TABLESIZE)
-    c:=pos%TABLESIZE
-    return  {r,c}
+    return  { r::str(2), c::str(2) }
 
 
 ******************************************************************************

@@ -131,7 +131,7 @@ void _clp_c_cb_button_press_stat(int argno)
     if( c->figure==' ' )
     {
         printf("%4d",x);
-        printf("[%2d,%2d]",x/MAXCOL,x%MAXCOL);
+        printf("{%2d,%2d}",x/MAXCOL,x%MAXCOL);
         print_pattern( 0, c->pattern[0] );
         print_pattern( 1, c->pattern[1] );
         print_pattern( 2, c->pattern[2] );
