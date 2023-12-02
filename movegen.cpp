@@ -48,7 +48,7 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
     int oppo=(cell::movecount&1)==0 ? 0:1;
 
     int cnt=0;
-    int minx=0;
+    int minx=-1;
     int minv=-1;
     int maxturn=-1;
     int maxoppo=-1;
@@ -58,8 +58,8 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
     for(int i=0; i<ROWCOL; i++)
     {
         int x=cell::spiral[i]; //középről kifelé
-        int v;
         cell *c=cell::cells[x];
+        int v;
 
         if( (c->figure==' ') && ((v=c->fieldval[oppo])>minv) )
         {
@@ -67,16 +67,15 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
 
             if( cnt<total  )
             {
-                minx=cnt;
+                cnt++;
+                minx++;
                 best[minx].x=x;
                 best[minx].v=v;
-                cnt++;
             }
             else
             {
-                minx=0;
-                minv=best[0].v;
-                for( int n=1; n<total; n++ )
+                minv=PVALUE_INFIN;
+                for( int n=0; n<total; n++ )
                 {
                     if( best[n].v<minv  )
                     {
@@ -84,8 +83,11 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
                         minv=best[n].v;
                     }
                 }
-                best[minx].x=x;
-                best[minx].v=v;
+                if( v>minv )
+                {
+                    best[minx].x=x;
+                    best[minx].v=v;
+                }
             }
             
             if( maxoppo>=PVALUE_EGY )
@@ -94,14 +96,15 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
             }
         }
     }
-    //qsort(best,cnt,2*sizeof(int),cell::cmp_value);
+    qsort(best,cnt,2*sizeof(int),cell::cmp_value);
     
     //printf("\n");
     //for(int i=0; i<cnt; i++ )
     //{
-    //    printf(">(%d[%d,%d],%d)\n", best[i].x, 
-    //                                best[i].x/TABLESIZE, best[i].x%TABLESIZE,  
-    //                                best[i].v );
+    //    printf(">%d(%d[%d,%d],%d)\n", i,
+    //                                  best[i].x, 
+    //                                  best[i].x/TABLESIZE, best[i].x%TABLESIZE,  
+    //                                  best[i].v );
     //}
     
 
@@ -110,8 +113,8 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
     for(int i=0; i<ROWCOL; i++)
     {
         int x=cell::spiral[i]; //középről kifelé
-        int v;
         cell *c=cell::cells[x];
+        int v;
 
         if( (c->figure==' ') && ((v=c->fieldval[turn])>minv) )
         {
@@ -126,33 +129,42 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
 
             maxturn=max(v,maxturn);
 
-            if( cnt<total  )
+            int in;
+            for( in=0; in<cnt; in++ )
             {
-                minx=cnt;
+                if( best[in].x==x )
+                {
+                    break;
+                }
+            }
+    
+            if( in<cnt )
+            {
+                //ok
+            }
+            else if( cnt<total  )
+            {
+                cnt++;
+                minx++;
                 best[minx].x=x;
                 best[minx].v=v;
-                cnt++;
             }
             else
             {
-                minx=0;
-                minv=best[0].v;
+                minv=PVALUE_INFIN;
                 for( int n=1; n<total; n++ )
                 {
-                    if( best[n].x==x )
-                    {
-                        // már benn van
-                        minx=n;
-                        break;
-                    }
-                    else if( best[n].v<minv  )
+                    if( best[n].v<minv  )
                     {
                         minx=n;
                         minv=best[n].v;
                     }
                 }
-                best[minx].x=x;
-                best[minx].v=v;
+                if( v>minv )
+                {
+                    best[minx].x=x;
+                    best[minx].v=v;
+                }
             }
 
             if( maxturn>=PVALUE_EGY )
@@ -166,9 +178,10 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
     //printf("\n");
     //for(int i=0; i<cnt; i++ )
     //{
-    //    printf("<(%d[%d,%d],%d)\n", best[i].x, 
-    //                                best[i].x/TABLESIZE, best[i].x%TABLESIZE,  
-    //                                best[i].v );
+    //    printf("<%d(%d[%d,%d],%d)\n", i,
+    //                                  best[i].x, 
+    //                                  best[i].x/TABLESIZE, best[i].x%TABLESIZE,  
+    //                                  best[i].v );
     //}
 
 

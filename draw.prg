@@ -24,6 +24,8 @@
 #include "amoeba.ch"
 
 
+#define CELLSIZE    32
+
 #define BLACK       1
 #define GREY        2
 #define LTGREY      3
@@ -75,12 +77,43 @@
   static SHAPE_OA:=SHAPE_XA
 #endif
 
-
 static area:=drawingarea()
 static ascx:=asc("X")
 static asco:=asc("O")
 
+static gc:={;
+    makegc("#000000"),; //fekete
+    makegc("#b0b0b0"),; //szürke
+    makegc("#c0c0c0"),; //világosszürke
+    makegc("#ffff00"),; //sárga
+    makegc("#ffffff"),; //fehér
+    NIL}
+
 static altflag:=.f.
+
+
+
+
+******************************************************************************
+function cellsize()
+    return CELLSIZE
+
+******************************************************************************
+static function fxalign()
+    return 6
+
+******************************************************************************
+static function fyalign()
+    return 2
+
+******************************************************************************
+static function nxalign(i)
+    return 7+if(i<10,10,0)
+
+******************************************************************************
+static function nyalign(i)
+    return 5
+
 
 
 ******************************************************************************
@@ -108,6 +141,9 @@ local cx,top
         if(altflag,drawalt(top),drawtop())
     end
 
+    hscale()
+    vscale()
+
 // Probléma, hogy gtk.main_stabilize()-ból általában (de nem mindig) 
 // meghívódik cb_expose(), aminek újra kell tudnia rajzolni a képet.
 //
@@ -115,6 +151,35 @@ local cx,top
 //
 // (Tehát ebben eleve van egy rekurzió, amit a rendszer valahogy kivéd.)
 // Tudni kell, milyen alakzat van a top-ban, ezért kell az altflag-es szarság.
+
+
+******************************************************************************
+static function hscale()
+local draw:=area:get_drawable
+local i,x,y
+
+    gdk.drawable.draw_rectangle(draw,gc[LTGREY],.t.,0,0,CELLSIZE*(TABLESIZE+1)+1,CELLSIZE)
+    
+    for i:=0 to TABLESIZE-1
+        x:=nxalign(i)+(i+1)*CELLSIZE
+        y:=nyalign(i)
+        gdk.drawable.draw_layout(draw,gc[BLACK],x,y,numlayout(i))
+    next
+    
+
+******************************************************************************
+static function vscale()
+
+local draw:=area:get_drawable
+local i,x,y
+
+    gdk.drawable.draw_rectangle(draw,gc[LTGREY],.t.,0,0,CELLSIZE,CELLSIZE*(TABLESIZE+1)+1)
+
+    for i:=0 to TABLESIZE-1
+        x:=nxalign(i)
+        y:=nyalign(i)+(i+1)*CELLSIZE
+        gdk.drawable.draw_layout(draw,gc[BLACK],x,y,numlayout(i))
+    next
 
 
 ******************************************************************************
@@ -175,14 +240,6 @@ local fig,color
 ******************************************************************************
 function drawcell(cx,fig,color)
 
-static gc:={;
-    makegc("#000000"),; //fekete
-    makegc("#b0b0b0"),; //szürke
-    makegc("#d0d0d0"),; //világosszürke
-    makegc("#ffff00"),; //sárga
-    makegc("#ffffff"),; //fehér
-    NIL}
-
 static lo:={;
     makelayout(SHAPE_X),;
     makelayout(SHAPE_O),;
@@ -192,27 +249,11 @@ static lo:={;
     makelayout(SHAPE_OA),;
     NIL}
 
-static lo1:={;
-    makelayout("1"),;
-    makelayout("2"),;
-    makelayout("3"),;
-    makelayout("4"),;
-    makelayout("5"),;
-    makelayout("6"),;
-    makelayout("7"),;
-    makelayout("8"),;
-    makelayout("9"),;
-    NIL}
-
 
 local i:=cx%TABLESIZE
 local j:=int(cx/TABLESIZE)
-
-local x:=i*CELLSIZE
-local y:=j*CELLSIZE
 local draw:=area:get_drawable
-local dx:=5
-local dy:=1
+local x,y
 
     if( fig==NIL .and. color==NIL )
         fig:=figure(cx)
@@ -228,13 +269,19 @@ local dy:=1
         end
     end
 
+    x:=(i+1)*CELLSIZE
+    y:=(j+1)*CELLSIZE
     gdk.drawable.draw_rectangle(draw,gc[GREY],.t.,x,y,CELLSIZE,CELLSIZE)
     gdk.drawable.draw_rectangle(draw,gc[BLACK],.f.,x,y,CELLSIZE,CELLSIZE)
 
     if( fig>0)
-        gdk.drawable.draw_layout(draw,gc[color],x+dx,y+dy,lo[fig])
+        x:=fxalign()+(i+1)*CELLSIZE
+        y:=fyalign()+(j+1)*CELLSIZE
+        gdk.drawable.draw_layout(draw,gc[color],x,y,lo[fig])
     elseif( fig<0 )
-        gdk.drawable.draw_layout(draw,gc[BLACK],x+dx,y+dy,lo1[-fig]) //movegen
+        x:=nxalign(i)+(i+1)*CELLSIZE
+        y:=nyalign(i)+(j+1)*CELLSIZE
+        gdk.drawable.draw_layout(draw,gc[BLACK],x,y,numlayout(-fig))
     end
 
     gtk.main_stabilize()
@@ -255,6 +302,12 @@ static function makelayout(x)
 local label:=gtk.label.new(x)
     gtk.label.set_use_markup(label,.t.)
     return gtk.label.get_layout(label)
+
+
+******************************************************************************
+static function numlayout(x)
+local label:=gtklabelNew(x::str::alltrim)
+    return label:get_layout()
 
 
 ******************************************************************************

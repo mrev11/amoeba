@@ -1,2 +1,2 @@
 #!/bin/bash
-bapp_unix_.b  -bccc3_gtk -bcrypto
+bapp_unix_.b -lamoeba  -bccc3_gtk -bcrypto

@@ -34,6 +34,7 @@ static label_turn
 static label_rate
 
 static EXPOSE:=.f.
+static CELLSIZE:=cellsize()
 
 
 *****************************************************************************
@@ -59,13 +60,14 @@ local hboxlab
 
 // vboxrig
 local hboxsep0
+local hboxsep1
 local button_move
 local button_back
 local button_forw
-local hboxsep1
+local hboxsep2
 local button_check
 local combo
-local hboxsep2
+local hboxsep3
 local button_new
 local button_load
 local button_save
@@ -106,7 +108,7 @@ local hboxfill
     hboxlab:pack_start( label_rate:=gtklabelNew() )
 
 
-    area:set_size_request(CELLSIZE*TABLESIZE+1,CELLSIZE*TABLESIZE+1)
+    area:set_size_request(CELLSIZE*(TABLESIZE+1)+1,CELLSIZE*(TABLESIZE+1)+1)
     area:signal_connect("expose_event",{|w,e|cb_expose(w,e)})
     area:signal_connect("button_press_event",{|w,e|cb_button_press(w,e)})
     area:signal_connect("button_release_event",{|w,e|cb_button_release(w,e)})
@@ -123,9 +125,9 @@ local hboxfill
     label_turn:set_size_request(150,-1)
     label_rate:set_size_request(150,-1)
 
-    label_move:set_alignment(0.2,0.5) //balra
-    label_turn:set_alignment(0.2,0.5) //balra
-    label_rate:set_alignment(0.2,0.5) //balra
+    //label_move:set_alignment(0.2,0.5) //balra
+    //label_turn:set_alignment(0.2,0.5) //balra
+    //label_rate:set_alignment(0.2,0.5) //balra
     label_move()
     label_rate(0)
 
@@ -133,15 +135,16 @@ local hboxfill
     // vboxrig
     //=============================
 
-    vboxrig:pack_start( twostatelabel:=gtktwostateimagelabelNew(.t.,"Ready","Thinking") )
     vboxrig:pack_start( hboxsep0:=gtkhboxNew(.f.,0))
+    vboxrig:pack_start( twostatelabel:=gtktwostateimagelabelNew(.t.,"Ready","Thinking") )
+    vboxrig:pack_start( hboxsep1:=gtkhboxNew(.f.,0))
     vboxrig:pack_start( button_move:=gtkbuttonNew_with_mnemonic_from_stock("_Move","gtk-execute") )
     vboxrig:pack_start( button_back:=gtkbuttonNew_with_mnemonic_from_stock("_Back","gtk-go-back"))
     vboxrig:pack_start( button_forw:=gtkbuttonNew_with_mnemonic_from_stock("_Forward","gtk-go-forward"))
-    vboxrig:pack_start( hboxsep1:=gtkhboxNew(.f.,0))
+    vboxrig:pack_start( hboxsep2:=gtkhboxNew(.f.,0))
     vboxrig:pack_start( button_check:=gtkcheckbuttonNew_with_mnemonic("_Teach") )
     vboxrig:pack_start( combo:=gtkcomboboxNew_text() )
-    vboxrig:pack_start( hboxsep2:=gtkhboxNew(.f.,0))
+    vboxrig:pack_start( hboxsep3:=gtkhboxNew(.f.,0))
     vboxrig:pack_start( button_new:=gtkbuttonNew_with_mnemonic_from_stock("_New","gtk-new"))
     vboxrig:pack_start( button_load:=gtkbuttonNew_with_mnemonic_from_stock("_Load","gtk-open"))
     vboxrig:pack_start( button_save:=gtkbuttonNew_with_mnemonic_from_stock("_Save","gtk-save"))
@@ -173,9 +176,10 @@ local hboxfill
     button_load:signal_connect("clicked",{||cb_load(window)})
     button_save:signal_connect("clicked",{||cb_save(window)})
 
-    hboxsep0:set_size_request(-1,10)
+    hboxsep0:set_size_request(-1,40)
     hboxsep1:set_size_request(-1,10)
     hboxsep2:set_size_request(-1,10)
+    hboxsep3:set_size_request(-1,10)
     hboxfill:set_size_request(-1,100)
 
     mainwindow(window)
@@ -444,12 +448,12 @@ local xy:=gdk.event.get_coords(event)
         return .f.
     end
 
-    x:=int(x/CELLSIZE)
-    y:=int(y/CELLSIZE)
+    x:=int(x/CELLSIZE)-1
+    y:=int(y/CELLSIZE)-1
 
-    if( x>=TABLESIZE )
+    if( x<0 .or. TABLESIZE<=x )
         return .f.
-    elseif( y>=TABLESIZE )
+    elseif( y<0 .or. TABLESIZE<=y )
         return .f.
     elseif( figure(y*TABLESIZE+x)!=32 )
         return .f.

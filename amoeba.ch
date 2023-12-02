@@ -24,8 +24,6 @@
 #define MAXCOL          TABLESIZE
 #define ROWCOL          TABLESIZE*TABLESIZE
 
-#define CELLSIZE        32
-
 #define PVALUE_INFIN    9999
 #define PVALUE_EGY      2000
 #define PVALUE_KET2      400

@@ -150,12 +150,6 @@ void cell::calcval() // kiszámítja a cella értékét
 }
 
 //--------------------------------------------------------------------------
-int cell::maxval()
-{
-    return max(fieldval[0],fieldval[1]); //X max, O min
-}
-
-//--------------------------------------------------------------------------
 void cell::modval() // újraszámolja a szomszéd cellák értékét
 {
     int i,j;
@@ -540,6 +534,16 @@ void _clp_c_cb_new( int argno )
     CCC_PROLOG("c_cb_new",1);
     cell *c;
     while( (c=cell::unset())!=0 );
+
+    for( int i=0; i<ROWCOL; i++ ) 
+    {
+        c=cell::cells[i];
+        unsigned char d;
+        RAND_bytes(&d,1); 
+        c->dist=abs(c->row-TABLESIZE/2)+abs(c->col-TABLESIZE/2)+(int)d/256.0;
+    }
+    qsort(cell::spiral,ROWCOL,sizeof(int),cell::cmp_dist);
+
 
     if( !ISNIL(1) )
     {

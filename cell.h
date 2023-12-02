@@ -24,7 +24,7 @@ struct cell
     int col;                            // oszlop index (0-tól, balról jobbra)
     int count;                          // index a táblában
     char figure;                        // ' ' vagy 'O' vagy 'X'
-    double dist;                        // középpontól vett távolság
+    double dist;                        // középpontól vett távolság (perturbálva)
 
 
     XPATTERN pattern[4];                // alakzatok négy irányban: K,Ék,É,Dk
@@ -35,7 +35,6 @@ struct cell
 
     cell *set();                        // felteszi magát a táblára
     void calcval();                     // kiszámítja a saját értékét
-    int maxval();                       // 'X' és 'O' közül az értékesebb
     void modval();                      // újraszámolja a szomszéd cellák értékét
 
     // osztály adatok
