@@ -44,13 +44,14 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
     }
     best[total];
 
-    int turn=cell::movecount&1; // 0=X, 1=O
-    int oppo=turn?0:1;
+    int turn=(cell::movecount&1)==0 ? 1:0;
+    int oppo=(cell::movecount&1)==0 ? 0:1;
 
     int cnt=0;
     int minx=0;
     int minv=-1;
-    int maxv=-1;
+    int maxturn=-1;
+    int maxoppo=-1;
 
     // első menet: az ellenfél lépései
 
@@ -62,7 +63,7 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
 
         if( (c->figure==' ') && ((v=c->fieldval[oppo])>minv) )
         {
-            maxv=max(v,maxv);
+            maxoppo=max(v,maxoppo);
 
             if( cnt<total  )
             {
@@ -86,12 +87,25 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
                 best[minx].x=x;
                 best[minx].v=v;
             }
+            
+            if( maxoppo>=PVALUE_EGY )
+            {
+                break;
+            }
         }
     }
+    //qsort(best,cnt,2*sizeof(int),cell::cmp_value);
+    
+    //printf("\n");
+    //for(int i=0; i<cnt; i++ )
+    //{
+    //    printf(">(%d[%d,%d],%d)\n", best[i].x, 
+    //                                best[i].x/TABLESIZE, best[i].x%TABLESIZE,  
+    //                                best[i].v );
+    //}
+    
 
     // második menet: saját lépések
-
-    int maxoppo=maxv;
 
     for(int i=0; i<ROWCOL; i++)
     {
@@ -105,12 +119,12 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
             {
                 continue;
             }
-            else if( maxoppo>=PVALUE_KET2 && v<PVALUE_KET2 )
+            else if( maxoppo>=PVALUE_KET2 && v<PVALUE_KET1 )
             {
                 continue;
             }
 
-            maxv=max(v,maxv);
+            maxturn=max(v,maxturn);
 
             if( cnt<total  )
             {
@@ -140,23 +154,39 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
                 best[minx].x=x;
                 best[minx].v=v;
             }
+
+            if( maxturn>=PVALUE_EGY )
+            {
+                break;
+            }
         }
     }
-
     qsort(best,cnt,2*sizeof(int),cell::cmp_value);
+
+    //printf("\n");
+    //for(int i=0; i<cnt; i++ )
+    //{
+    //    printf("<(%d[%d,%d],%d)\n", best[i].x, 
+    //                                best[i].x/TABLESIZE, best[i].x%TABLESIZE,  
+    //                                best[i].v );
+    //}
+
 
     cell::best_move[0]=0;
     cell::best_move[1]=0;
     cell::second_move[0]=0;
     cell::second_move[1]=0;
-
+    int flag=best[0].v>=PVALUE_EGY;
     for( int n=0; n<cnt; n++ )
     {
-        cell *c=cell::cells[best[n].x];
-        cell::store_best(c);
-        number( c->count );
+        if( flag && best[n].v<PVALUE_EGY )
+        {
+            cnt=n;
+            break;
+        }
+        cell::store_best(best[n].x);
+        number(best[n].x);
     }
-
     array(cnt);
     _rettop();
 

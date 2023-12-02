@@ -23,7 +23,7 @@
 static node
 static xbest
 
-#define  PRUNING   .f. .and.
+#define  PRUNING  //  .f. .and.
 
 *****************************************************************************
 function go()
@@ -63,6 +63,8 @@ local n,fm,x,v,xopt,vopt
     end
 
     fm:=movegen(width[depth])
+    
+    //? ">>>>>>>>>>>>>>", fm
 
     if( turn_x() )
         vopt:=alfa

@@ -330,6 +330,8 @@ local amoeba:="amoeba"+TABLESIZE::str::alltrim
         next
         c_cb_new(cells)
         drawall()
+        label_move(0)
+        label_turn(0)
         label_rate(0)
     end
 

@@ -53,7 +53,7 @@ struct cell
     static int classinit();             // inicializálja az osztály adatokat
     static cell *unset();               // leveszi az utolsó figurát a tábláról
     static int  posvalue();             // statikus állás kiértékelés
-    static void store_best(cell*);      // tárolja a legjobb cellát
+    static void store_best(int);        // tárolja a legjobb cellát
 
     static int  cmp_value
             (void const*,void const*);  // melyik cellában van értékesebb alakzat

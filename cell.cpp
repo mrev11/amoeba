@@ -327,8 +327,10 @@ int cell::posvalue() //statikus állásértékelés
 }
 
 //--------------------------------------------------------------------------
-void cell::store_best(cell *c) // tárolja a legjobb cellát
+void cell::store_best(int cx) // tárolja a legjobb cellát
 {
+    cell *c=cell::cells[cx];
+
     for( int x=0; x<=1; x++ )
     {
         int v=c->fieldval[x];
