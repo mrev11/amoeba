@@ -140,7 +140,9 @@ void _clp_movegen(int argno) //kikeresi a megadott számú "legfontosabb" mezőt
     
             if( in<cnt )
             {
-                //ok
+                // már benn van
+                // a nagyobb érték kell 
+                best[in].v=max(best[in].v,v);
             }
             else if( cnt<total  )
             {

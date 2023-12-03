@@ -95,7 +95,7 @@ static teach:=.t.
 
     if( !teach  )
         return 0
-    elseif( len(width)<14 )
+    elseif( width::len<16 )
         return 1
     else
         return 2
