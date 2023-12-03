@@ -23,6 +23,7 @@
 #include "amoeba.ch"
 
 
+
 static width1:=powinit(POW1) 
 static width2:=powinit(POW2) 
 static width3:=powinit(POW3) 
@@ -47,17 +48,17 @@ local w
 
     if( power!=NIL )
         width:=power
-    elseif( movecount<=4 )
+    elseif( movecount<=2 )
         width:=width1
-    elseif( movecount<=8 )
+    elseif( movecount<=4 )
         width:=width2
-    elseif( movecount<=16 )
+    elseif( movecount<=8 )
         width:=width3
-    elseif( movecount<=24 )
+    elseif( movecount<=16 )
         width:=width4
-    elseif( movecount<=40 )
+    elseif( movecount<=32 )
         width:=width5
-    elseif( movecount<=56 )
+    elseif( movecount<=64 )
         width:=width6
     else
         width:=width7
@@ -83,6 +84,22 @@ local n
         p[n]:=val(p[n])
     next
     return p
+
+
+*****************************************************************************
+function teach(t)
+static teach:=.t.
+    if( t!=NIL )
+        teach:=t
+    end
+
+    if( !teach  )
+        return 0
+    elseif( len(width)<14 )
+        return 1
+    else
+        return 2
+    end
 
 
 *****************************************************************************

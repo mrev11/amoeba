@@ -25,8 +25,6 @@
 
 #define VERSION "Amoeba 1.3.0 for GTK+"
 
-#define TDEPTH 1
-
 static area
 static twostatelabel
 static label_move
@@ -112,7 +110,7 @@ local hboxfill
     area:signal_connect("expose_event",{|w,e|cb_expose(w,e)})
     area:signal_connect("button_press_event",{|w,e|cb_button_press(w,e)})
     area:signal_connect("button_release_event",{|w,e|cb_button_release(w,e)})
-  //area:signal_connect("motion_notify_event",{|w,e|cb_motion_notify(w,e)})
+    area:signal_connect("motion_notify_event",{|w,e|cb_motion_notify(w,e)})
     mask:=area:get_events
     mask:=numor(mask,GDK_BUTTON_PRESS_MASK)
     mask:=numor(mask,GDK_BUTTON_RELEASE_MASK)
@@ -214,6 +212,7 @@ local x,y,but,cx,fm,n
                 cx:=y*TABLESIZE+x
                 forw(cx)
                 drawtop(cx)
+                label_turn()
             end
             if( winner()==32 )
                 cb_move()
@@ -394,8 +393,8 @@ static function cb_power(w)
 ******************************************************************************
 static function cb_motion_notify(area,event)
     //? "cb_motion_notify", gtk.main_depth()
-    if(gtk.main_depth()>1);return NIL;end
-
+    //if(gtk.main_depth()>1);return NIL;end
+    //? "motion"
 
 ******************************************************************************
 function cb_expose(area,event)
@@ -466,13 +465,5 @@ local xy:=gdk.event.get_coords(event)
 function drawingarea()
     return area
 
-
-*****************************************************************************
-function teach(t)
-static teach:=0
-    if( t!=NIL )
-        teach:=if(t,TDEPTH,0)
-    end
-    return teach
 
 ******************************************************************************

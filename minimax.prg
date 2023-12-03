@@ -56,7 +56,7 @@ local n,fm,x,v,xopt,vopt
     depth++
 
     if( depth>len(width) )
-        movegen(2)
+        movegen(8)
         vopt:=posvalue()
         leaf(depth,vopt)
         return vopt
@@ -64,8 +64,6 @@ local n,fm,x,v,xopt,vopt
 
     fm:=movegen(width[depth])
     
-    //? ">>>>>>>>>>>>>>", fm
-
     if( turn_x() )
         vopt:=alfa
 

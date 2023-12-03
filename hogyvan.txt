@@ -5,8 +5,9 @@ struct cell
     col             oszlop index
     count           tábla index (cella indexe a cells tömbben)
     figure          ' ' vagy 'O' vagy 'X'
+    dist            középtől való távolság
+    
     pattern[4]      cella alakzat négy iranyban (0=→, 1=↗, 2=↑, 3=↘)
-
     fieldval[0]     'O' alakzatainak összegzett értéke a cellában
     fieldval[1]     'X' alakzatainak összegzett értéke a cellában
     valuedir[0]     a legértékesebb 'O' alakzat iránya (0=→, 1=↗, 2=↑, 3=↘)
@@ -15,13 +16,12 @@ struct cell
     set()           ráteszi magát a táblára (a cell->count mezőre)
     unset()         felszedi magát a tábláról (a cell->count mezőről)
 
-    ertek()         kiszámítja (összegzi) fieldval[]-t, beállítja valuedir[]-t
+    calcval()       kiszámítja (összegzi) fieldval[]-t, beállítja valuedir[]-t
 
-    amod()          set()-ben és unset()-ben módosítja a szomszéd cellák alakzatait,
+    modval()        set()-ben és unset()-ben módosítja a szomszéd cellák alakzatait,
                     és végrehajtja a szomszéd cellákra az ertek() metódust,
                     tehát fieldval[] és valuedir[] mindig minden cellában aktuális
     
-    osszertek()     cella értéke  movegen()-ben:  max(fieldval[1],fieldval[0])
 }
 
 best_move[0]        movegen() után: 'O' legértékesebb cellája (cella pointer)

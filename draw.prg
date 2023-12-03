@@ -83,7 +83,7 @@ static asco:=asc("O")
 
 static gc:={;
     makegc("#000000"),; //fekete
-    makegc("#b0b0b0"),; //szürke
+    makegc("#a0a0a0"),; //szürke
     makegc("#c0c0c0"),; //világosszürke
     makegc("#ffff00"),; //sárga
     makegc("#ffffff"),; //fehér
@@ -108,7 +108,7 @@ static function fyalign()
 
 ******************************************************************************
 static function nxalign(i)
-    return 7+if(i<10,10,0)
+    return 7+if(i<10,9,0)
 
 ******************************************************************************
 static function nyalign(i)
