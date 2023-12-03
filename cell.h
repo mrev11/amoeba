@@ -18,6 +18,18 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
+struct BEST
+{
+    int cx;
+    int vo;    // oppo
+    int vt;    // turn
+    int vs;    // sum
+};
+
+#define MAXBEST 64
+
+
 struct cell
 {
     int row;                            // sor index (0-tól, fentről lefele)
@@ -26,44 +38,40 @@ struct cell
     char figure;                        // ' ' vagy 'O' vagy 'X'
     double dist;                        // középpontól vett távolság (perturbálva)
 
-
     XPATTERN pattern[4];                // alakzatok négy irányban: K,Ék,É,Dk
     int fieldval[2];                    // cella értrék a két játékosra: [0]='O', [1]='X'
     int valuedir[2];                    // milyen irányú a legértékesebb alakzat
 
+
     cell(int r, int c);                 // konstruktor
 
-    cell *set();                        // felteszi magát a táblára
-    void calcval();                     // kiszámítja a saját értékét
-    void modval();                      // újraszámolja a szomszéd cellák értékét
+    cell  *set();                       // felteszi magát a táblára
+    void  calcval();                    // kiszámítja a saját értékét
+    void  modval();                     // újraszámolja a szomszéd cellák értékét
 
     // osztály adatok
     static int  init;                   // osztály adatok inicializálása 
     static cell *cells[ROWCOL];         // az összes cella tömbje (ez maga a tábla)
-    static int spiral[ROWCOL];          // cellák középről kifele sorrendben
-    static int movestack[ROWCOL];       // lépések
-    static int movecount;               // lépésszám
-    static int moveforw;                // eddig lehet előremenni (hátralépések után)
-    static cell *best_move[2];          // O és X legjobb lépése
-    static cell *second_move[2];        // O és X második legjobb lépése
+    static int  spiral[ROWCOL];         // cellák középről kifele sorrendben (perturbálva)
+    static int  movestack[ROWCOL];      // stack a lépéseknek
+    static int  movecount;              // lépésszám (stack pointer)
+    static int  moveforw;               // eddig lehet előremenni (hátralépések után)
     static char winner;                 // ' ' vagy 'O' vagy 'X'
     
     // osztály függvények
-    static int classinit();             // inicializálja az osztály adatokat
+    static int  classinit();            // inicializálja az osztály adatokat
     static cell *unset();               // leveszi az utolsó figurát a tábláról
+    static int  movegen(int);           // megkeresi a fontos lépéseket
     static int  posvalue();             // statikus állás kiértékelés
-    static void store_best(int);        // tárolja a legjobb cellát
 
-    static int  cmp_value
+    static BEST best[MAXBEST];          // a movegen által kiválasztott cellák
+    static int  bestcnt;                // a best-ben levő cellák darabszáma
+
+    static int  cmp_best
             (void const*,void const*);  // melyik cellában van értékesebb alakzat
 
     static int  cmp_dist
             (void const*,void const*);  // melyik cella van távolabb a középtől
 };
 
-
-#define BVAL(x)  (cell::best_move[x]?cell::best_move[x]->fieldval[x]:0)
-#define BDIR(x)  (cell::best_move[x]?cell::best_move[x]->valuedir[x]:-1)
-#define SVAL(x)  (cell::second_move[x]?cell::second_move[x]->fieldval[x]:0)
-#define SDIR(x)  (cell::second_move[x]?cell::second_move[x]->valuedir[x]:-1)
 

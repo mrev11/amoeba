@@ -110,9 +110,7 @@ void _clp_c_cb_button_press_pos(int argno)
 {
     CCC_PROLOG("c_cb_button_press_pos",0);
     
-    printf( "turn:%c\n",cell::movecount&1?'O':'X');
-    printf( "best_move O=%d X=%d\n",BVAL(0),BVAL(1));
-    printf( "scnd_move O=%d X=%d\n",SVAL(0),SVAL(1));
+    printf( "turn:%c ",cell::movecount&1?'O':'X');
     printf( "posvalue=%d\n",cell::posvalue() );
     fflush(0);
     _ret();

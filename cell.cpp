@@ -38,10 +38,9 @@ int     cell::spiral[ROWCOL];               // cellák középről kifele sorend
 int     cell::movestack[ROWCOL];            // lépések
 int     cell::movecount=0;                  // lépésszám
 int     cell::moveforw=0;                   // eddig lehet előremenni (hátralépések után)
-cell  * cell::best_move[2]={0,0};           // O és X legjobb lépése
-cell  * cell::second_move[2]={0,0};         // O és X második legjobb lépése
 char    cell::winner= ' ';                  // ' ' vagy 'O' vagy 'X'
-
+BEST    cell::best[MAXBEST];
+int     cell::bestcnt;
 
 //--------------------------------------------------------------------------
 int cell::classinit() // inicializálja az osztály adatokat
@@ -220,145 +219,13 @@ cell *cell::unset()  // leveszi az utolsó figurát a tábláról
     return 0;
 }
 
-//--------------------------------------------------------------------------
-int cell::posvalue() //statikus állásértékelés
-{
-    if( cell::winner=='O' )
-    {
-        return -PVALUE_INFIN;
-    }
-    else if( cell::winner=='X' )
-    {
-        return  PVALUE_INFIN;
-    }
-    else
-    {
-        int oturn=((cell::movecount&1)==1);
-        int xturn=((cell::movecount&1)==0);
-        int bo=BVAL(0),so=SVAL(0);
-        int bx=BVAL(1),sx=SVAL(1);
-        int v=0;
-
-#ifndef NOTDEF
-        if( xturn )
-        {
-            if( sx>=bo )
-            {
-                return(bx+sx);
-            }
-            else if( bx>=bo )
-            {
-                return(bx);
-            }
-            else if( so>bx )
-            {
-                return(-bo-so);
-            }
-            else
-            {
-                return(-bo);
-            }
-        }
-        else //if( oturn )
-        {
-            if( so>=bx )
-            {
-                return(-bo-so);
-            }
-            else if( bo>=bx )
-            {
-                return(-bo);
-            }
-            else
-            {
-                return(sx);
-            }
-        }
-#else
-        if( xturn )
-        {
-            if( bx>=bo )
-            {
-                v=bx;
-                if( sx>=bo )
-                {
-                    v+=sx;
-                }
-            }
-            else
-            {
-                v=-bo;
-                if( so>bx )
-                {
-                    v-=so;
-                }
-            }
-        }
-        else
-        {
-            if( bo>=bx )
-            {
-                v=-bo;
-                if( so>=bx )
-                {
-                    v-=so;
-                }
-            }
-            else
-            {
-                v=bx;
-                if( sx>bo )
-                {
-                    v+=sx;
-                }
-            }
-        }
-        return v;
-#endif
-
-
-    }
-}
 
 //--------------------------------------------------------------------------
-void cell::store_best(int cx) // tárolja a legjobb cellát
+int cell::cmp_best(void const *xp, void const *yp) // melyik cellában van értékesebb alakzat
 {
-    cell *c=cell::cells[cx];
-
-    for( int x=0; x<=1; x++ )
-    {
-        int v=c->fieldval[x];
-        int d=c->valuedir[x];
-
-        if( v>BVAL(x) )
-        {
-            cell::second_move[x]=cell::best_move[x];
-            cell::best_move[x]=c;
-        }
-        else if( v>SVAL(x) )
-        {
-            cell::second_move[x]=c;
-        }
-    }
-}
-
-//--------------------------------------------------------------------------
-int cell::cmp_value(void const *xp, void const *yp) // melyik cellában van értékesebb alakzat
-{
-    int *x=(int*)xp;
-    int *y=(int*)yp;
-
-    int res=0;
-
-    if( *x<*y )
-    {
-        res=1;
-    }
-    else if( *x>*y )
-    {
-        res=-1;
-    }
-    return res;
+    BEST *x=(BEST*)xp;
+    BEST *y=(BEST*)yp;
+    return y->vs - x->vs;
 }
 
 
@@ -389,6 +256,21 @@ void _clp_posvalue(int argno)
 {
     CCC_PROLOG("posvalue",0);
     _retni(cell::posvalue());
+    CCC_EPILOG();
+}
+
+//--------------------------------------------------------------------------
+void _clp_movegen(int argno)
+{
+    CCC_PROLOG("movegen",1);
+    int total=_parni(1);
+    int cnt=cell::movegen(total);
+    for(int i=0;i<cnt; i++)
+    {
+        number( cell::best[i].cx ); 
+    }
+    array(cnt);
+    _rettop();
     CCC_EPILOG();
 }
 

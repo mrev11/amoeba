@@ -1,4 +1,9 @@
-2023-12-02 koodrináták a tábla oldalain;
+2023-12-04
+  alakzatokhoz rendelt értékek újragondolva; 
+  movegen() újraírva;
+  posvalue() újraírva külön modulban;
+
+2023-12-02 koordináták a tábla oldalain;
 
 2023-12-01 movegen() külön modulban;
 

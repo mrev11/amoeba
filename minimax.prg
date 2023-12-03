@@ -52,6 +52,8 @@ local teach:=teach()
 local width:=width()
 local n,fm,x,v,xopt,vopt
 
+    //width:={4} //debug
+
     node++
     depth++
 
@@ -63,6 +65,7 @@ local n,fm,x,v,xopt,vopt
     end
 
     fm:=movegen(width[depth])
+    //? depth, fm
     
     if( turn_x() )
         vopt:=alfa
