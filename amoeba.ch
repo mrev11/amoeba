@@ -25,18 +25,18 @@
 #define ROWCOL          TABLESIZE*TABLESIZE
 
 #define PVALUE_INFIN    9999
-#define PVALUE_EGY      1000
-#define PVALUE_KET2      200
-#define PVALUE_KET1      100
-#define PVALUE_HAR2       60
-#define PVALUE_HAR1       10
+#define PVALUE_EGY       100
+#define PVALUE_KET2       20
+#define PVALUE_KET1       10
+#define PVALUE_HAR2        6
+#define PVALUE_HAR1        3
 #define PVALUE_NEGY2       2
 #define PVALUE_NEGY1       1
 
 //Athlon-64/3000 processzor sebességével
 //üres táblán nem jó POW6-7-8-cal játszani.
 
-#define POW0  "auto"      
+#define POW0  "auto"
 #define POW1  "4,4,3,3,2,2,1,1"                 //  2-ig
 #define POW2  "5,5,4,4,3,3,2,2,1,1"             //  4-ig
 #define POW3  "6,5,5,4,4,3,3,2,2,1,1"           //  8-ig

@@ -39,8 +39,8 @@ int     cell::movestack[ROWCOL];            // lépések
 int     cell::movecount=0;                  // lépésszám
 int     cell::moveforw=0;                   // eddig lehet előremenni (hátralépések után)
 char    cell::winner= ' ';                  // ' ' vagy 'O' vagy 'X'
-BEST    cell::best[MAXBEST];
-int     cell::bestcnt;
+BEST    cell::best[MAXBEST];                // movegen után a legjobb lépések
+int     cell::bestcnt;                      // lépések száma best-ben
 
 //--------------------------------------------------------------------------
 int cell::classinit() // inicializálja az osztály adatokat

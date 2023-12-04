@@ -34,6 +34,9 @@
 //--------------------------------------------------------------------------
 int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
 {
+    int maxtotal=min(MAXBEST,ROWCOL-cell::movecount);
+    total=min(total,maxtotal); // bővülhet maxtotal-ig
+
     int turn=(cell::movecount&1)==0 ? 1:0;
     int oppo=(cell::movecount&1)==0 ? 0:1;
 
@@ -42,23 +45,22 @@ int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
     int minv=-1;
     int maxturn=-1;
     int maxoppo=-1;
-    int i=0;
 
-    for( i=0; i<ROWCOL; i++)
+    for( int i=0; i<ROWCOL; i++ )
     {
-        int cx=cell::spiral[i]; //középről kifelé
+        int  cx=cell::spiral[i]; //középről kifelé
         cell *c=cell::cells[cx];
-        int vo,vt,vs;
-        
+        int  vo,vt,vs;
+
         if( c->figure!=' ')
         {
             continue;
         }
-        
+
         vo=c->fieldval[oppo];
         vt=c->fieldval[turn];
         vs=vo+vt;
-        if( vs<minv )
+        if( vs<=minv  )
         {
             continue;
         }
@@ -66,14 +68,13 @@ int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
         maxturn=max(maxturn,vt);
         maxoppo=max(maxoppo,vo);
 
-        if( cnt<total  )
+        if( cnt<total )
         {
+            cell::best[cnt].cx=cx;
+            cell::best[cnt].vo=vo;
+            cell::best[cnt].vt=vt;
+            cell::best[cnt].vs=vs;
             cnt++;
-            minx++;
-            cell::best[minx].cx=cx;
-            cell::best[minx].vo=vo;
-            cell::best[minx].vt=vt;
-            cell::best[minx].vs=vs;
         }
         else
         {
@@ -86,21 +87,19 @@ int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
                     minv=cell::best[n].vs;
                 }
             }
-            if( vs<=minv )
-            {
-                continue;
-            }
 
-            cell::best[minx].cx=cx;
-            cell::best[minx].vo=vo;
-            cell::best[minx].vt=vt;
-            cell::best[minx].vs=vs;
+            if( vs>minv )
+            {
+                cell::best[minx].cx=cx;
+                cell::best[minx].vo=vo;
+                cell::best[minx].vt=vt;
+                cell::best[minx].vs=vs;
+            }
         }
     }
 
 
-    i=0;
-    while( i<cnt )
+    for( int i=0; i<cnt; )
     {
         if( maxoppo>=PVALUE_EGY && cell::best[i].vs<PVALUE_EGY )
         {

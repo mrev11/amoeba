@@ -140,7 +140,23 @@ static char const *negy2[]={
 "   __X__", 
 "   _X___", 
 0};
+
+
+static char const *negy1[]={
+"____X   ", 
+"X____   ", 
+
+" ____X  ", 
+" X____  ", 
+
+"  ____X ", 
+"  X____ ", 
+
+"   ____X", 
+"   X____", 
+0};
  
+
 //--------------------------------------------------------------------------
 static void aprint(XPATTERN a)
 {
@@ -258,6 +274,7 @@ void ponttab_init()
     ponttab_feltolt(harom2 , PVALUE_HAR2);
     ponttab_feltolt(harom1 , PVALUE_HAR1);
     ponttab_feltolt(negy2  , PVALUE_NEGY2);
+    ponttab_feltolt(negy1  , PVALUE_NEGY1);
 }
 
 
