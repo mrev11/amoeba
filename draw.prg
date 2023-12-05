@@ -41,6 +41,7 @@
 
 
 // ilyen körök vannak
+// (Windowson nem jól jelennek meg)
 //
 //  chr(0x2299)
 //  chr(0x25cf) 
@@ -55,7 +56,10 @@
 #define CIRCLE2  chr(0x29bf)
 #define CIRCLE3  chr(0x2d54)
 
-#define xLEGACY
+#ifdef WINDOWS
+#define LEGACY
+#endif
+
 #ifdef  LEGACY
   static legacy:=.t.
   static SHAPE_X :="<span size='x-large'><b>X</b></span>"   // FIG_X

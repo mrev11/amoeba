@@ -33,6 +33,13 @@
 // csak debugoláshoz hasznos adatokat írnak ki
 
 
+#ifdef WINDOWS
+  typedef  wint_t  ARROW_T;
+#else
+  typedef  int     ARROW_T;
+#endif
+
+
 //--------------------------------------------------------------------------
 static int arrow(int direction)
 {
@@ -47,7 +54,7 @@ static int arrow(int direction)
 //--------------------------------------------------------------------------
 static void print_pattern(int dir, XPATTERN pat)
 {
-    printf(" %lc(",arrow(dir));
+    printf(" %lc(",(ARROW_T)arrow(dir));
     for( int i=0; i<4; i++ )
     {
         printf("%c",pat[i]==32?'-':pat[i]);
@@ -147,7 +154,7 @@ void _clp_c_cb_button_press_stat(int argno)
         const char *vx=num0("%4d",c->fieldval[1]);
         int ao=arrow(c->valuedir[0]);
         int ax=arrow(c->valuedir[1]);
-        printf(" %4s%lc %4s%lc",vo,ao,vx,ax);
+        printf(" %4s%lc %4s%lc",vo,(ARROW_T)ao,vx,(ARROW_T)ax);
 
         printf("\n");
         printf("\n");

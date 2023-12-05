@@ -28,7 +28,7 @@ static xbest
 *****************************************************************************
 function go()
 
-local x,v
+local x,v,n
 
     node:=0
     xbest:=NIL
@@ -40,7 +40,12 @@ local x,v
 
     if( NIL!=x )
         forw(x)
-        drawtop(x)
+        for n:=1 to 5
+            drawcell(x)
+            sleep(80)
+            drawtop(x)
+            sleep(80)
+        next
     end
     label_rate(v)
 
@@ -60,7 +65,7 @@ local n,fm,x,v,xopt,vopt
     if( depth>len(width) )
         movegen(6)
         vopt:=posvalue()
-        leaf(depth,vopt)
+        //leaf(depth,vopt)
         return vopt
     end
 

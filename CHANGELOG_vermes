@@ -1,4 +1,11 @@
 2023-12-05
+  Fordítás Windowson:
+  Az arrow karakterek típusa Windowson nem int, hanem wint_t;
+  Windowson nem jók a kör fontok, ezért LEGACY módban rajzol;
+  Windows ikon (a Windows szarul jeleníti meg);
+  A figurák lerakásakor egy kicsit hunyorog;
+
+2023-12-05
   movegen() bővíti az eredmény halmazt a közbeiktatható lépésekkel;
   induláskor betölti a parancssori argumentumként megadott amoeba fájlt;
 

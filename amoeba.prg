@@ -398,9 +398,19 @@ static function cb_power(w)
 
 ******************************************************************************
 static function cb_motion_notify(area,event)
+local x,n
     //? "cb_motion_notify", gtk.main_depth()
-    //if(gtk.main_depth()>1);return NIL;end
-    //? "motion"
+    if(gtk.main_depth()>1);return NIL;end
+
+    // mozgásra hunyorog
+    // (nem annyira jó ötlet)
+    //if( (x:=topcell())!=NIL )
+    //    drawcell(x)
+    //    sleep(200)
+    //    drawtop(x)
+    //    sleep(200)
+    //end
+    
 
 ******************************************************************************
 function cb_expose(area,event)
