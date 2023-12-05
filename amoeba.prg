@@ -36,15 +36,15 @@ static CELLSIZE:=cellsize()
 
 
 *****************************************************************************
-function main()
+function main(amoebafile)
     //printpid()
     //printexe()
     rand(seconds())
-    amoeba_gui()
+    amoeba_gui(amoebafile)
 
 
 ******************************************************************************
-static function amoeba_gui()
+static function amoeba_gui(amoebafile)
 
 local window
 local wcolor
@@ -182,6 +182,7 @@ local hboxfill
 
     mainwindow(window)
     window:show_all
+    loadfile(amoebafile)
     gtk.main()
     ?
 
@@ -288,8 +289,7 @@ static function cb_new(w,combo)
 
 ******************************************************************************
 static function cb_load(window)
-local dlg, selected_file,cells,n
-local amoeba:="amoeba"+TABLESIZE::str::alltrim
+local dlg,selected_file
 
     if(gtk.main_depth()>1);return NIL;end
 
@@ -308,6 +308,12 @@ local amoeba:="amoeba"+TABLESIZE::str::alltrim
         dlg:run
         selected_file:=NIL
     end
+    loadfile(selected_file)
+
+
+static function loadfile(selected_file)
+local cells,n
+local amoeba:="amoeba"+TABLESIZE::str::alltrim
 
     if( selected_file==NIL )
         // nem választott

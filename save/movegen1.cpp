@@ -30,13 +30,13 @@
 #include <pattern.h>
 #include <cell.h>
 
+// egyszerűbb változat
+// nem bővíti az eredmény halmazt
+// a közbeiktatható lépésekkel
 
 //--------------------------------------------------------------------------
 int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
 {
-    int maxtotal=min(MAXBEST,ROWCOL-cell::movecount);
-    total=min(total,maxtotal);
-
     int turn=(cell::movecount&1)==0 ? 1:0;
     int oppo=(cell::movecount&1)==0 ? 0:1;
 
@@ -60,8 +60,7 @@ int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
         vo=c->fieldval[oppo];
         vt=c->fieldval[turn];
         vs=vo+vt;
-
-        if( vs<=minv && vt<PVALUE_KET1 )
+        if( vs<=minv  )
         {
             continue;
         }
@@ -77,28 +76,18 @@ int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
             cell::best[cnt].vs=vs;
             cnt++;
         }
-        else if( vt>=PVALUE_KET1 && cnt<maxtotal )
-        {
-            // közbeiktatható lépés
-            // eredmény halmaz bővítve
-
-            cell::best[cnt].cx=cx;
-            cell::best[cnt].vo=vo;
-            cell::best[cnt].vt=vt;
-            cell::best[cnt].vs=vs;
-            cnt++;
-        }
         else
         {
             minv=PVALUE_INFIN;
             for( int n=0; n<cnt; n++ )
             {
-                if( cell::best[n].vs<=minv )
+                if( cell::best[n].vs<=minv  )
                 {
                     minx=n;
                     minv=cell::best[n].vs;
                 }
             }
+
             if( vs>minv )
             {
                 cell::best[minx].cx=cx;
@@ -110,37 +99,16 @@ int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
     }
 
 
-//#define  NOTDEF
-#ifdef   NOTDEF
-if( total>=7 )
-{
-    printf("\n??TOTAL<%d> cnt=%d maxoppo=%d minv=%d\n",total,cnt,maxoppo,minv);
-    printf("\n================================================\n");
-    for( int i=0; i<cnt; i++ )
-    {
-        printf("%2d   cx=%3d{%2d,%2d}   vo=%4d   vt=%4d   vs=%4d\n"
-            ,i
-            ,cell::best[i].cx
-            ,cell::best[i].cx/TABLESIZE
-            ,cell::best[i].cx%TABLESIZE
-            ,cell::best[i].vo
-            ,cell::best[i].vt
-            ,cell::best[i].vs
-            );
-    }
-}
-#endif
-
     for( int i=0; i<cnt; )
     {
         if( maxoppo>=PVALUE_EGY && cell::best[i].vs<PVALUE_EGY )
         {
-            memmove(&cell::best[i],&cell::best[i+1],(cnt-i)*sizeof(BEST)); //delete
+            memmove(&cell::best[i],&cell::best[i+1],(cnt-i)*sizeof(BEST)); //del
             --cnt;
         }
         else if( maxoppo>=PVALUE_KET2 && cell::best[i].vs<PVALUE_KET1 )
         {
-            memmove(&cell::best[i],&cell::best[i+1],(cnt-i)*sizeof(BEST)); //delete
+            memmove(&cell::best[i],&cell::best[i+1],(cnt-i)*sizeof(BEST)); //del
             --cnt;
         }
         else
@@ -148,13 +116,11 @@ if( total>=7 )
             ++i;
         }
     }
+
     qsort(cell::best,cnt,sizeof(BEST),cell::cmp_best);
     cell::bestcnt=cnt;
 
-#ifdef NOTDEF
-if( total>=7 )
-{
-    printf("\n!!TOTAL<%d> cnt=%d maxoppo=%d minv=%d\n",total,cnt,maxoppo,minv);
+/*
     printf("\n================================================\n");
     for( int i=0; i<cnt; i++ )
     {
@@ -168,10 +134,9 @@ if( total>=7 )
             ,cell::best[i].vs
             );
     }
-}
-#endif
+*/
 
-    return cell::bestcnt;
+    return cnt;
 }
 
 //--------------------------------------------------------------------------

@@ -33,29 +33,40 @@
 //--------------------------------------------------------------------------
 int cell::posvalue() //statikus állásértékelés
 {
+    int v=0;
+
     if( cell::winner=='O' )
     {
-        return -PVALUE_INFIN;
+        v=-PVALUE_INFIN;
     }
     else if( cell::winner=='X' )
     {
-        return  PVALUE_INFIN;
+        v=PVALUE_INFIN;
     }
-
-    int oturn=((cell::movecount&1)==1);
-    int xturn=((cell::movecount&1)==0);
-
-    int v=0;
-    for( int i=0; i<cell::bestcnt; i++ )
+    else
     {
-        v+=cell::best[i].vt;
-        v-=cell::best[i].vo;
+        for( int i=0; i<cell::bestcnt; i++ )
+        {
+            v+=cell::best[i].vt;
+            v-=cell::best[i].vo;
+        }
+        if( cell::movecount&1 )
+        {
+            v=-v;
+        }
     }
 
-    if( oturn )
-    {
-        v=-v;
-    }
+    //printf("POSVALUE=%d movecount=%d ",v,cell::movecount);
+    //if( cell::movecount>0 )
+    //{
+    //    int cx=cell::movestack[cell::movecount-1];
+    //    printf( "lastmove=%d{%d,%d}\n",cx,cx/TABLESIZE,cx%TABLESIZE );
+    //}
+    //else
+    //{
+    //    printf("\n");
+    //}
+
     return v;
 }
 

@@ -1,3 +1,7 @@
+2023-12-05
+  movegen() bővíti az eredmény halmazt a közbeiktatható lépésekkel;
+  induláskor betölti a parancssori argumentumként megadott amoeba fájlt;
+
 2023-12-04
   alakzatokhoz rendelt értékek újragondolva; 
   movegen() újraírva;
