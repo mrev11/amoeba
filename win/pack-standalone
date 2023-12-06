@@ -1,0 +1,28 @@
+#!/bin/bash
+# e.g. MINGW_PREFIX == /clang64
+
+
+mkdir -p bin
+mkdir -p lib/gdk-pixbuf-2.0/2.10.0
+mkdir -p lib/gtk-2.0/2.10.0
+mkdir -p share/themes/MS-Windows/gtk-2.0
+
+ldd amoeba.exe | grep -E '\/clang64.*\.dll' -o | xargs -I{} cp "{}" ./bin
+
+cp -r /clang64/lib/gdk-pixbuf-2.0/*               ./lib/gdk-pixbuf-2.0/
+cp -r /clang64/lib/gtk-2.0/2.10.0/*               ./lib/gtk-2.0/2.10.0/
+cp -r /clang64/share/themes/MS-Windows/gtk-2.0/*  ./share/themes/MS-Windows/gtk-2.0/
+
+
+
+cat << 'EOF' >> ./share/themes/MS-Windows/gtk-2.0/gtkrc
+
+gtk-font-name="Sans 12"
+style "font"
+{
+    font_name = "Sans 12"
+}
+widget_class "*" style "font"
+
+EOF
+

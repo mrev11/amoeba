@@ -17,6 +17,7 @@ gccver.opt
 
 *.exe
 objlin/
+objmng/
 ppo/
 error
 error--*

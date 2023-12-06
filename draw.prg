@@ -20,9 +20,7 @@
 
 #include "gdk.ch"
 #include "gtk.ch"
-
 #include "amoeba.ch"
-
 
 #define CELLSIZE    32
 
@@ -45,6 +43,7 @@
 //
 //  chr(0x2299)
 //  chr(0x25cf) 
+//  chr(0x25ef) 
 //  chr(0x2609)
 //  chr(0x29be)
 //  chr(0x29bf)
@@ -52,34 +51,66 @@
 //  chr(0x2d59)
 
 
-#define CIRCLE1  chr(0x25cf) 
-#define CIRCLE2  chr(0x29bf)
-#define CIRCLE3  chr(0x2d54)
+//#define LEGACY
 
-#ifdef WINDOWS
-#define LEGACY
-#endif
-
-#ifdef  LEGACY
+#ifdef LEGACY
   static legacy:=.t.
   static SHAPE_X :="<span size='x-large'><b>X</b></span>"   // FIG_X
   static SHAPE_O :="<span size='x-large'><b>O</b></span>"   // FIG_O
-
   static SHAPE_XT:=SHAPE_X                                  // FIG_XT
   static SHAPE_OT:=SHAPE_O                                  // FIG_OT
-
   static SHAPE_XA:="<span size='x-large'>X</span>"          // FIG_XA
   static SHAPE_OA:="<span size='x-large'>O</span>"          // FIG_OA
+
+  #define ALIGN_X     7         // normál horizontális eltolás
+  #define ALIGN_Y     2         // normál vertikális eltolás
+  #define ALIGN_TX    ALIGN_X   // top horizontális eltolás          
+  #define ALIGN_TY    ALIGN_Y   // top vertikális eltolás            
+  #define ALIGN_AX    ALIGN_X   // alternatív horizontális eltolás   
+  #define ALIGN_AY    ALIGN_Y   // alternatív vertikális eltolás     
 #else
   static legacy:=.f.
-  static SHAPE_X :="<span size='x-large'><b>"+CIRCLE1+"</b></span>" // FIG_X
-  static SHAPE_XT:="<span size='x-large'><b>"+CIRCLE2+"</b></span>" // FIG_XT (top)
-  static SHAPE_XA:="<span size='x-large'>"+CIRCLE3+"</span>"        // FIG_XA (alt)
 
-  static SHAPE_O:=SHAPE_X
-  static SHAPE_OT:=SHAPE_XT
-  static SHAPE_OA:=SHAPE_XA
+#ifdef WINDOWS
+  #define CIRCLE1  chr(0x25cf) 
+  #define CIRCLE2  chr(0x29bf)
+  #define CIRCLE3  chr(0x25ef)
+
+  static SHAPE_X    := "<span font_desc='Sans 32'>"+CIRCLE1+"</span>" // FIG_X
+  static SHAPE_XT   := "<span font_desc='Sans 16'><b>"+CIRCLE2+"</b></span>" // FIG_XT (top)
+  static SHAPE_XA   := "<span font_desc='Sans 16'><b>"+CIRCLE3+"</b></span>" // FIG_XA (alt)
+  static SHAPE_O    := SHAPE_X
+  static SHAPE_OT   := SHAPE_XT
+  static SHAPE_OA   := SHAPE_XA
+
+  #define ALIGN_X     3         // normál horizontális eltolás
+  #define ALIGN_Y   -14         // normál vertikális eltolás
+  #define ALIGN_TX    5         // top horizontális eltolás
+  #define ALIGN_TY    5         // top vertikális eltolás
+  #define ALIGN_AX    5         // alternatív horizontális eltolás
+  #define ALIGN_AY    7         // alternatív vertikális eltolás
+
+#else // LINUX
+  #define CIRCLE1  chr(0x25cf) 
+  #define CIRCLE2  chr(0x29bf)
+  #define CIRCLE3  chr(0x2d54)
+
+  static SHAPE_X    := "<span size='x-large'><b>"+CIRCLE1+"</b></span>" // FIG_X
+  static SHAPE_XT   := "<span size='x-large'><b>"+CIRCLE2+"</b></span>" // FIG_XT (top)
+  static SHAPE_XA   := "<span size='x-large'>"+CIRCLE3+"</span>"        // FIG_XA (alt)
+  static SHAPE_O    := SHAPE_X
+  static SHAPE_OT   := SHAPE_XT
+  static SHAPE_OA   := SHAPE_XA
+
+  #define ALIGN_X     6         // normál horizontális eltolás
+  #define ALIGN_Y     2         // normál vertikális eltolás
+  #define ALIGN_TX    ALIGN_X   // top horizontális eltolás          
+  #define ALIGN_TY    ALIGN_Y   // top vertikális eltolás            
+  #define ALIGN_AX    6         // alternatív horizontális eltolás   
+  #define ALIGN_AY    4         // alternatív vertikális eltolás     
 #endif
+#endif
+
 
 static area:=drawingarea()
 static ascx:=asc("X")
@@ -96,29 +127,17 @@ static gc:={;
 static altflag:=.f.
 
 
-
-
 ******************************************************************************
 function cellsize()
     return CELLSIZE
 
 ******************************************************************************
-static function fxalign()
-    return 6
+static function nxalign(i)  // szám labelek horizontális eltolása
+    return 9+if(i<10,9,0)
 
 ******************************************************************************
-static function fyalign()
-    return 2
-
-******************************************************************************
-static function nxalign(i)
-    return 7+if(i<10,9,0)
-
-******************************************************************************
-static function nyalign(i)
-    return 5
-
-
+static function nyalign(i)  // szám labelek vertikális eltolása
+    return 8
 
 ******************************************************************************
 function shape_x()
@@ -253,6 +272,24 @@ static lo:={;
     makelayout(SHAPE_OA),;
     NIL}
 
+static dx:={;
+    ALIGN_X,;
+    ALIGN_X,;
+    ALIGN_TX,;
+    ALIGN_TX,;
+    ALIGN_AX,;
+    ALIGN_AX,;
+    NIL}
+
+static dy:={;
+    ALIGN_Y,;
+    ALIGN_Y,;
+    ALIGN_TY,;
+    ALIGN_TY,;
+    ALIGN_AY,;
+    ALIGN_AY,;
+    NIL}
+
 
 local i:=cx%TABLESIZE
 local j:=int(cx/TABLESIZE)
@@ -279,8 +316,8 @@ local x,y
     gdk.drawable.draw_rectangle(draw,gc[BLACK],.f.,x,y,CELLSIZE,CELLSIZE)
 
     if( fig>0)
-        x:=fxalign()+(i+1)*CELLSIZE
-        y:=fyalign()+(j+1)*CELLSIZE
+        x:=dx[fig]+(i+1)*CELLSIZE
+        y:=dy[fig]+(j+1)*CELLSIZE
         gdk.drawable.draw_layout(draw,gc[color],x,y,lo[fig])
     elseif( fig<0 )
         x:=nxalign(i)+(i+1)*CELLSIZE

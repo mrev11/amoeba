@@ -1,0 +1,22 @@
+
+Egy directoryban el kell helyezni ezeket:
+    pack-standalone
+    amoeba.exe
+    amoeba.ico
+    amoeba.png
+    s.bat
+
+pack-standalone-ban át kell írni /clang64-et arra
+az MINGW_PREFIX-re, amivel az amoeba.exe készült.
+
+MSYS környezetben le kell futtatni pack-standalone-t,
+ez összegyűjti az amoeba.exe MSYS2 nélküli futtatásához
+szükséges alkatrészeket.
+
+Az így keletkezett directoryt összezipeljük.
+
+s.bat-tal lehet indítani a programot.
+s.bat-ra lehet Windows shortcutot készíteni.
+A shortcuthoz használhatjuk az amoeba.ico ikont.
+
+
