@@ -1,3 +1,8 @@
+<head>
+<META charset="UTF-8">
+</head>
+
+
 
 ---------------------------------------------------------------------------------
 ## Amoeba élmény beszámoló
@@ -169,7 +174,7 @@ van eltalálva.
 Ezért eshet meg, hogy a program, noha értelmesen játszik, mégsem elég erősen. 
 A minimax kombinálás akkor is értelem látszatát kölcsönzi a programnak,
 ha a másik két komponens viszonylag gyönge. A végállásokban mindig egyértelmű, 
-ki a nyerő, ez már egy már ad egy minimális támpontot, ami alapján a minimax jó 
+ki a nyerő, ez már ad egy minimális támpontot, ami alapján a minimax jó 
 irányba terel. Ettől élvezetes program az Amoeba. Olyan, mintha volna ott valaki, 
 aki gondolkodik. Persze nincs, de mégis olyan. Pedig ez még csak nem is AI.
 
@@ -260,6 +265,9 @@ elfogadhatóan működik.
 
 
 ---------------------------------------------------------------------------------
+
+
+
 
 
 
