@@ -1,0 +1,6 @@
+#!/bin/bash
+
+INPUT=amoeba.md
+OUTPUT=${INPUT}.html
+
+markdown_py -f ${OUTPUT} ${INPUT}

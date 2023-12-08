@@ -1,0 +1,222 @@
+<hr />
+<h2>Amoeba élmény beszámoló</h2>
+<p>Eredetileg 1984-ben írtam az amőba programot C64-re.
+Boltban is kapható volt, a Novotrade forgalmazta. 
+Kb. tízezer forintot kerestem vele.
+Egyszer még kirakatban is felfedeztem a magnókazettán árult amőbámat, 
+csak hogy halhassam, hogy az épp mellettem bámészkodó gamer fiú mondja
+a barátjának:  "Nézd, van pofájuk amőbával jönni!"</p>
+<p>2005-ben csináltam a CCC-GTK interfész könyvtárat, amivel CCC/Clipper 
+nyelven lehet grafikus programokat írni Linuxra és Windowsra. 
+Itt lehet olvasni a leírását:
+<a href="http://comfirm.hu/ccc3/cccgtk.html">http://comfirm.hu/ccc3/cccgtk.html </a>. 
+Ez a könyvtár aztán a kezdeti állapotában maradt, nem fejlődött tovább.</p>
+<p>A GTK projekt kellemetlenül változékony. Ha írok egy alkalmazást GTK-ra,
+és két hónap múlva újra akarom fordítani, kapom a hibaüzeneteket:
+Ez vagy az az API megszűnt, vagy deprecated lett, valamelyik struktúra megváltozott.
+Nem volt energiám követni az örökös változásokat. Évekig abban merült ki
+a CCC-GTK csatoló karbantartása, hogy töröltem belőle azokat az API-kat,
+amik a GTK2-ben megváltoztak. Így tartottam lefordítható állapotban.
+Azóta lett GTK3 és GTK4 is, de ezekkel nem foglalkoztam. 
+Szerencsére a GTK2 mostanra olyan réginek számít, hogy nem piszkálják többé.
+Így nyugtom van, a csatoló maradékán már nem kell változtatni, 
+úgy jó, ahogy van.</p>
+<p>Mindenesetre 2005-ben úgy gondoltam, hogy kellene egy értelmes demó a GTK-hoz.
+Emlékezetből újraírtam az amőbát. Húsz év után a részletek már elhalványultak,
+és nem is volt sok időm a szöszmötölésre. Így aztán, bár értelmesen játszott,
+nem játszott valami erősen az új amőba. Robi barátom könnyen legyőzte.</p>
+<blockquote>
+<p>- Ki nyer ma?<br />
+ - Märle Róbert, matematikus.</p>
+</blockquote>
+<p>Sokszor lehetett hallani ezt délben a Kossuthon.
+Robi rengetegszeres <em>Ki nyer ma?</em> győztes volt. Az ELGI-ben, a Graphisoftban 
+és a KSH-ban dolgozott. Huszonöt éven át hetente együtt furulyáztunk. 
+Láttuk felnőni egymás gyerekeit. 2011-ben, ötvenhét évesen nem élte túl a szívműtétet.</p>
+<p>Most (2023-ban) rászántam magam, hogy beleteszem a munkát,
+hogy a program elfogadható játékerővel játsszon. Mégis, milyen már, hogy 
+egy C64-es program jobban játszik, mint egy sokezerszeres teljesítményre
+képes mai PC. Tűrhetetlen állapot, ha meggondoljuk.</p>
+<hr />
+<h2>Hogyan játszik az Amoeba?</h2>
+<h4>1) Kombinatórikus optimalizálás minimax algoritmussal</h4>
+<p>Az Amoeba váza ugyanaz, mint a sakkprogramoké, persze ezerszer 
+egyszerűbb, minthogy a sakkhoz képest az amőba játék meglehetősen primitív.</p>
+<p>Ketten játszanak:</p>
+<ul>
+<li>a fekete (vagy X) játékos</li>
+<li>a fehér (vagy O) játékos</li>
+</ul>
+<p>Mindkettő nyerni akar. Hogy a két játékos közül melyik áll jobban,
+azt az ún. <em>rating</em> mutatja. Ha a rating értéke pozitív, akkor a fekete,
+ha negatív, akkor a fehér áll jobban. Természetesen fekete úgy próbál lépni,
+hogy a rating a pozitív irányba mozduljon. Fehér ezzel szemben próbálja minél 
+inkább csökkenteni a ratinget. </p>
+<p>Vegyünk egy tetszőleges egy állást, ahol a fekete van lépésen:
+A fekete játékos számbaveszi az értelmes lépéseket, és kiválasztja azt, amelyiktől 
+fehér legerősebb válasza esetén is a legjobb eredmény (legmagasabb rating) várható.</p>
+<p>Fekete megteszi a lépését, mire fehér következik, aki most hasonló helyzetben van,
+csak éppen fordított előjellel: Ki kell választania azt a lépést, amivel fekete
+legerősebb válasza esetén a rating minimális.</p>
+<p>Fekete (a sok lehetőség közül) választ egy lépést. Bármit is választ, az új
+pozícióban fehér választja a következőt, utána újra fekete, és így tovább. 
+Bármely pozícióból kiindulva egy fát kapunk, az <em>elemző fát</em>.
+A fában fekete olyan úton halad a levelek felé, mely úton a maximális rating érhető el. 
+Fehér ezzel szemben a minimális rating felé vezető útra terel.</p>
+<p>A hasonló fákban való optimum keresés kombinatórikus optimalizálási feladat, 
+amit a minimax néven ismert algoritmussal oldunk meg. A minimax algoritmus leírását 
+megnézhetjük például itt: <a href="https://en.wikipedia.org/wiki/Minimax">https://en.wikipedia.org/wiki/Minimax</a>.</p>
+<p>Szerencsére nem szükséges, hogy az elemzőfa minden pontját kiértékeljük.
+Egy ügyes trükk segítségével, az <em>alfa-béta vágással</em>, kb. felére lehet csökkenteni
+a számítások mennyiségét. Az alfa-béta vágásról olvashatunk például itt:
+<a href="https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning">https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning</a>.</p>
+<h4>2) Pozíciók statikus értékelése</h4>
+<p>Gondolhatnánk, hogy készen is vagyunk. Bejárjuk a teljes elemzőfát.
+A fa levelein ismerjük a rating értékét: egyik vagy másik fél nyert, esetleg
+döntetlen, ha a tábla betelt, mielőtt bárki nyert volna. A minimax
+algoritmus minden állásban megadja az optimumhoz vezető lépéseket.</p>
+<p>Csakhogy a teljes elemzőfa bejárása akármekkora számítási kapacitás mellett
+sem lehetséges. Már egy 16x16-os kis tábla esetén is 256! (faktoriális) 
+pozíciót kéne kiértékelni. Még ha ez a szám csökkenthető is az alfa-béta 
+vágással és egyéb módszerekkel, akkor sem. Ezért az elemzőfa méretét
+kénytelenek vagyunk kicsinek tartani. Az elemzőfa ágai nem mindig érik el 
+a játék végállását, ezért a leveleken olyan pozícióhoz is ratinget kell 
+rendelnünk, ahonnan még folytatódhat a játék.</p>
+<p>Az eddigiek bármely hasonló játékra (sakk, go) érvényesek, 
+itt azonban színrelépnek az amőba sajátosságai.
+Az Amoeba program az alakzatok nyilvántartásával és az alakzatokon végzett
+számításokkal dolgozik. Mik azok az alakzatok? Például a fehér kövek 
+alábbi elhelyezkedése </p>
+<pre><code>    OOO_O
+</code></pre>
+<p>olyan alakzat, amiben a fehér egylépéses nyerése lehetséges. Ez egy nagyon
+értékes alakzat. Vagy nézzük az alábbit:</p>
+<pre><code>    _OO__
+</code></pre>
+<p>Ha fehér van lépésen, akkor lehetősége van olyan alakzatot létrehozni,
+ami kétféle módon is egylépéses nyeréssel fenyeget. Ez is nagyon értékes 
+alakzat, bár egy fokkal kevésbé értékes, mint az előző. Az Amoeba program 
+az ilyen alakzatok minden fajtáját rendszerezi, számon tartja és kezeli.     </p>
+<p>A tábla minden mezője nyolc alakzatban szerepel.  Kelet, Ék, É, Dk négy irány,
+négy alakzat, szorozva kettővel, mert mindkét játékos alakzataira figyelni kell.</p>
+<p>Az alakzatokhoz pontértéket rendelünk. Összegezzük a fekete játékos 
+alakzatainak pontértékét, az összegből levonjuk a fehér játékos alakzatait.
+Kapunk egy előjeles számot, ami mutatja, hogy a fekete (pozitív) vagy fehér 
+(negatív) áll-e jobban. </p>
+<p>Körülbelül így történik a pozíciók statikus értékelése. Sok múlik
+az itt nem kifejthető részleteken. Az alakzatokhoz úgy kell pontértéket
+rendelni, hogy az jól tükrözze az illető alakzat más alakzatokhoz
+viszonyított fontosságát. Amikor az alakzatok összegződnek, akkor
+az összegnek értelmes helyre kell kerülnie a pontértékek sorrendjében.</p>
+<h4>3) Lépés kiválasztás</h4>
+<p>A csökkentett méretű elemzőfa ágai rövidek: általában nem érnek el 
+a játék végállásáig. Az ágak hosszán kívül a fa ágainak számát is számát 
+is csökkentenünk kell. Képtelenség ugyanis minden lehetséges lépést, vagyis 
+a tábla minden  szabad mezejét kiértékelni. Ki kell választanunk azokat a 
+fontosnak látszó lépéseket (mezőket), amikkel érdemes foglalkozni, 
+azaz érdemes elindítani  rájuk a minimax algoritmust.</p>
+<p>Itt is sok múlik a részleteken. Ha fontos mezőket figyelmen kívül hagyunk,
+akkor gyengén fog játszani a program, ha mindent beveszünk, akkor pedig
+túl lassan. Az Amoeba  a mezőkhöz tartozó alakzatok pontértéke alapján
+választja ki a fontos mezőket.</p>
+<p>Összegzésként megállapíthatjuk, hogy a játék (más hasonló játékokkal egyezően) 
+három egymásra épülő komponenssel dolgozik:</p>
+<ul>
+<li>kombinálás minimax algoritmussal</li>
+<li>statikus állás értékelés</li>
+<li>lépés kiválasztás</li>
+</ul>
+<p>A statikus állás értékelés értéket rendel az elemzőfa leveleihez.
+A fontosnak vélt lépésekhez tartozó érték a minimax algoritmusból adódik.
+A minimax algoritmuson nincs sok töprengeni való, úgy kell leprogramozni,
+ahogy a korábbi linkekben le van írva. A program játékereje azon múlik,
+hogy a statikus állás értékelés és a lépés kiválasztás milyen jól
+van eltalálva.</p>
+<p>Ezért eshet meg, hogy a program, noha értelmesen játszik, mégsem elég erősen. 
+A minimax kombinálás akkor is az értelem látszatát kölcsönzi a programnak,
+ha a másik két komponens viszonylag gyönge. A végállásokban mindig egyértelmű, 
+ki a nyerő, ez már egy már ad egy minimális támpontot, ami alapján a minimax jó 
+irányba terel. Ettől élvezetes program az Amoeba. Olyan, mintha volna ott valaki, 
+aki gondolkodik. Persze nincs, de mégis olyan. Pedig ez még csak nem is AI.</p>
+<hr />
+<h2>Az Amoeba program kezelése</h2>
+<p>A tábla mérete 16x16. Lehetne akármekkora, de általában ennyi is elég.
+Nem olyan érdekes a játék, hogy ennél többet adjunk neki.
+A tábla bármely mezejére egér balgombbal elhelyezhetjük a soron levő
+játékos kövét, feltéve, hogy a program éppen nem gondolkodik.</p>
+<p>A jobb felső sarokban levő kétállapotú (Ready/Thinking) gomb mutatja,
+hogy a program kész fogadni az inputot, vagy el van foglalva a számításokkal.
+Ha éppen gondolkodik, akkor semmilyen inputra nem reagál, meg kell várnunk,
+amíg végez, megteszi a lépését, és Ready állapotba kerül.</p>
+<p>Ha a program Ready állapotban van, akkor:</p>
+<ul>
+<li>
+<p>Egér balgombbal léphetünk (lerakhatjuk a kövünket a táblára).</p>
+</li>
+<li>
+<p>Egér jobbgomb mutatja számbajövő folytatásokat <em>(hint)</em>.</p>
+</li>
+<li>
+<p>Move gombbal lépésre utasítjuk a programot.</p>
+</li>
+<li>
+<p>Back gomb visszaveszi az utolsó követ.</p>
+</li>
+<li>
+<p>Forward gomb visszarakja az előzőleg levett követ.</p>
+</li>
+<li>
+<p>Teach checkboxszal beállíthatjuk, hogy mutassa a lépést,
+    amin éppen gondolkodik. Ha ki van kapcsolva, akkor a humán játékosnak 
+    nem sok esélye marad. Ha konzolból futatjuk, akkor teach módban
+    infót listáz a kiértékelt mezőkben talált alakzatokról.</p>
+</li>
+<li>
+<p>A Teach alatti listboxban beállíthatjuk az elemzőfa méretét.
+    Auto beállításnál a program a lépészám előrehaladtával
+    egyre terjedelmesebb elemzőfát használ. Nem érdemes túl nagyra
+    választani a fát, mert lassú lesz a program. Windowson különösen lassú.</p>
+</li>
+<li>
+<p>New gomb kiüríti a táblát, új játék kezdhető.</p>
+</li>
+<li>
+<p>Load gombbal betölthetünk egy korábban elmentett állást.</p>
+</li>
+<li>
+<p>Save gomb elmenti az aktuális állást.</p>
+</li>
+</ul>
+<p>Az ablak alsó részén látjuk, hány lépés történt, ki van lépésen, mi az állás értékelése.</p>
+<hr />
+<h2>Milyen nyelven íródott az Amoeba?</h2>
+<p>A program kb. fele-fele arányban  CCC-ben és C++ ban készült. </p>
+<p>CCC-ben van</p>
+<ul>
+<li>a főprogram,</li>
+<li>a GTK-ra alapozott grafikus interfész,</li>
+<li>a minimax algoritmus.</li>
+</ul>
+<p>C++-ban van</p>
+<ul>
+<li>a táblán levő állás és az alakzatok nyilvántartása,</li>
+<li>a statikus állás értékelés,</li>
+<li>a lépés kiválasztás.    </li>
+</ul>
+<hr />
+<h2>Letöltés</h2>
+<p>A program forrása git-tel tölthető le:</p>
+<pre><code>    git clone git://comfirm.hu/amoeba.git
+</code></pre>
+<p>Linuxon CCC3 környezetben vagy Windowson MSYS2+CCC3 környezetben tudjuk lefordítani.</p>
+<p>Windows 10-re lefordított, MSYS2 és CCC környezet nélkül futtatható zip csomag
+tölthető le innen: <a href="http://comfirm.hu/pub/amoeba.zip">http://comfirm.hu/pub/amoeba.zip</a></p>
+<p>Hangsúlyozom, hogy a program elsősorban linuxos. A windowos verzió halovány
+árnyéka a linuxosnak. Eleve Windowson minden ötször lassabb. Ez annak ellenére van így, 
+hogy az <code>amoeba.exe</code> és a hozzá tartozó <code>dll</code>-ek natív Windows programok, 
+nincs szó valamiféle Linux emulációról. 
+Abban sem vagyok biztos, hogy másvalaki gépén jól jelenik-e meg. A megjelenés függ attól, 
+hogy milyen fontok vannak installálva a rendszeren, milyen a képernyő felbontása és 
+hasonlók. Annyit mondhatok csak, hogy a saját Linux boxomban virtualizált Windows 10-en 
+elfogadhatóan működik.</p>
+<hr />
