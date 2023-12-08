@@ -6,13 +6,13 @@ Eredetileg 1984-ben írtam az amőba programot C64-re.
 Boltban is kapható volt, a Novotrade forgalmazta. 
 Kb. tízezer forintot kerestem vele.
 Egyszer még kirakatban is felfedeztem a magnókazettán árult amőbámat, 
-csak hogy halhassam, hogy az épp mellettem bámészkodó gamer fiú mondja
+csak hogy hallhassam, amit az épp mellettem bámészkodó gamer fiú mond
 a barátjának:  "Nézd, van pofájuk amőbával jönni!"
 
 2005-ben csináltam a CCC-GTK interfész könyvtárat, amivel CCC/Clipper 
 nyelven lehet grafikus programokat írni Linuxra és Windowsra. 
-Itt lehet olvasni a leírását:
-[http://comfirm.hu/ccc3/cccgtk.html ](http://comfirm.hu/ccc3/cccgtk.html). 
+(Itt lehet olvasni a leírását:
+[http://comfirm.hu/ccc3/cccgtk.html ](http://comfirm.hu/ccc3/cccgtk.html).) 
 Ez a könyvtár aztán a kezdeti állapotában maradt, nem fejlődött tovább.
 
 A GTK projekt kellemetlenül változékony. Ha írok egy alkalmazást GTK-ra,
@@ -26,7 +26,7 @@ Szerencsére a GTK2 mostanra olyan réginek számít, hogy nem piszkálják töb
 Így nyugtom van, a csatoló maradékán már nem kell változtatni, 
 úgy jó, ahogy van.
 
-Mindenesetre 2005-ben úgy gondoltam, hogy kellene egy értelmes demó a GTK-hoz.
+Mindenesetre 2005-ben úgy gondoltam, kellene egy értelmes demó a GTK-hoz.
 Emlékezetből újraírtam az amőbát. Húsz év után a részletek már elhalványultak,
 és nem is volt sok időm a szöszmötölésre. Így aztán, bár értelmesen játszott,
 nem játszott valami erősen az új amőba. Robi barátom könnyen legyőzte.
@@ -40,16 +40,16 @@ Robi rengetegszeres _Ki nyer ma?_ győztes volt. Az ELGI-ben, a Graphisoftban
 és a KSH-ban dolgozott. Huszonöt éven át hetente együtt furulyáztunk. 
 Láttuk felnőni egymás gyerekeit. 2011-ben, ötvenhét évesen nem élte túl a szívműtétet.
 
-Most (2023-ban) rászántam magam, hogy beleteszem a munkát,
-hogy a program elfogadható játékerővel játsszon. Mégis, milyen már, hogy 
-egy C64-es program jobban játszik, mint egy sokezerszeres teljesítményre
-képes mai PC. Tűrhetetlen állapot, ha meggondoljuk.
+Most (2023-ban) rászántam magam: Beleteszem a munkát,
+hogy elfogadható játékerővel játsszon a program. Mégis, milyen már, hogy 
+a Commodore-64 jobban játszik, mint egy sokezerszeres teljesítményre képes mai PC. 
+Tűrhetetlen állapot, ha meggondoljuk.
 
 
 ---------------------------------------------------------------------------------
 ## Hogyan játszik az Amoeba?
 
-#### 1) Kombinatórikus optimalizálás minimax algoritmussal
+#### 1) Kombinatorikus optimalizálás minimax algoritmussal
 
 Az Amoeba váza ugyanaz, mint a sakkprogramoké, persze ezerszer 
 egyszerűbb, minthogy a sakkhoz képest az amőba játék meglehetősen primitív.
@@ -65,7 +65,7 @@ ha negatív, akkor a fehér áll jobban. Természetesen fekete úgy próbál lé
 hogy a rating a pozitív irányba mozduljon. Fehér ezzel szemben próbálja minél 
 inkább csökkenteni a ratinget. 
 
-Vegyünk egy tetszőleges egy állást, ahol a fekete van lépésen:
+Vegyünk egy  állást, ahol a fekete van lépésen:
 A fekete játékos számbaveszi az értelmes lépéseket, és kiválasztja azt, amelyiktől 
 fehér legerősebb válasza esetén is a legjobb eredmény (legmagasabb rating) várható.
 
@@ -73,26 +73,25 @@ Fekete megteszi a lépését, mire fehér következik, aki most hasonló helyzet
 csak éppen fordított előjellel: Ki kell választania azt a lépést, amivel fekete
 legerősebb válasza esetén a rating minimális.
 
-Fekete (a sok lehetőség közül) választ egy lépést. Bármit is választ, az új
-pozícióban fehér választja a következőt, utána újra fekete, és így tovább. 
-Bármely pozícióból kiindulva egy fát kapunk, az _elemző fát_.
-A fában fekete olyan úton halad a levelek felé, mely úton a maximális rating érhető el. 
+Fekete  számos lehetőség közül választ. Bármit is választ, az új
+pozícióban fehér választja a következő lépést, utána újra fekete, újra fehér, és így tovább. 
+A lehetséges lépéssorozatokat ábrázoló gráfot hívjuk _elemzőfának_.
+Fekete a maximális ratinget igérő úton halad a fa gyökerétől a levelek felé. 
 Fehér ezzel szemben a minimális rating felé vezető útra terel.
 
-A hasonló fákban való optimum keresés kombinatórikus optimalizálási feladat, 
+A hasonló fákban való optimum keresés kombinatorikus optimalizálási feladat, 
 amit a minimax néven ismert algoritmussal oldunk meg. A minimax algoritmus leírását 
 megnézhetjük például itt: [https://en.wikipedia.org/wiki/Minimax](https://en.wikipedia.org/wiki/Minimax).
-
-Szerencsére nem szükséges, hogy az elemzőfa minden pontját kiértékeljük.
+Nincs szükség az elemzőfa minden pontjának kiértékelésére.
 Egy ügyes trükk segítségével, az _alfa-béta vágással_, kb. felére lehet csökkenteni
-a számítások mennyiségét. Az alfa-béta vágásról olvashatunk például itt:
+a számítások mennyiségét. Az alfa-béta vágásról olvashatunk itt:
 [https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning).
 
 
 #### 2) Pozíciók statikus értékelése
 
 Gondolhatnánk, hogy készen is vagyunk. Bejárjuk a teljes elemzőfát.
-A fa levelein ismerjük a rating értékét: egyik vagy másik fél nyert, esetleg
+A fa levelein ismerjük a rating értékét: Egyik vagy másik fél nyert, esetleg
 döntetlen, ha a tábla betelt, mielőtt bárki nyert volna. A minimax
 algoritmus minden állásban megadja az optimumhoz vezető lépéseket.
 
@@ -120,7 +119,7 @@ olyan alakzat, amiben a fehér egylépéses nyerése lehetséges. Ez egy nagyon
 Ha fehér van lépésen, akkor lehetősége van olyan alakzatot létrehozni,
 ami kétféle módon is egylépéses nyeréssel fenyeget. Ez is nagyon értékes 
 alakzat, bár egy fokkal kevésbé értékes, mint az előző. Az Amoeba program 
-az ilyen alakzatok minden fajtáját rendszerezi, számon tartja és kezeli.     
+az ilyen alakzatok minden fajtáját rendszerezi, számon tartja, kezeli.     
 
 A tábla minden mezője nyolc alakzatban szerepel.  Kelet, Ék, É, Dk négy irány,
 négy alakzat, szorozva kettővel, mert mindkét játékos alakzataira figyelni kell.
@@ -152,22 +151,23 @@ túl lassan. Az Amoeba  a mezőkhöz tartozó alakzatok pontértéke alapján
 választja ki a fontos mezőket.
 
 
-Összegzésként megállapíthatjuk, hogy a játék (más hasonló játékokkal egyezően) 
-három egymásra épülő komponenssel dolgozik:
+Összegzésként megállapíthatjuk, hogy a játékot (más hasonló játékokkal egyezően) 
+három egymásra épülő komponens alkotja:
 
-   - kombinálás minimax algoritmussal
+   - minimax algoritmus
    - statikus állás értékelés
    - lépés kiválasztás
 
 A statikus állás értékelés értéket rendel az elemzőfa leveleihez.
 A fontosnak vélt lépésekhez tartozó érték a minimax algoritmusból adódik.
+
 A minimax algoritmuson nincs sok töprengeni való, úgy kell leprogramozni,
 ahogy a korábbi linkekben le van írva. A program játékereje azon múlik,
 hogy a statikus állás értékelés és a lépés kiválasztás milyen jól
 van eltalálva.
 
 Ezért eshet meg, hogy a program, noha értelmesen játszik, mégsem elég erősen. 
-A minimax kombinálás akkor is az értelem látszatát kölcsönzi a programnak,
+A minimax kombinálás akkor is értelem látszatát kölcsönzi a programnak,
 ha a másik két komponens viszonylag gyönge. A végállásokban mindig egyértelmű, 
 ki a nyerő, ez már egy már ad egy minimális támpontot, ami alapján a minimax jó 
 irányba terel. Ettől élvezetes program az Amoeba. Olyan, mintha volna ott valaki, 
@@ -175,11 +175,11 @@ aki gondolkodik. Persze nincs, de mégis olyan. Pedig ez még csak nem is AI.
 
 
 ---------------------------------------------------------------------------------
-## Az Amoeba program kezelése
+## A program kezelése
 
 A tábla mérete 16x16. Lehetne akármekkora, de általában ennyi is elég.
 Nem olyan érdekes a játék, hogy ennél többet adjunk neki.
-A tábla bármely mezejére egér balgombbal elhelyezhetjük a soron levő
+A tábla bármely szabad mezejére egér balgombbal elhelyezhetjük a soron levő
 játékos kövét, feltéve, hogy a program éppen nem gondolkodik.
 
 A jobb felső sarokban levő kétállapotú (Ready/Thinking) gomb mutatja,
@@ -201,13 +201,13 @@ Ha a program Ready állapotban van, akkor:
 
   - Teach checkboxszal beállíthatjuk, hogy mutassa a lépést,
     amin éppen gondolkodik. Ha ki van kapcsolva, akkor a humán játékosnak 
-    nem sok esélye marad. Ha konzolból futatjuk, akkor teach módban
+    nem sok esélye marad. Ha konzolból futtatjuk, akkor teach módban
     infót listáz a kiértékelt mezőkben talált alakzatokról.
 
   - A Teach alatti listboxban beállíthatjuk az elemzőfa méretét.
-    Auto beállításnál a program a lépészám előrehaladtával
-    egyre terjedelmesebb elemzőfát használ. Nem érdemes túl nagyra
-    választani a fát, mert lassú lesz a program. Windowson különösen lassú.
+    Auto beállításnál a program a lépésszám előrehaladtával
+    egyre terjedelmesebb elemzőfát használ. Nem érdemes  túl nagy fát
+    választani, mert lassú lesz a program. Windowson különösen lassú lesz.
     
   - New gomb kiüríti a táblát, új játék kezdhető.
   
@@ -249,7 +249,7 @@ Windows 10-re lefordított, MSYS2 és CCC környezet nélkül futtatható zip cs
 tölthető le innen: [http://comfirm.hu/pub/amoeba.zip](http://comfirm.hu/pub/amoeba.zip)
    
 
-Hangsúlyozom, hogy a program elsősorban linuxos. A windowos verzió halovány
+Hangsúlyozom, hogy a program elsősorban linuxos. A windowsos verzió halvány
 árnyéka a linuxosnak. Eleve Windowson minden ötször lassabb. Ez annak ellenére van így, 
 hogy az `amoeba.exe` és a hozzá tartozó `dll`-ek natív Windows programok, 
 nincs szó valamiféle Linux emulációról. 
@@ -260,5 +260,6 @@ elfogadhatóan működik.
 
 
 ---------------------------------------------------------------------------------
+
 
 
