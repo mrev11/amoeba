@@ -22,8 +22,8 @@
 #include "gtk.ch"
 
 #include "amoeba.ch"
+#include "tabsize.ch"
 
-#define VERSION "Amoeba 1.3.0 for GTK+"
 
 static area
 static twostatelabel
@@ -31,16 +31,47 @@ static label_move
 static label_turn
 static label_rate
 
-static EXPOSE:=.f.
-static CELLSIZE:=cellsize()
-
 
 *****************************************************************************
-function main(amoebafile)
-    //printpid()
-    //printexe()
-    rand(seconds())
-    amoeba_gui(amoebafile)
+function main(*)
+
+local args:={*},n
+local size
+local file
+local game
+
+    for n:=1 to len(args)
+        if( args[n]=="-s" .and. n<len(args) )
+            size:=args[++n]::val
+
+        elseif( args[n]=="-f" .and. n<len(args) )
+            file:=args[++n]
+
+        elseif( file(args[n]) )
+            file:=args[n]
+
+        else
+            usage()
+        end
+    next
+
+    if( file!=NIL )
+        size:=memoread(file)::strtran("amoeba","")::val
+    end
+
+    if( size!=NIL )
+        tablesize(size)
+        cell_classinit()
+    end
+
+    amoeba_gui(file)
+
+
+******************************************************************************
+static function usage()
+    ? "usage: amoeba.exe [-s <tablesize>] [-f <amoebafile>]"
+    ?
+    quit
 
 
 ******************************************************************************
@@ -149,7 +180,6 @@ local hboxfill
     vboxrig:pack_start( hboxfill:=gtkhboxNew(.f.,0))
 
 
-
     button_move:signal_connect("clicked",{|w|cb_move(w)})
     button_back:signal_connect("clicked",{|w|cb_back(w)})
     button_forw:signal_connect("clicked",{|w|cb_forward(w)})
@@ -186,16 +216,16 @@ local hboxfill
     gtk.main()
     ?
 
-******************************************************************************
-function mainwindow(w)
-static window
-    if( w!=NIL )
-        window:=w
-    end
-    return window
 
 ******************************************************************************
-static function cb_button_release(area,event)
+function cb_expose(area,event)
+
+    // tapasztalat szerint
+    // gtk.main_stabilize()-ból
+    // meghívódik cb_expose()
+    // (akkor ez itt rekurzív?)
+
+    drawall()
 
 
 ******************************************************************************
@@ -206,18 +236,24 @@ local x,y,but,cx,fm,n
     if( validpos(event,@x,@y,@but) )
         if( but==1 )
             //left-button
+
+            if( movecount()==0 )
+                ? "RANDOMIZE",y,x
+                cell_randomize(y,x)
+            end
+
             if( !game_over() )
                 if( topcell()!=NIL )
                     drawcell(topcell()) // -> normal shape
                 end
                 cx:=y*TABLESIZE+x
                 forw(cx)
-                drawtop(cx)
+                drawtop()
                 label_turn()
             end
             if( winner()==32 )
                 cb_move()
-            end
+             end
 
         elseif( teach()>0 )
             //right-button
@@ -235,6 +271,10 @@ local x,y,but,cx,fm,n
             end
         end
     end
+
+
+******************************************************************************
+static function cb_button_release(area,event)
 
 
 ******************************************************************************
@@ -412,19 +452,6 @@ local x,n
     //end
     
 
-******************************************************************************
-function cb_expose(area,event)
-
-    EXPOSE:=.t.
-
-    // tapasztalat szerint
-    // gtk.main_stabilize()-ból
-    // meghívódik cb_expose()
-    // (akkor ez itt rekurzív?)
-
-    drawall()
-
-    EXPOSE:=.f.
 
 ******************************************************************************
 function label_move()
@@ -435,12 +462,17 @@ local m:=movecount()
 
 ******************************************************************************
 function label_turn()
-local m:=movecount()
-    if( (m%2)==0 )
-        label_turn:set_markup( "Turn: <span color='black'>"+SHAPE_X()+"</span>" )
+
+local mc:=movecount()
+local circle:=chr(0x25cf)
+local text:="Turn: <span size='x-large' color='COLOR'>"+circle+"</span>"
+
+    if( (mc%2)==0 )
+        text::=strtran("COLOR","black" )
     else
-        label_turn:set_markup( "Turn: <span color='white'>"+SHAPE_O()+"</span>" )
+        text::=strtran("COLOR","white" )
     end
+    label_turn:set_markup( text )
 
 
 ******************************************************************************
@@ -451,26 +483,30 @@ function label_rate(x)
 ******************************************************************************
 static function validpos(event,x,y,but)
 
+static cellsize  := DRAW_CELLSIZE
+static orig_x    := DRAW_ORIGO_X
+static orig_y    := DRAW_ORIGO_Y
+
 local xy:=gdk.event.get_coords(event)
 
     x:=xy[1]
     y:=xy[2]
     but:=gdk.event_button.get_button(event) //1,2,3 -- bal,köz,jobb
 
-    if( x%CELLSIZE<2 .or. x%CELLSIZE>CELLSIZE-2 )
+    if( x%cellsize<2 .or. x%cellsize>cellsize-2 )
         return .f.
-    elseif( y%CELLSIZE<2 .or. y%CELLSIZE>CELLSIZE-2 )
+    elseif( y%cellsize<2 .or. y%cellsize>cellsize-2 )
         return .f.
     end
 
-    x:=int(x/CELLSIZE)-1
-    y:=int(y/CELLSIZE)-1
+    x:=int(x/cellsize)-1
+    y:=int(y/cellsize)-1
 
-    if( x<0 .or. TABLESIZE<=x )
+    if( x<0 .or. tablesize()<=x )
         return .f.
-    elseif( y<0 .or. TABLESIZE<=y )
+    elseif( y<0 .or. tablesize()<=y )
         return .f.
-    elseif( figure(y*TABLESIZE+x)!=32 )
+    elseif( figure(y*tablesize()+x)!=32 )
         return .f.
     end
 
@@ -478,8 +514,28 @@ local xy:=gdk.event.get_coords(event)
 
 
 ******************************************************************************
+function mainwindow(w)
+static window
+    if( w!=NIL )
+        window:=w
+    end
+    return window
+
+
+******************************************************************************
 function drawingarea()
     return area
+
+
+******************************************************************************
+function tablesize(ts)
+static tablesize:=DRAW_TABSIZE
+    if( ts!=NIL .and. 12<=ts .and. ts<=24 )
+        tablesize:=ts
+        cairo_settabsize(ts)
+        cell_settabsize(ts)
+    end
+    return tablesize
 
 
 ******************************************************************************

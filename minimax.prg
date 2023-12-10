@@ -40,7 +40,7 @@ local x,v,n
 
     if( NIL!=x )
         forw(x)
-        for n:=1 to 5
+        for n:=1 to 3
             drawcell(x)
             sleep(80)
             drawtop(x)

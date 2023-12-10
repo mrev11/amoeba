@@ -19,6 +19,12 @@
  */
 
 
+
+#define MAXTABLE    24
+#define MAXCELLS    MAXTABLE*MAXTABLE
+#define MAXBEST     64
+
+
 struct BEST
 {
     int cx;
@@ -26,8 +32,6 @@ struct BEST
     int vt;    // turn
     int vs;    // sum
 };
-
-#define MAXBEST 64
 
 
 struct cell
@@ -42,24 +46,26 @@ struct cell
     int fieldval[2];                    // cella értrék a két játékosra: [0]='O', [1]='X'
     int valuedir[2];                    // milyen irányú a legértékesebb alakzat
 
-
     cell(int r, int c);                 // konstruktor
 
-    cell  *set();                       // felteszi magát a táblára
-    void  calcval();                    // kiszámítja a saját értékét
-    void  modval();                     // újraszámolja a szomszéd cellák értékét
+    double calcdist(int r, int c);      // [r,c]-től vett távolság (perturbálva)
+    cell   *set();                      // felteszi magát a táblára
+    void   calcval();                   // kiszámítja a saját értékét
+    void   modval();                    // újraszámolja a szomszéd cellák értékét
 
     // osztály adatok
     static int  init;                   // osztály adatok inicializálása 
-    static cell *cells[ROWCOL];         // az összes cella tömbje (ez maga a tábla)
-    static int  spiral[ROWCOL];         // cellák középről kifele sorrendben (perturbálva)
-    static int  movestack[ROWCOL];      // stack a lépéseknek
+    static cell *cells[MAXCELLS];       // az összes cella tömbje (ez maga a tábla)
+    static int  spiral[MAXCELLS];       // cellák középről kifele sorrendben (perturbálva)
+    static int  movestack[MAXCELLS];    // stack a lépéseknek
     static int  movecount;              // lépésszám (stack pointer)
     static int  moveforw;               // eddig lehet előremenni (hátralépések után)
     static char winner;                 // ' ' vagy 'O' vagy 'X'
+    static int  tablesize;              // táblaméret (default=16)
     
     // osztály függvények
     static int  classinit();            // inicializálja az osztály adatokat
+    static void randomize(int,int);     // randomizálás 
     static cell *unset();               // leveszi az utolsó figurát a tábláról
     static int  movegen(int);           // megkeresi a fontos lépéseket
     static int  posvalue();             // statikus állás kiértékelés
@@ -73,5 +79,6 @@ struct cell
     static int  cmp_dist
             (void const*,void const*);  // melyik cella van távolabb a középtől
 };
+
 
 

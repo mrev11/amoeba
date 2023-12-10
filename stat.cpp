@@ -25,13 +25,13 @@
 #include <cccapi.h>
 
 #include <amoeba.ch>
+#include <tabsize.h>
 #include <pattern.h>
 #include <cell.h>
 
 
 // ezek nem kellenek a játékhoz
 // csak debugoláshoz hasznos adatokat írnak ki
-
 
 #ifdef WINDOWS
   typedef  wint_t  ARROW_T;

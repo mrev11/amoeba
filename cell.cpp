@@ -27,24 +27,29 @@
 #include <cccapi.h>
 
 #include <amoeba.ch>
+#include <draw.ch>
+#include <tabsize.h>
 #include <pattern.h>
 #include <cell.h>
 
 
 //--------------------------------------------------------------------------
 int     cell::init=cell::classinit();       // inicializálja az osztály adatokat
-cell  * cell::cells[ROWCOL];                // az összes cella tömbje (ez maga a tábla)
-int     cell::spiral[ROWCOL];               // cellák középről kifele sorendben
-int     cell::movestack[ROWCOL];            // lépések
+cell  * cell::cells[MAXCELLS];              // az összes cella tömbje (ez maga a tábla)
+int     cell::spiral[MAXCELLS];             // cellák középről kifele sorendben
+int     cell::movestack[MAXCELLS];          // lépések
 int     cell::movecount=0;                  // lépésszám
 int     cell::moveforw=0;                   // eddig lehet előremenni (hátralépések után)
 char    cell::winner= ' ';                  // ' ' vagy 'O' vagy 'X'
 BEST    cell::best[MAXBEST];                // movegen után a legjobb lépések
 int     cell::bestcnt;                      // lépések száma best-ben
+int     cell::tablesize=DRAW_TABSIZE;       // táblaméret
 
 //--------------------------------------------------------------------------
 int cell::classinit() // inicializálja az osztály adatokat
 {
+    //printf("CLASSINIT\n");
+
     ponttab_init();
 
     int i,j;
@@ -59,9 +64,19 @@ int cell::classinit() // inicializálja az osztály adatokat
         cell::spiral[n]=n;
         cell::cells[n]->modval();
     }
-    qsort(cell::spiral,ROWCOL,sizeof(int),cell::cmp_dist);
+    cell::randomize(TABLESIZE/2,TABLESIZE/2);
 
     return 1;
+}
+
+//--------------------------------------------------------------------------
+void cell::randomize( int r, int c ) // újragenerálja a dist tagokat és rendezi a spirált
+{
+    for( int cx=0; cx<ROWCOL; cx++ )
+    {
+        cell::cells[cx]->calcdist(r,c);
+    }
+    qsort(cell::spiral,ROWCOL,sizeof(int),cell::cmp_dist);
 }
 
 //--------------------------------------------------------------------------
@@ -71,10 +86,7 @@ cell::cell(int r, int c)  // konstruktor (inicializálja az objektumokat)
     col=c;
     figure=' ';
     count=row*MAXCOL+col;
-
-    unsigned char d;
-    RAND_bytes(&d,1); 
-    dist=abs(row-TABLESIZE/2)+abs(col-TABLESIZE/2)+(int)d/256.0;
+    calcdist(TABLESIZE/2,TABLESIZE/2);
 
     for( int i=0; i<4; i++ )
     {
@@ -87,6 +99,15 @@ cell::cell(int r, int c)  // konstruktor (inicializálja az objektumokat)
     fieldval[1]=0;
 
     cell::cells[count]=this;
+}
+
+//--------------------------------------------------------------------------
+double cell::calcdist(int r, int c) // távolság a cx cellától
+{
+    unsigned char d;
+    RAND_bytes(&d,1); 
+    dist=abs(row-r)+abs(col-c)+(int)d/256.0;
+    return dist;
 }
 
 //--------------------------------------------------------------------------
@@ -200,6 +221,7 @@ void cell::modval() // újraszámolja a szomszéd cellák értékét
         if(c->figure==' ') c->calcval();
     }
 }
+
 
 
 //--------------------------------------------------------------------------
@@ -405,6 +427,11 @@ void _clp_c_cb_forward(int argno)
     {
         cell *c=cell::cells[cell::movestack[cell::movecount]];
         c->set();
+        if( cell::movecount==1 )
+        {
+            printf("HOPP\n");
+        }
+        
     }
     _ret();
     CCC_EPILOG();
@@ -414,18 +441,8 @@ void _clp_c_cb_forward(int argno)
 void _clp_c_cb_new( int argno )
 {
     CCC_PROLOG("c_cb_new",1);
-    cell *c;
-    while( (c=cell::unset())!=0 );
-
-    for( int i=0; i<ROWCOL; i++ ) 
-    {
-        c=cell::cells[i];
-        unsigned char d;
-        RAND_bytes(&d,1); 
-        c->dist=abs(c->row-TABLESIZE/2)+abs(c->col-TABLESIZE/2)+(int)d/256.0;
-    }
-    qsort(cell::spiral,ROWCOL,sizeof(int),cell::cmp_dist);
-
+    while( cell::unset()!=0 );
+    cell::randomize(TABLESIZE/2,TABLESIZE/2);
 
     if( !ISNIL(1) )
     {
@@ -438,6 +455,35 @@ void _clp_c_cb_new( int argno )
         }
         cell::moveforw=cell::movecount;
     }
+    _ret();
+    CCC_EPILOG();
+}
+
+//--------------------------------------------------------------------------
+void _clp_cell_settabsize(int argno)
+{
+    CCC_PROLOG("cell_settabsize",1);
+    cell::tablesize=_parni(1);
+    _ret();
+    CCC_EPILOG();
+}
+
+//--------------------------------------------------------------------------
+void _clp_cell_classinit(int argno)
+{
+    CCC_PROLOG("cell_classinit",0);
+    cell::classinit();
+    _ret();
+    CCC_EPILOG();
+}
+
+//--------------------------------------------------------------------------
+void _clp_cell_randomize(int argno)
+{
+    CCC_PROLOG("cell_randomize",0);
+    int row=_parni(1);
+    int col=_parni(2);
+    cell::randomize(row,col);
     _ret();
     CCC_EPILOG();
 }

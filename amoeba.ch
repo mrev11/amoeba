@@ -18,11 +18,11 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "draw.ch"
 
-#define TABLESIZE       16
-#define MAXROW          TABLESIZE
-#define MAXCOL          TABLESIZE
-#define ROWCOL          TABLESIZE*TABLESIZE
+#define VERSION "Amoeba 1.4.0 for GTK+"
+
+#define CELLSIZE        DRAW_CELLSIZE
 
 #define PVALUE_INFIN    9999
 #define PVALUE_EGY       100

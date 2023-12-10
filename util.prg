@@ -22,6 +22,8 @@
 #include "gtk.ch"
 
 #include "amoeba.ch"
+#include "tabsize.ch"
+
 
 ******************************************************************************
 function printpid()

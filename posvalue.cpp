@@ -27,8 +27,10 @@
 #include <cccapi.h>
 
 #include <amoeba.ch>
+#include <tabsize.h>
 #include <pattern.h>
 #include <cell.h>
+
 
 //--------------------------------------------------------------------------
 int cell::posvalue() //statikus állásértékelés
