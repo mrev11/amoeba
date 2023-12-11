@@ -182,10 +182,31 @@ aki gondolkodik. Persze nincs, de mégis olyan. Pedig ez még csak nem is AI.
 ---------------------------------------------------------------------------------
 ## A program kezelése
 
-A tábla mérete 16x16. Lehetne akármekkora, de általában ennyi is elég.
+#### Indítás
+
+Így indítjuk a programot:
+
+        amoeba.exe [-t <tablesize>] [-p <power>] [<amoebafile>]
+
+Miinden paraméter opcionális. A paraméterek default értéke:
+
+  - tablesize: 16
+  - power: 0 (auto)
+  - amoebafile: üres             
+
+Ha meg van adva, akkor betölti az `<amoebafile>-t`,  és folyathatjuk a játékot, 
+vagy elemezhetjük az állást. Ha a `<tablesize>` nincs összhangban azzal a táblával, 
+amin a betöltendő játékot eredetileg játszották (és mentették),
+akkor a táblaméretet a játékhoz igazítja.            
+
+
+#### Interakció
+
+Általában 16x16-s táblán játszunk.
 Nem olyan érdekes a játék, hogy ennél többet adjunk neki.
 A tábla bármely szabad mezejére egér balgombbal elhelyezhetjük a soron levő
 játékos kövét, feltéve, hogy a program éppen nem gondolkodik.
+
 
 A jobb felső sarokban levő kétállapotú (Ready/Thinking) gomb mutatja,
 hogy a program kész fogadni az inputot, vagy el van foglalva a számításokkal.
@@ -216,7 +237,9 @@ Ha a program Ready állapotban van, akkor:
     
   - New gomb kiüríti a táblát, új játék kezdhető.
   
-  - Load gombbal betölthetünk egy korábban elmentett állást.
+  - Load gombbal betölthetünk egy korábban elmentett állást. 
+    Csak olyan állást tölt be, aminek a táblamérete azonos
+    az aktuális táblamérettel.
   
   - Save gomb elmenti az aktuális állást.
 
@@ -237,6 +260,7 @@ CCC-ben van
 C++-ban van
 
   - a táblán levő állás és az alakzatok nyilvántartása,
+  - a tábla és a kövek kirajzolása ([Cairo](https://en.wikipedia.org/wiki/Cairo_(graphics)) könyvtárral),
   - a statikus állás értékelés,
   - a lépés kiválasztás.    
     

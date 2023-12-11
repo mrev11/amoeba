@@ -143,7 +143,22 @@ irányba terel. Ettől élvezetes program az Amoeba. Olyan, mintha volna ott val
 aki gondolkodik. Persze nincs, de mégis olyan. Pedig ez még csak nem is AI.</p>
 <hr />
 <h2>A program kezelése</h2>
-<p>A tábla mérete 16x16. Lehetne akármekkora, de általában ennyi is elég.
+<h4>Indítás</h4>
+<p>Így indítjuk a programot:</p>
+<pre><code>    amoeba.exe [-t &lt;tablesize&gt;] [-p &lt;power&gt;] [&lt;amoebafile&gt;]
+</code></pre>
+<p>Miinden paraméter opcionális. A paraméterek default értéke:</p>
+<ul>
+<li>tablesize: 16</li>
+<li>power: 0 (auto)</li>
+<li>amoebafile: üres             </li>
+</ul>
+<p>Ha meg van adva, akkor betölti az <code>&lt;amoebafile&gt;-t</code>,  és folyathatjuk a játékot, 
+vagy elemezhetjük az állást. Ha a <code>&lt;tablesize&gt;</code> nincs összhangban azzal a táblával, 
+amin a betöltendő játékot eredetileg játszották (és mentették),
+akkor a táblaméretet a játékhoz igazítja.            </p>
+<h4>Interakció</h4>
+<p>Általában 16x16-s táblán játszunk.
 Nem olyan érdekes a játék, hogy ennél többet adjunk neki.
 A tábla bármely szabad mezejére egér balgombbal elhelyezhetjük a soron levő
 játékos kövét, feltéve, hogy a program éppen nem gondolkodik.</p>
@@ -184,7 +199,9 @@ amíg végez, megteszi a lépését, és Ready állapotba kerül.</p>
 <p>New gomb kiüríti a táblát, új játék kezdhető.</p>
 </li>
 <li>
-<p>Load gombbal betölthetünk egy korábban elmentett állást.</p>
+<p>Load gombbal betölthetünk egy korábban elmentett állást. 
+    Csak olyan állást tölt be, aminek a táblamérete azonos
+    az aktuális táblamérettel.</p>
 </li>
 <li>
 <p>Save gomb elmenti az aktuális állást.</p>
@@ -203,6 +220,7 @@ amíg végez, megteszi a lépését, és Ready állapotba kerül.</p>
 <p>C++-ban van</p>
 <ul>
 <li>a táblán levő állás és az alakzatok nyilvántartása,</li>
+<li>a tábla és a kövek kirajzolása (<a href="https://en.wikipedia.org/wiki/Cairo_(graphics)">Cairo</a> könyvtárral),</li>
 <li>a statikus állás értékelés,</li>
 <li>a lépés kiválasztás.    </li>
 </ul>

@@ -94,7 +94,10 @@ local top,fig
 ******************************************************************************
 function drawall()
 local cx,top
+
     cairo_drawgrid(area:gobject)
+    scale()
+
     top:=topcell()
     for cx:=0 to ROWCOL-1
         if( cx!=top )
@@ -145,5 +148,32 @@ static function numlayout(x)
 local label:=gtklabelNew(x::str::alltrim)
     return label:get_layout()
 
+
+******************************************************************************
+static function scale()
+
+local draw:=area:get_drawable
+local gc:=makegc("#000000")
+local i,x,y,dx,dy
+
+    for i:=0 to TABLESIZE-1
+        dx:=CELLSIZE*0.2
+        dy:=CELLSIZE*0.2
+
+        x:=dx + (i+1)*CELLSIZE
+        y:=dy + 0
+
+        gdk.drawable.draw_layout(draw,gc,x,y,numlayout(i))
+    next
+
+    for i:=0 to TABLESIZE-1
+        dx:=CELLSIZE*0.2+if(i<10,10,0)
+        dy:=CELLSIZE*0.1
+
+        x:=dx + 0
+        y:=dy + (i+1)*CELLSIZE
+
+        gdk.drawable.draw_layout(draw,gc,x,y,numlayout(i))
+    next
 
 ******************************************************************************

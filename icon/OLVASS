@@ -1,0 +1,17 @@
+
+AMOEBA ikon rajzoló program
+
+amoeba-icon.exe -> amoeba.svg
+figure.exe      -> black.svg, white.svg
+
+eog(save-as)    -> amoeba.ico
+                -> amoeba.png
+                -> black.png
+                -> white.png
+
+Linuxon megfelelne az eredeti svg.
+
+Windowson a shortcutok ikonja kötelezően ico.
+Windowson a GTK pixbuf loader nem jól működik svg-re.
+Ezért a Windows kedvéért ico-ra és png-re van megírva a program.
+

@@ -30,6 +30,7 @@ static twostatelabel
 static label_move
 static label_turn
 static label_rate
+static power:=0
 
 
 *****************************************************************************
@@ -41,11 +42,11 @@ local file
 local game
 
     for n:=1 to len(args)
-        if( args[n]=="-s" .and. n<len(args) )
+        if( args[n]=="-t" .and. n<len(args) )
             size:=args[++n]::val
 
-        elseif( args[n]=="-f" .and. n<len(args) )
-            file:=args[++n]
+        elseif( args[n]=="-p" .and. n<len(args) )
+            power:=args[++n]::val::max(0)::min(8)
 
         elseif( file(args[n]) )
             file:=args[n]
@@ -69,7 +70,13 @@ local game
 
 ******************************************************************************
 static function usage()
-    ? "usage: amoeba.exe [-s <tablesize>] [-f <amoebafile>]"
+    ?
+    ? "Usage: amoeba.exe [-t <tablesize>] [-p <power>] [<amoebafile>]  "
+    ?
+    ? "defaults:"
+    ? "     tablesize  - 16"
+    ? "     power      - 0 (=auto)"
+    ? "     amoebafile - empty"
     ?
     quit
 
@@ -133,7 +140,8 @@ local hboxfill
     vboxlef:pack_start( hboxlab:=gtkhboxNew(.f.,0) )
 
     hboxlab:pack_start( label_move:=gtklabelNew() )
-    hboxlab:pack_start( label_turn:=gtklabelNew() )
+    //hboxlab:pack_start( label_turn:=gtklabelNew() )
+    hboxlab:pack_start( label_turn:=gtkhboxNew() )
     hboxlab:pack_start( label_rate:=gtklabelNew() )
 
 
@@ -150,13 +158,10 @@ local hboxfill
 
     hboxsep:set_size_request(0,10)
 
-    label_move:set_size_request(150,-1)
-    label_turn:set_size_request(150,-1)
-    label_rate:set_size_request(150,-1)
+    label_move:set_size_request(250,-1)
+    label_turn:set_size_request(50,-1)
+    label_rate:set_size_request(250,-1)
 
-    //label_move:set_alignment(0.2,0.5) //balra
-    //label_turn:set_alignment(0.2,0.5) //balra
-    //label_rate:set_alignment(0.2,0.5) //balra
     label_move()
     label_rate(0)
 
@@ -198,7 +203,7 @@ local hboxfill
     combo:append_text(POW6)
     combo:append_text(POW7)
     combo:append_text(POW8)
-    combo:set_active(0)
+    combo:set_active(power)
 
     button_new:signal_connect("clicked",{|w|cb_new(w,combo)})
     button_load:signal_connect("clicked",{||cb_load(window)})
@@ -258,9 +263,8 @@ local x,y,but,cx,fm,n
         elseif( teach()>0 )
             //right-button
             if( winner()==32 )
-                drawall()
                 fm:=movegen(9)
-                ? "###";?//;fflush()
+                ? "###";?
                 for n:=1 to len(fm)
                     drawnum(fm[n],n)
                     c_cb_button_press_stat(fm[n])
@@ -380,7 +384,7 @@ local amoeba:="amoeba"+TABLESIZE::str::alltrim
         c_cb_new(cells)
         drawall()
         label_move(0)
-        label_turn(0)
+        label_turn()
         label_rate(0)
     end
 
@@ -450,7 +454,7 @@ local x,n
     //    drawtop(x)
     //    sleep(200)
     //end
-    
+
 
 
 ******************************************************************************
@@ -463,10 +467,38 @@ local m:=movecount()
 ******************************************************************************
 function label_turn()
 
+static label
+static image
+static black
+static white
+
+local mc:=movecount()
+
+    if( label==NIL )
+        label:=gtklabelNew("Turn:")
+        label_turn:pack_start(label)
+        black:=gtk.image.new_from_file("black.png")
+        white:=gtk.image.new_from_file("white.png")
+        gtk.gobject.ref(black) // increase ref number
+        gtk.gobject.ref(white) // increase ref number
+    end
+
+    if( image!=NIL )
+        label_turn:remove(image) // destroy object
+    end
+    if( (mc%2)==0 )
+        image:=black
+    else
+        image:=white
+    end
+    label_turn:pack_end(image)
+    label_turn:show_all
+
+
+function old_label_turn()
 local mc:=movecount()
 local circle:=chr(0x25cf)
 local text:="Turn: <span size='x-large' color='COLOR'>"+circle+"</span>"
-
     if( (mc%2)==0 )
         text::=strtran("COLOR","black" )
     else

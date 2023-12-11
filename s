@@ -3,4 +3,4 @@ cd ~/amoeba
 . ~/envccc
 clear
 
-amoeba.exe "$@" | tee log-amoeba
+amoeba.exe  -p 3  "$@" | tee log-amoeba

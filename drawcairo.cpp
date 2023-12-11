@@ -45,8 +45,11 @@ void _clp_cairo_drawgrid(int argno)
 
     DRAW_BLACK(cr);
 
+/*
+    //kihagyva, mert nem lehet normális fontot választani
+
     char buf[128];
-    cairo_select_font_face(cr,"",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_NORMAL);
+    //cairo_select_font_face(cr,"",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_NORMAL);
     cairo_set_font_size(cr,16.0);
     for( int i=0; i<tablesize; i++)
     {
@@ -62,7 +65,7 @@ void _clp_cairo_drawgrid(int argno)
                        origo_y-cellsize*0.3);
         cairo_text_path(cr,buf);
     }
-
+*/
 
     cairo_set_line_width(cr,1);
     for( int i=0; i<=tablesize; i++)
