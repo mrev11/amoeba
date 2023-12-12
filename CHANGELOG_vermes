@@ -1,4 +1,8 @@
 2023-12-12
+  stackeli a ratinget: back/forw mutatja, hogy mi volt az értéke;
+  menti/visszatölti a ratinget: az amoeba fájl formátuma változott;
+
+2023-12-12
   env: AMOEBA_CONTINUOUS_PLAY=true folyamatosan játszik; 
   env: AMOEBA_POWER_WHITE=1..8 fehérrel ezen a szinten játszik;
   env: AMOEBA_POWER_BLACK=1..8 feketével ezen a szinten játszik;

@@ -289,11 +289,11 @@ void _clp_movegen(int argno)
     int cnt=0;
     if( (cell::movecount&1)==0 )
     {
-        cnt=cell::movegen1(total);    // black
+        cnt=cell::movegen(total); // black
     }
     else
     {
-        cnt=cell::movegen(total);   // white
+        cnt=cell::movegen(total); // white
     }
     for(int i=0;i<cnt; i++)
     {
@@ -304,6 +304,9 @@ void _clp_movegen(int argno)
     CCC_EPILOG();
 }
 
+// megjegyzés:
+// a különböző lépésgenerálások egymás ellen játszathatók
+// ehhez bele kell itt nyúlni a forrásba és újrafordítani
 
 //--------------------------------------------------------------------------
 void _clp_movegen1(int argno) //alternatív movegen (egymás ellen játszathatók)

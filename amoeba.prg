@@ -31,7 +31,7 @@ static label_move
 static label_turn
 static label_rate
 static power:=0
-
+static rating
 
 *****************************************************************************
 function main(*)
@@ -64,6 +64,9 @@ local game
         tablesize(size)
         cell_classinit()
     end
+
+    rating:=array(ROWCOL+1)
+    rating::afill(0)
 
     amoeba_gui(file)
 
@@ -308,7 +311,7 @@ local cx:=topcell()
         drawtop()
     end
     label_move()
-    label_rate(0)
+    label_rate()
 
 
 ******************************************************************************
@@ -321,6 +324,7 @@ local cx:=topcell()
     end
     drawtop()
     label_move()
+    label_rate()
 
 
 ******************************************************************************
@@ -359,53 +363,98 @@ local dlg,selected_file
 
 
 static function loadfile(selected_file)
-local cells,n
+local content
+local cells,rates,n
 local amoeba:="amoeba"+TABLESIZE::str::alltrim
 
     if( selected_file==NIL )
-        // nem választott
+        //? "nem választott"
+        return NIL
+    end   
+    
+    content:=memoread(selected_file)
 
-    elseif( empty(cells:=memoread(selected_file)) )
-        // nem létezik vagy üres
-
-    elseif( at(amoeba,cells)!=1  )
-        // nem amoeba fájl
-
-    //elseif( cells::str2bin::crc32::l2hex::padl(8,"0")!=selected_file::right(8)  )
-    // hibás CRC32
-    // így lehetne ellenőrizni a tartalom sértetlenségét
-    // de akkor kötelező volna a CRC32-es neveket használni
-
-    elseif( cells::=strtran(amoeba,""), cells::left(1)!="{" .or. cells::right(1)!="}" )
-        // hibás formátum
-
-    else
-        cells::=substr(2,len(cells)-2)::split
-        for n:=1 to len(cells)
-             cells[n]::=val
-        next
-        c_cb_new(cells)
-        drawall()
-        label_move(0)
-        label_turn()
-        label_rate(0)
+    if( empty(content) )
+        ? "nem létezik vagy üres"
+        return NIL
     end
+
+    if( at(amoeba,content)!=1  )
+        ? "nem amoeba fájl"
+        return NIL
+    end
+
+    // if( content::str2bin::crc32::l2hex::padl(8,"0")!=selected_file::right(8)  )
+    //  hibás CRC32
+    //  így lehetne ellenőrizni a tartalom sértetlenségét
+    //  de akkor kötelező volna a CRC32-es neveket használni
+    //  return NIL
+    // end
+    
+
+    content::=strtran(chr(13),"")    
+    content::=split(chr(10))
+    
+    if( content::len<3  )
+        ? "hibás formátum1"
+        return NIL
+    end
+    
+    cells:=content[2]
+    rates:=content[3]
+
+    if( cells::left(1)!="{" .or. cells::right(1)!="}" )
+        ? "hibás formátum2"
+        return NIL
+    end
+    cells::=substr(2,len(cells)-2)::split
+    for n:=1 to len(cells)
+         cells[n]::=val
+    next
+
+    if( rates::left(1)!="{" .or. rates::right(1)!="}" )
+        ? "hibás formátum3"
+        return NIL
+    end
+    rates::=substr(2,len(rates)-2)::split
+    for n:=1 to len(rates)
+         rates[n]::=val
+    next
+
+    for n:=1 to len(rates)
+        rating[n]:=rates[n]
+    next
+    c_cb_new(cells)
+    drawall()
+
+    label_move()
+    label_turn()
+    label_rate()
 
 
 ******************************************************************************
 static function cb_save(window)
-local dlg,selected_file
-local index:=0,cellid,cells:={},name
+local dlg,selected_file,name
+local index:=0,cellid,cells:={}
+local rates:=rating[1..movecount()+1]
 local amoeba:="amoeba"+TABLESIZE::str::alltrim
+local content:=""
 
     if(gtk.main_depth()>1);return NIL;end
 
     while( NIL!=(cellid:=cell(index++)) )
         aadd(cells,cellid)
     end
+
     cells::=any2str
-    cells:=amoeba+cells
-    name:=amoeba+"-"+cells::str2bin::crc32::l2hex::padl(8,"0")
+    rates::=any2str
+
+    content:=amoeba+chr(10)
+    content+=cells+chr(10)
+    content+=rates+chr(10)
+    content+=chr(winner())+chr(10)
+
+    name:=amoeba+"-"+content::str2bin::crc32::l2hex::padl(8,"0")
 
     selected_file:=selfil(name)
     if( selected_file==NIL )
@@ -423,7 +472,7 @@ local amoeba:="amoeba"+TABLESIZE::str::alltrim
     end
 
     if( selected_file!=NIL )
-        memowrit(selected_file,cells)
+        memowrit(selected_file,content)
     end
 
 
@@ -512,6 +561,12 @@ local text:="Turn: <span size='x-large' color='COLOR'>"+circle+"</span>"
 
 ******************************************************************************
 function label_rate(x)
+local mc1:=movecount()+1
+    if( x!=NIL )
+        rating[mc1]:=x
+    else
+        x:=rating[mc1]
+    end
     label_rate:set_markup( "Rating: <b>"+x::int::str::alltrim+"</b>" )
 
 
