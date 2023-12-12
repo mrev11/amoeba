@@ -18,8 +18,6 @@ void _clp_cairo_settabsize(int argno)
 {
     CCC_PROLOG("cairo_settabsize",1);
     tablesize=_parni(1);
-    printf("HOPP cairo %d\n",tablesize);
-
     _ret();
     CCC_EPILOG();
 }

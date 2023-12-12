@@ -1,3 +1,12 @@
+2023-12-12
+  env: AMOEBA_CONTINUOUS_PLAY=true folyamatosan játszik; 
+  env: AMOEBA_POWER_WHITE=1..8 fehérrel ezen a szinten játszik;
+  env: AMOEBA_POWER_BLACK=1..8 feketével ezen a szinten játszik;
+  opció: -t <tablesize> táblaméret
+  opció: -p <power> játékerő induláskor
+  movegen() és movegen1() alternatív lépésgeneráló módszer;
+  numlayout-ban megszüntetve a memóriavesztés;
+
 2023-12-10 Version 1.4.0,  rajzolás átírva cairo könyvtárra;
   különböző méretű táblák támogatása;
   a humán játékos kezdőlépése után új randomizálás;

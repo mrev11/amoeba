@@ -286,7 +286,31 @@ void _clp_movegen(int argno)
 {
     CCC_PROLOG("movegen",1);
     int total=_parni(1);
-    int cnt=cell::movegen(total);
+    int cnt=0;
+    if( (cell::movecount&1)==0 )
+    {
+        cnt=cell::movegen1(total);    // black
+    }
+    else
+    {
+        cnt=cell::movegen(total);   // white
+    }
+    for(int i=0;i<cnt; i++)
+    {
+        number( cell::best[i].cx ); 
+    }
+    array(cnt);
+    _rettop();
+    CCC_EPILOG();
+}
+
+
+//--------------------------------------------------------------------------
+void _clp_movegen1(int argno) //alternatív movegen (egymás ellen játszathatók)
+{
+    CCC_PROLOG("movegen1",1);
+    int total=_parni(1);
+    int cnt=cell::movegen1(total);
     for(int i=0;i<cnt; i++)
     {
         number( cell::best[i].cx ); 
@@ -427,10 +451,6 @@ void _clp_c_cb_forward(int argno)
     {
         cell *c=cell::cells[cell::movestack[cell::movecount]];
         c->set();
-        if( cell::movecount==1 )
-        {
-            printf("HOPP\n");
-        }
         
     }
     _ret();

@@ -68,6 +68,7 @@ struct cell
     static void randomize(int,int);     // randomizálás 
     static cell *unset();               // leveszi az utolsó figurát a tábláról
     static int  movegen(int);           // megkeresi a fontos lépéseket
+    static int  movegen1(int);          // megkeresi a fontos lépéseket (alternatív)
     static int  posvalue();             // statikus állás kiértékelés
 
     static BEST best[MAXBEST];          // a movegen által kiválasztott cellák

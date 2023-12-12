@@ -137,23 +137,27 @@ local gc:=gdk.gc.new(area:get_drawable)
 
 
 ******************************************************************************
-static function makelayout(x)
-local label:=gtk.label.new(x)
-    gtk.label.set_use_markup(label,.t.)
-    return gtk.label.get_layout(label)
+//static function makelayout(x)
+//local label:=gtk.label.new(x)
+//    gtk.label.set_use_markup(label,.t.)
+//    return gtk.label.get_layout(label)
 
 
 ******************************************************************************
-static function numlayout(x)
-local label:=gtklabelNew(x::str::alltrim)
-    return label:get_layout()
+static function numlayout(n) // n=0...99
+static label:=array(100)
+local  x:=n+1
+    if( label[x]==NIL )
+        label[x]:=gtklabelNew(n::str::alltrim)
+    end 
+    return label[x]:get_layout()
 
 
 ******************************************************************************
 static function scale()
 
+static gc:=makegc("#000000")
 local draw:=area:get_drawable
-local gc:=makegc("#000000")
 local i,x,y,dx,dy
 
     for i:=0 to TABLESIZE-1

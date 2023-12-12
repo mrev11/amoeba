@@ -27,6 +27,7 @@
 #include <cccapi.h>
 
 #include <amoeba.ch>
+#include <tabsize.h>
 #include <pattern.h>
 #include <cell.h>
 
@@ -35,7 +36,7 @@
 // a közbeiktatható lépésekkel
 
 //--------------------------------------------------------------------------
-int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
+int cell::movegen1(int total) //kikeresi a megadott számú "legfontosabb" mezőt
 {
     int turn=(cell::movecount&1)==0 ? 1:0;
     int oppo=(cell::movecount&1)==0 ? 0:1;

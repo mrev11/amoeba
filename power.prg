@@ -22,46 +22,88 @@
 
 #include "amoeba.ch"
 
+static width_current
 
-
-static width1:=powinit(POW1) 
-static width2:=powinit(POW2) 
-static width3:=powinit(POW3) 
-static width4:=powinit(POW4) 
-static width5:=powinit(POW5) 
-static width6:=powinit(POW6)
-static width7:=powinit(POW7)
-static width8:=powinit(POW8)
-
+static width:=init_width()
+static width_black:=init_width_black()
+static width_white:=init_width_white()
 static power
-static width
 
 
 *****************************************************************************
-function width() // elemzőfa aktuáőis szélessége
-    return width
+static function init_width()
+local w:=array(8)
+    w[1]:=powinit(POW1) 
+    w[2]:=powinit(POW2) 
+    w[3]:=powinit(POW3) 
+    w[4]:=powinit(POW4) 
+    w[5]:=powinit(POW5) 
+    w[6]:=powinit(POW6)
+    w[7]:=powinit(POW7)
+    w[8]:=powinit(POW8)
+    return w
+
+
+*****************************************************************************
+static function init_width_black()
+local p
+    if( !getenv("AMOEBA_POWER_BLACK")::empty )
+        p:=getenv("AMOEBA_POWER_BLACK")::val
+        p::=max(1)
+        p::=min(8)
+        ? "Black plays at power", p //, width[p]
+        return width[p]
+    end
+
+
+static function init_width_white()
+local p
+    if( !getenv("AMOEBA_POWER_WHITE")::empty )
+        p:=getenv("AMOEBA_POWER_WHITE")::val
+        p::=max(1)
+        p::=min(8)
+        ? "White plays at power:", p //, width[p]
+        return width[p]
+    end
+
+
+*****************************************************************************
+function width() // elemzőfa aktuális szélessége
+    return width_current
 
 
 *****************************************************************************
 function setwidth(movecount)
 local w
+    if( turn_x() .and. width_black!=NIL )
+        width_current:=width_black
 
-    if( power!=NIL )
-        width:=power
+    elseif( turn_o() .and. width_white!=NIL )
+        width_current:=width_white
+        
+    elseif( power!=NIL )
+        width_current:=power
+
     elseif( movecount<=2 )
-        width:=width1
+        width_current:=width[1]
+
     elseif( movecount<=4 )
-        width:=width2
+        width_current:=width[2]
+
     elseif( movecount<=8 )
-        width:=width3
+        width_current:=width[3]
+
     elseif( movecount<=16 )
-        width:=width4
+        width_current:=width[4]
+
     elseif( movecount<=32 )
-        width:=width5
+        width_current:=width[5]
+
     elseif( movecount<=64 )
-        width:=width6
+        width_current:=width[6]
+
     else
-        width:=width7
+        width_current:=width[7]
     end
 
 

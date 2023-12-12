@@ -264,7 +264,8 @@ local x,y,but,cx,fm,n
             //right-button
             if( winner()==32 )
                 fm:=movegen(9)
-                ? "###";?
+                ? "###"
+                ?
                 for n:=1 to len(fm)
                     drawnum(fm[n],n)
                     c_cb_button_press_stat(fm[n])
@@ -283,8 +284,9 @@ static function cb_button_release(area,event)
 
 ******************************************************************************
 static function cb_move()
+local cp:=.t.
     if(gtk.main_depth()>1);return NIL;end
-    if( !game_over() )
+    while( cp .and. !game_over() )
         twostatelabel:set_state(.f.)
         area:set_sensitive(.f.)
         go()
@@ -292,6 +294,7 @@ static function cb_move()
         twostatelabel:set_state(.t.)
         markmovecount()
         label_move()
+        cp:=getenv("AMOEBA_CONTINUOUS_PLAY")=="true"
     end
 
 

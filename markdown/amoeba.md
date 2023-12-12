@@ -188,7 +188,7 @@ aki gondolkodik. Persze nincs, de mégis olyan. Pedig ez még csak nem is AI.
 
         amoeba.exe [-t <tablesize>] [-p <power>] [<amoebafile>]
 
-Miinden paraméter opcionális. A paraméterek default értéke:
+Minden paraméter opcionális. A paraméterek default értéke:
 
   - tablesize: 16
   - power: 0 (auto)
