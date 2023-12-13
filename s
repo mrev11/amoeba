@@ -1,7 +1,7 @@
 #!/bin/bash
-#cd ~/amoeba
-#. ~/envccc
-#clear
+cd ~/amoeba
+. ~/envccc
+clear
 
 #export AMOEBA_CONTINUOUS_PLAY=true
 #export AMOEBA_POWER_WHITE=3

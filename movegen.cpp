@@ -46,6 +46,7 @@ int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
     int minv=-1;
     int maxturn=-1;
     int maxoppo=-1;
+    int maxoppo_cx=-1;
 
     for( int i=0; i<ROWCOL; i++ )
     {
@@ -65,6 +66,28 @@ int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
         if( vs<=minv && vt<PVALUE_KET1 )
         {
             continue;
+        }
+        
+        if( vt>=PVALUE_EGY )
+        {
+            // azonnali nyerés
+            cell::best[0].cx=cx;
+            cell::best[0].vo=vo;
+            cell::best[0].vt=vt;
+            cell::bestcnt=1;
+            return 1;
+        }
+
+        if( maxoppo_cx>=0 )
+        {
+            // azonnali vesztés lehetősége
+            // miatt semmi más nem érdekes
+            continue;
+        }
+        if( vo>=PVALUE_EGY && maxoppo_cx<0 )
+        {
+            // azonnali vesztés lehetősége
+            maxoppo_cx=cx;
         }
 
         maxturn=max(maxturn,vt);
@@ -110,6 +133,17 @@ int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
         }
     }
 
+    if( maxoppo_cx>=0 )
+    {
+        // azonnali vesztés hárítása
+        cell::best[0].cx=maxoppo_cx;
+        cell::best[0].vo=maxoppo;
+        cell::best[0].vt=0; //közömbös
+        cell::bestcnt=1;
+        return 1;
+    }
+
+
 
 //#define  NOTDEF
 #ifdef   NOTDEF
@@ -134,12 +168,7 @@ if( total>=7 )
 
     for( int i=0; i<cnt; )
     {
-        if( maxoppo>=PVALUE_EGY && cell::best[i].vs<PVALUE_EGY )
-        {
-            memmove(&cell::best[i],&cell::best[i+1],(cnt-i)*sizeof(BEST)); //delete
-            --cnt;
-        }
-        else if( maxoppo>=PVALUE_KET2 && cell::best[i].vs<PVALUE_KET1 )
+        if( maxoppo>=PVALUE_KET2 && cell::best[i].vs<PVALUE_KET1 )
         {
             memmove(&cell::best[i],&cell::best[i+1],(cnt-i)*sizeof(BEST)); //delete
             --cnt;
