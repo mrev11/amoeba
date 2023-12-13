@@ -158,6 +158,7 @@ void _clp_c_cb_button_press_stat(int argno)
 
         printf("\n");
         printf("\n");
+        fflush(0);
     }
     _ret();
     CCC_EPILOG();

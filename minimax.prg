@@ -19,6 +19,7 @@
  */
 
 #include "amoeba.ch"
+#include "tabsize.ch"
 
 static node
 static xbest
@@ -84,7 +85,7 @@ local x,v,n
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN)
     x:=xbest
 
-    ? turn(), "["+v::int::str(5)+"]", x::str(4), rc(x), node
+    ? turn(), "["+v::int::str(5)+"]", rc(x), node
 
     if( NIL!=x )
         forw(x)
@@ -101,8 +102,8 @@ local x,v,n
 *****************************************************************************
 static function minimax(depth,alfa,beta)
 
-local teach:=teach()
 local width:=width()
+local ilevel:=infolevel()
 local n,fm,x,v,xopt,vopt
 
     //width:={4} //debug
@@ -124,7 +125,7 @@ local n,fm,x,v,xopt,vopt
 
         for n:=1 to len(fm)
             if( forw(x:=fm[n]) )
-                if( teach>=depth )
+                if( ilevel>=depth )
                     drawalt(x)
                     sleep(100)
                 end
@@ -141,8 +142,8 @@ local n,fm,x,v,xopt,vopt
                 end
 
                 back()
-                debug(x,v,depth)
-                if( teach>=depth )
+                info(x,v,depth)
+                if( ilevel>=depth )
                     drawalt(x)
                 end
             end
@@ -160,7 +161,7 @@ local n,fm,x,v,xopt,vopt
         for n:=1 to len(fm)
             x:=fm[n]
             if( forw(x) )
-                if( teach>=depth )
+                if( ilevel>=depth )
                     drawalt(x)
                     sleep(100)
                 end
@@ -177,8 +178,8 @@ local n,fm,x,v,xopt,vopt
                 end
 
                 back()
-                debug(x,v,depth)
-                if( teach>=depth )
+                info(x,v,depth)
+                if( ilevel>=depth )
                     drawalt(x)
                 end
             end
@@ -201,11 +202,22 @@ local n,fm,x,v,xopt,vopt
 
 
 *****************************************************************************
-static function debug(x,v,depth)
-    if( depth==teach() )
-        ?? turn(),"["+v::str::alltrim+"]";?
-        c_cb_button_press_stat(x)
-        fflush()
+static function info(x,v,depth)
+local r,c
+    if( depth==infolevel() )
+        #define SHORT
+        #ifdef  SHORT
+            c:=x%MAXCOL
+            r:=(x-c)/MAXCOL
+            ?? turn(),;
+               "["+v::str(5)+"]",;
+               "{"+r::str(2)+","+c::str(2)+"}",;
+               node 
+            ?
+        #else
+            ?? turn(),"["+v::str::alltrim+"]";?
+            c_cb_button_press_stat(x)
+        #endif
     end
 
 

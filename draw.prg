@@ -111,6 +111,17 @@ local cx,top
 
 
 ******************************************************************************
+function drawclean(flag)
+static f:=.f.
+    if( flag!=NIL )
+        f:=flag
+    elseif( f )
+        drawall()
+        f:=.f.
+    end
+
+
+******************************************************************************
 function drawnum(cx,num)
 
 local i:=cx%TABLESIZE

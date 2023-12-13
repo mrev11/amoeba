@@ -4,7 +4,7 @@ cd ~/amoeba
 clear
 
 export AMOEBA_CONTINUOUS_PLAY=true
-export AMOEBA_POWER_WHITE=3
-export AMOEBA_POWER_BLACK=3
+export AMOEBA_POWER_WHITE=4
+export AMOEBA_POWER_BLACK=4
 
-amoeba.exe -t 16 -p 3  "$@" | tee log-amoeba
+amoeba.exe  "$@" | tee log-amoeba

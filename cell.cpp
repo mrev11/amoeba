@@ -250,7 +250,8 @@ int cell::cmp_best(void const *xp, void const *yp) // melyik cellában van ért�
 {
     BEST *x=(BEST*)xp;
     BEST *y=(BEST*)yp;
-    return y->vs - x->vs;
+    //return (y->vs) - (x->vs);  // passziv -> lassú
+    return (y->vs+y->vt/2) - (x->vs+x->vt/2); // aktív -> gyors
 }
 
 

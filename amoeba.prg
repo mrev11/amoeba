@@ -180,7 +180,7 @@ local hboxfill
     vboxrig:pack_start( button_back:=gtkbuttonNew_with_mnemonic_from_stock("_Back","gtk-go-back"))
     vboxrig:pack_start( button_forw:=gtkbuttonNew_with_mnemonic_from_stock("_Forward","gtk-go-forward"))
     vboxrig:pack_start( hboxsep2:=gtkhboxNew(.f.,0))
-    vboxrig:pack_start( button_check:=gtkcheckbuttonNew_with_mnemonic("_Teach") )
+    vboxrig:pack_start( button_check:=gtkcheckbuttonNew_with_mnemonic("_Info") )
     vboxrig:pack_start( button_eval:=gtkbuttonNew_with_mnemonic_from_stock("_Eval","gtk-execute") )
     vboxrig:pack_start( combo:=gtkcomboboxNew_text() )
     vboxrig:pack_start( hboxsep3:=gtkhboxNew(.f.,0))
@@ -194,7 +194,7 @@ local hboxfill
     button_forw:signal_connect("clicked",{|w|cb_forward(w)})
     button_eval:signal_connect("clicked",{|w|cb_eval(w)})
 
-    button_check:signal_connect("clicked",{|w|cb_teach(w)})
+    button_check:signal_connect("clicked",{|w|cb_info(w)})
     button_check:set_active(.t.)
 
     combo:signal_connect("changed",{|w|cb_power(w)})
@@ -270,7 +270,7 @@ local x,y,but,cx,fm,n
         //    // middle-button
         //    go_eval()
 
-        elseif( but==3 .and. teach()>0 )
+        elseif( but==3 .and. infolevel()>0 )
             //right-button
             if( winner()==32 )
                 fm:=movegen(9)
@@ -283,8 +283,8 @@ local x,y,but,cx,fm,n
                 cx:=y*TABLESIZE+x
                 c_cb_button_press_stat(cx)
                 c_cb_button_press_pos()
+                drawclean(.t.)
             end
-
         end
     end
 
@@ -313,6 +313,7 @@ local cp:=.t.
 static function cb_back(w)
 local cx:=topcell()
     if(gtk.main_depth()>1);return NIL;end
+    drawclean()
     if( cx!=NIL )
         c_cb_back()
         drawcell(cx)
@@ -326,6 +327,7 @@ local cx:=topcell()
 static function cb_forward(w)
 local cx:=topcell()
     if(gtk.main_depth()>1);return NIL;end
+    drawclean()
     c_cb_forward()
     if( cx!=NIL )
         drawcell(cx)
@@ -337,6 +339,7 @@ local cx:=topcell()
 
 ******************************************************************************
 static function cb_eval()
+    drawclean()
     go_eval()
 
 ******************************************************************************
@@ -489,11 +492,11 @@ local content:=""
 
 
 ******************************************************************************
-static function cb_teach(w)
-    //? "cb_teach", gtk.main_depth()
+static function cb_info(w)
+    //? "cb_info", gtk.main_depth()
     //if(gtk.main_depth()>1);return NIL;end
     //engedni kell a rekurziót
-    teach(w:get_active)
+    infolevel(w:get_active)
 
 
 ******************************************************************************

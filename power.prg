@@ -129,15 +129,15 @@ local n
 
 
 *****************************************************************************
-function teach(t)
-static teach:=.t.
+function infolevel(t)
+static level:=.t.
     if( t!=NIL )
-        teach:=t
+        level:=t
     end
 
-    if( !teach  )
+    if( !level  )
         return 0
-    elseif( width::len<16 )
+    elseif( width_current::len<16 )
         return 1
     else
         return 2
