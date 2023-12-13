@@ -45,6 +45,10 @@ BEST    cell::best[MAXBEST];                // movegen után a legjobb lépések
 int     cell::bestcnt;                      // lépések száma best-ben
 int     cell::tablesize=DRAW_TABSIZE;       // táblaméret
 
+int     cell::save_move[MAXCELLS];          // lépések
+int     cell::save_count=0;                 // lépésszám
+int     cell::save_forw=0;                  // eddig lehet előremenni (hátralépések után)
+
 //--------------------------------------------------------------------------
 int cell::classinit() // inicializálja az osztály adatokat
 {
@@ -223,7 +227,6 @@ void cell::modval() // újraszámolja a szomszéd cellák értékét
 }
 
 
-
 //--------------------------------------------------------------------------
 // osztály függvények
 //--------------------------------------------------------------------------
@@ -269,6 +272,30 @@ int cell::cmp_dist(void const *x, void const *y) // melyik cella van távolabb a
     }
     return 0;
 }
+
+
+//--------------------------------------------------------------------------
+void cell::save()
+{
+    for( int i=0; i<MAXCELLS; i++ )
+    {
+        cell::save_move[i]=cell::movestack[i];
+    }
+    cell::save_count=cell::movecount;
+    cell::save_forw=cell::moveforw;
+}
+
+//--------------------------------------------------------------------------
+void cell::restore()
+{
+    for( int i=0; i<MAXCELLS; i++ )
+    {
+        cell::movestack[i]=cell::save_move[i];
+    }
+    cell::movecount=cell::save_count;
+    cell::moveforw=cell::save_forw;
+}
+
 
 
 //--------------------------------------------------------------------------
@@ -496,6 +523,24 @@ void _clp_cell_classinit(int argno)
 {
     CCC_PROLOG("cell_classinit",0);
     cell::classinit();
+    _ret();
+    CCC_EPILOG();
+}
+
+//--------------------------------------------------------------------------
+void _clp_cell_save(int argno)
+{
+    CCC_PROLOG("cell_save",0);
+    cell::save();
+    _ret();
+    CCC_EPILOG();
+}
+
+//--------------------------------------------------------------------------
+void _clp_cell_restore(int argno)
+{
+    CCC_PROLOG("cell_restore",0);
+    cell::restore();
     _ret();
     CCC_EPILOG();
 }

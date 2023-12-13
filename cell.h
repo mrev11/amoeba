@@ -62,6 +62,11 @@ struct cell
     static int  moveforw;               // eddig lehet előremenni (hátralépések után)
     static char winner;                 // ' ' vagy 'O' vagy 'X'
     static int  tablesize;              // táblaméret (default=16)
+
+    static int  save_move[MAXCELLS];    // stack a lépéseknek
+    static int  save_count;             // lépésszám (stack pointer)
+    static int  save_forw;              // eddig lehet előremenni (hátralépések után)
+
     
     // osztály függvények
     static int  classinit();            // inicializálja az osztály adatokat
@@ -70,6 +75,9 @@ struct cell
     static int  movegen(int);           // megkeresi a fontos lépéseket
     static int  movegen1(int);          // megkeresi a fontos lépéseket (alternatív)
     static int  posvalue();             // statikus állás kiértékelés
+
+    static void save();
+    static void restore();
 
     static BEST best[MAXBEST];          // a movegen által kiválasztott cellák
     static int  bestcnt;                // a best-ben levő cellák darabszáma

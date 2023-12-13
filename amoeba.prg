@@ -105,6 +105,7 @@ local button_back
 local button_forw
 local hboxsep2
 local button_check
+local button_eval
 local combo
 local hboxsep3
 local button_new
@@ -180,6 +181,7 @@ local hboxfill
     vboxrig:pack_start( button_forw:=gtkbuttonNew_with_mnemonic_from_stock("_Forward","gtk-go-forward"))
     vboxrig:pack_start( hboxsep2:=gtkhboxNew(.f.,0))
     vboxrig:pack_start( button_check:=gtkcheckbuttonNew_with_mnemonic("_Teach") )
+    vboxrig:pack_start( button_eval:=gtkbuttonNew_with_mnemonic_from_stock("_Eval","gtk-execute") )
     vboxrig:pack_start( combo:=gtkcomboboxNew_text() )
     vboxrig:pack_start( hboxsep3:=gtkhboxNew(.f.,0))
     vboxrig:pack_start( button_new:=gtkbuttonNew_with_mnemonic_from_stock("_New","gtk-new"))
@@ -187,10 +189,10 @@ local hboxfill
     vboxrig:pack_start( button_save:=gtkbuttonNew_with_mnemonic_from_stock("_Save","gtk-save"))
     vboxrig:pack_start( hboxfill:=gtkhboxNew(.f.,0))
 
-
     button_move:signal_connect("clicked",{|w|cb_move(w)})
     button_back:signal_connect("clicked",{|w|cb_back(w)})
     button_forw:signal_connect("clicked",{|w|cb_forward(w)})
+    button_eval:signal_connect("clicked",{|w|cb_eval(w)})
 
     button_check:signal_connect("clicked",{|w|cb_teach(w)})
     button_check:set_active(.t.)
@@ -242,6 +244,7 @@ local x,y,but,cx,fm,n
     if(gtk.main_depth()>1);return NIL;end
 
     if( validpos(event,@x,@y,@but) )
+    
         if( but==1 )
             //left-button
 
@@ -263,7 +266,11 @@ local x,y,but,cx,fm,n
                 cb_move()
              end
 
-        elseif( teach()>0 )
+        //elseif( but==2 )
+        //    // middle-button
+        //    go_eval()
+
+        elseif( but==3 .and. teach()>0 )
             //right-button
             if( winner()==32 )
                 fm:=movegen(9)
@@ -277,6 +284,7 @@ local x,y,but,cx,fm,n
                 c_cb_button_press_stat(cx)
                 c_cb_button_press_pos()
             end
+
         end
     end
 
@@ -326,6 +334,10 @@ local cx:=topcell()
     label_move()
     label_rate()
 
+
+******************************************************************************
+static function cb_eval()
+    go_eval()
 
 ******************************************************************************
 static function cb_new(w,combo)

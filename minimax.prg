@@ -25,10 +25,58 @@ static xbest
 
 #define  PRUNING  //  .f. .and.
 
+
+
+*****************************************************************************
+function go_eval()
+
+local cx,x,v,n
+
+    cell_save()
+
+    cx:=back()
+    if( cx==NIL  )
+        return NIL
+    end
+
+    ? "=============================================================================";?
+
+    drawcell(cx)
+
+    node:=0
+    xbest:=NIL
+    setwidth(movecount(),.t.)
+    v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN)
+    x:=xbest
+
+
+    ? turn(), "["+v::int::str(5)+"]", x::str(4), rc(x), node
+
+    label_rate(v)
+
+    if( NIL!=x )
+        forw(x)
+        for n:=1 to 5
+            drawcell(x)
+            sleep(300)
+            drawtop(x)
+            sleep(300)
+        next
+        back()
+        drawcell(x)
+    end
+
+    forw(cx)
+    drawtop()
+
+    cell_restore()
+
 *****************************************************************************
 function go()
 
 local x,v,n
+
+    ? "-----------------------------------------------------------------------------";?
 
     node:=0
     xbest:=NIL
@@ -154,12 +202,7 @@ local n,fm,x,v,xopt,vopt
 
 *****************************************************************************
 static function debug(x,v,depth)
-static mc
     if( depth==teach() )
-        if( mc!=movecount() )
-            mc:=movecount()
-            ? "-----------------------------------------------------------------------------";?
-        end
         ?? turn(),"["+v::str::alltrim+"]";?
         c_cb_button_press_stat(x)
         fflush()
