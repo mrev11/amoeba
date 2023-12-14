@@ -7,4 +7,4 @@ clear
 # export AMOEBA_POWER_WHITE=3
 # export AMOEBA_POWER_BLACK=3
 
-amoeba.exe   "$@" | tee log-amoeba
+amoeba.exe  -t 19  "$@" | tee log-amoeba

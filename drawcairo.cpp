@@ -42,29 +42,6 @@ void _clp_cairo_drawgrid(int argno)
     cairo_fill(cr);
 
     DRAW_BLACK(cr);
-
-/*
-    //kihagyva, mert nem lehet normális fontot választani
-
-    char buf[128];
-    //cairo_select_font_face(cr,"",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_NORMAL);
-    cairo_set_font_size(cr,16.0);
-    for( int i=0; i<tablesize; i++)
-    {
-        sprintf(buf,"%2d",i);
-
-        cairo_move_to( cr,
-                       origo_x-(i<10?28:32),
-                       origo_y+cellsize*0.6+i*cellsize);
-        cairo_text_path(cr,buf);
-
-        cairo_move_to( cr,
-                       origo_x+16+i*cellsize,
-                       origo_y-cellsize*0.3);
-        cairo_text_path(cr,buf);
-    }
-*/
-
     cairo_set_line_width(cr,1);
     for( int i=0; i<=tablesize; i++)
     {

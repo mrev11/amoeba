@@ -23,12 +23,12 @@
 
 static node
 static xbest
+static treshold
 
-#define  PRUNING  //  .f. .and.
+#define PRUNING         //  .f. .and.
 
 
-
-*****************************************************************************
+******************************************************************************************
 function go_eval()
 
 local cx,x,v,n
@@ -47,11 +47,11 @@ local cx,x,v,n
     node:=0
     xbest:=NIL
     setwidth(movecount(),.t.)
+    treshold:=len(width())*0.5
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN)
     x:=xbest
 
-
-    ? turn(), "["+v::int::str(5)+"]", x::str(4), rc(x), node
+    ? turn(), "["+v::int::str(5)+"]", rc(x), node, any2str(width()), treshold
 
     label_rate(v)
 
@@ -72,7 +72,8 @@ local cx,x,v,n
 
     cell_restore()
 
-*****************************************************************************
+
+******************************************************************************************
 function go()
 
 local x,v,n
@@ -82,10 +83,11 @@ local x,v,n
     node:=0
     xbest:=NIL
     setwidth(movecount())
+    treshold:=len(width())*0.5
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN)
     x:=xbest
 
-    ? turn(), "["+v::int::str(5)+"]", rc(x), node
+    ? turn(), "["+v::int::str(5)+"]", rc(x), node, any2str(width())
 
     if( NIL!=x )
         forw(x)
@@ -99,7 +101,7 @@ local x,v,n
     label_rate(v)
 
 
-*****************************************************************************
+******************************************************************************************
 static function minimax(depth,alfa,beta)
 
 local width:=width()
@@ -119,33 +121,40 @@ local n,fm,x,v,xopt,vopt
     end
 
     fm:=movegen(width[depth])
-    
+
+    if( len(fm)==0 )
+        vopt:=if(turn_x(),-PVALUE_INFIN,PVALUE_INFIN )
+        return vopt
+    end
+
     if( turn_x() )
         vopt:=alfa
 
         for n:=1 to len(fm)
-            if( forw(x:=fm[n]) )
-                if( ilevel>=depth )
-                    drawalt(x)
-                    sleep(100)
-                end
+            forw(x:=fm[n])
+            if( ilevel>=depth )
+                drawalt(x)
+                sleep(100)
+            end
 
-                v:=minimax(depth,alfa,beta)
+            v:=minimax(depth,alfa,beta)
 
-                if( v>alfa )
-                    alfa:=v
-                    vopt:=v
-                    xopt:=x
-                end
-                if( PRUNING beta<=alfa )
-                    n:=9999
-                end
+            back()
+            if( ilevel>=depth )
+                drawalt(x)
+            end
+            info(x,v,depth)
 
-                back()
-                info(x,v,depth)
-                if( ilevel>=depth )
-                    drawalt(x)
-                end
+            if( v>alfa )
+                alfa:=v
+                vopt:=v
+                xopt:=x
+            end
+
+            if( PRUNING beta<=alfa )
+                exit
+            elseif( v>PVALUE_INFIN-treshold )    
+                exit
             end
         next
 
@@ -154,34 +163,34 @@ local n,fm,x,v,xopt,vopt
         end
     end
 
-
     if( turn_o() )
         vopt:=beta
 
         for n:=1 to len(fm)
-            x:=fm[n]
-            if( forw(x) )
-                if( ilevel>=depth )
-                    drawalt(x)
-                    sleep(100)
-                end
+            forw(x:=fm[n])
+            if( ilevel>=depth )
+                drawalt(x)
+                sleep(100)
+            end
 
-                v:=minimax(depth,alfa,beta)
+            v:=minimax(depth,alfa,beta)
 
-                if( v<beta )
-                    beta:=v
-                    vopt:=v
-                    xopt:=x
-                end
-                if( PRUNING beta<=alfa )
-                    n:=9999
-                end
+            back()
+            if( ilevel>=depth )
+                drawalt(x)
+            end
+            info(x,v,depth)
 
-                back()
-                info(x,v,depth)
-                if( ilevel>=depth )
-                    drawalt(x)
-                end
+            if( v<beta )
+                beta:=v
+                vopt:=v
+                xopt:=x
+            end
+
+            if( PRUNING beta<=alfa )
+                exit
+            elseif( v<-PVALUE_INFIN+treshold )    
+                exit
             end
         next
 
@@ -191,28 +200,24 @@ local n,fm,x,v,xopt,vopt
     end
 
     if( depth==1 )
-        if( xopt==NIL )
-            xopt:=fm[1]
-        end
         xbest:=xopt
     end
-
     return vopt
 
 
-
-*****************************************************************************
+******************************************************************************************
 static function info(x,v,depth)
 local r,c
-    if( depth==infolevel() )
+    if( depth<=1 )
         #define SHORT
         #ifdef  SHORT
             c:=x%MAXCOL
             r:=(x-c)/MAXCOL
+            ?? space((depth-1)*4)
             ?? turn(),;
                "["+v::str(5)+"]",;
                "{"+r::str(2)+","+c::str(2)+"}",;
-               node 
+               node,depth
             ?
         #else
             ?? turn(),"["+v::str::alltrim+"]";?
@@ -221,7 +226,7 @@ local r,c
     end
 
 
-*****************************************************************************
+******************************************************************************************
 static function leaf(depth,v)
 
 static leaf
@@ -231,7 +236,7 @@ local md:=mc-depth+1
 local m
 
     if( leaf==NIL )
-        set channel(leaf) to log-leaf 
+        set channel(leaf) to log-leaf
     end
     set channel(leaf) on
 
@@ -239,7 +244,7 @@ local m
 
     for m:=md to mc-1
         ?? str(cell(m),5)
-        
+
         if( m==md )
             ?? "!"
         elseif( m==md+1 )
@@ -251,4 +256,4 @@ local m
 
 
 
-*****************************************************************************
+******************************************************************************************

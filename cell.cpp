@@ -134,7 +134,7 @@ cell *cell::set() // felteszi magát a táblára
             figure='X';
             if( fieldval[1]>=PVALUE_EGY ) //PONTOK!!
             {
-                winner=figure;
+                cell::winner=figure;
             }
         }
         modval();

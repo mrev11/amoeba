@@ -1,3 +1,5 @@
+2023-12-15 movegen üreset ad, ha vége a játéknak;
+
 2023-12-13
   "Teach" helyett "Info" a gui-ban;
   drawclean() feltételesen újra rajzolja a gui-t;

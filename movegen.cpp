@@ -35,6 +35,12 @@
 //--------------------------------------------------------------------------
 int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
 {
+    if( cell::winner!=' ' )
+    {
+        cell::bestcnt=0;
+        return 0;
+    }
+
     int maxtotal=min(MAXBEST,ROWCOL-cell::movecount);
     total=min(total,maxtotal);
 

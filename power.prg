@@ -51,7 +51,8 @@ local p
         p:=getenv("AMOEBA_POWER_BLACK")::val
         p::=max(1)
         p::=min(8)
-        ? "Black plays at power", p //, width[p]
+        ? "Black plays at power", p, width[p]
+        ?
         return width[p]
     end
 
@@ -62,7 +63,8 @@ local p
         p:=getenv("AMOEBA_POWER_WHITE")::val
         p::=max(1)
         p::=min(8)
-        ? "White plays at power:", p //, width[p]
+        ? "White plays at power:", p, width[p]
+        ?
         return width[p]
     end
 

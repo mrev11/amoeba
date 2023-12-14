@@ -38,6 +38,13 @@
 //--------------------------------------------------------------------------
 int cell::movegen1(int total) //kikeresi a megadott számú "legfontosabb" mezőt
 {
+    if( cell::winner!=' ' )
+    {
+        cell::bestcnt=0;
+        return 0;
+    }
+
+
     int turn=(cell::movecount&1)==0 ? 1:0;
     int oppo=(cell::movecount&1)==0 ? 0:1;
 
