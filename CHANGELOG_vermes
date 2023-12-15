@@ -1,3 +1,9 @@
+2023-12-16 
+  külső png fájlok helyett belsőleg generálja az ionokat;
+  a shortcutokhoz továbbra is kell 
+    - Windowson amoeba.ico
+    - Linuxon akármi, pl. amoeba.svg
+
 2023-12-15 movegen üreset ad, ha vége a játéknak;
 
 2023-12-13

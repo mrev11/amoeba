@@ -1,4 +1,4 @@
 #!/bin/bash
-bapp_unix0.b  -xamoeba-icon -xfigure -bcairo
+bapp_unix0.b  -xamoeba-icon -xcircle -bcairo
 amoeba-icon.exe
 figure.exe

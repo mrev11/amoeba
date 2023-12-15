@@ -117,7 +117,8 @@ local hboxfill
 
     window:=gtkwindowNew()
     window:set_title(VERSION)
-    window:set_icon_from_file("amoeba.png")
+    //window:set_icon_from_file("amoeba.png")
+    window:set_icon(amoeba_pixbuf())
     window:signal_connect("destroy",{||quit()})
     window:set_border_width(16)
     window:set_resizable(.f.)
@@ -544,10 +545,14 @@ local mc:=movecount()
     if( label==NIL )
         label:=gtklabelNew("Turn:")
         label_turn:pack_start(label)
-        black:=gtk.image.new_from_file("black.png")
-        white:=gtk.image.new_from_file("white.png")
-        gtk.gobject.ref(black) // increase ref number
-        gtk.gobject.ref(white) // increase ref number
+
+        //black:=gtk.image.new_from_file("black.png")
+        //white:=gtk.image.new_from_file("white.png")
+        //gtk.gobject.ref(black) // increase ref number
+        //gtk.gobject.ref(white) // increase ref number
+
+        black:=circle_image(CELLSIZE,0,0,0,3/4,3/4,3/4)
+        white:=circle_image(CELLSIZE,1,1,1,3/4,3/4,3/4)
     end
 
     if( image!=NIL )
