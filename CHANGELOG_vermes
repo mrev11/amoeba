@@ -1,4 +1,9 @@
 2023-12-16 
+  a sor koordinátákban áttérés számokról betűkre;
+  alakzatok tömör listázása;
+  auto módban a power nem megy 5 fölé, mert túl lassú volt;
+
+2023-12-16 
   külső png fájlok helyett belsőleg generálja az ionokat;
   a shortcutokhoz továbbra is kell 
     - Windowson amoeba.ico

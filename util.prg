@@ -169,13 +169,13 @@ local text
 function rc(pos)
 local r,c
     if( pos==NIL )
-        r:=-1
-        c:=-1
+        r:="-"
+        c:="-"
     else
-        r:=int(pos/TABLESIZE)
-        c:=pos%TABLESIZE
+        r:=chr( asc("a")+int(pos/TABLESIZE) )
+        c:=(pos%TABLESIZE)::str::alltrim::padr(2)
     end
-    return  { r::str(2), c::str(2) }
+    return r+c
 
 
 ******************************************************************************

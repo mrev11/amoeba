@@ -97,6 +97,16 @@ local w
 
     elseif( movecount<=16 )
         width_current:=width[4]
+  
+    else
+        width_current:=width[5]
+    end
+
+
+
+/*
+    elseif( movecount<=16 )
+        width_current:=width[4]
 
     elseif( movecount<=32 )
         width_current:=width[5]
@@ -107,7 +117,7 @@ local w
     else
         width_current:=width[7]
     end
-
+*/
 
 *****************************************************************************
 function setpower(p)

@@ -207,23 +207,24 @@ local n,fm,x,v,xopt,vopt
 
 ******************************************************************************************
 static function info(x,v,depth)
-local r,c
-    if( depth<=1 )
-        #define SHORT
-        #ifdef  SHORT
-            c:=x%MAXCOL
-            r:=(x-c)/MAXCOL
-            ?? space((depth-1)*4)
-            ?? turn(),;
-               "["+v::str(5)+"]",;
-               "{"+r::str(2)+","+c::str(2)+"}",;
-               node,depth
-            ?
-        #else
-            ?? turn(),"["+v::str::alltrim+"]";?
-            c_cb_button_press_stat(x)
-        #endif
+
+//#define NOTDEF
+#ifdef NOTDEF
+    // ezzel + a tree.exe programmal
+    // vizsgálni (browse-olni) lehet az elemzőfát
+    // a log-amoeba-ban maradó infó alapján
+    local level:=1
+    if( depth<=level )
+        ?? space((depth-1)*4)
+        ?? turn(), "["+v::int::str(5)+"]", rc(x), node
+        ?
     end
+#else
+    if( depth==1 )
+        ?? turn(),"["+v::int::str(5)+"]"
+        c_cb_button_press_stat(x)
+    end
+#endif
 
 
 ******************************************************************************************

@@ -148,18 +148,24 @@ local gc:=gdk.gc.new(area:get_drawable)
 
 
 ******************************************************************************
-//static function makelayout(x)
-//local label:=gtk.label.new(x)
-//    gtk.label.set_use_markup(label,.t.)
-//    return gtk.label.get_layout(label)
-
-
-******************************************************************************
 static function numlayout(n) // n=0...99
 static label:=array(100)
 local  x:=n+1
     if( label[x]==NIL )
-        label[x]:=gtklabelNew(n::str::alltrim)
+        label[x]:=gtklabelNew("<b>"+n::str::alltrim+"</b>")
+        label[x]:set_use_markup(.t.)
+    end 
+    return label[x]:get_layout()
+
+
+******************************************************************************
+static function abclayout(n) // n=0...99
+static label:=array(100)
+static a:=asc("a")
+local  x:=n+1
+    if( label[x]==NIL )
+        label[x]:=gtklabelNew( "<b>"+chr(a+n)+"</b>" )
+        label[x]:set_use_markup(.t.)
     end 
     return label[x]:get_layout()
 
@@ -172,23 +178,19 @@ local draw:=area:get_drawable
 local i,x,y,dx,dy
 
     for i:=0 to TABLESIZE-1
-        dx:=CELLSIZE*0.2
+        dx:=CELLSIZE*(0.1+if(i<10,0.1,0.0))
         dy:=CELLSIZE*0.2
-
         x:=dx + (i+1)*CELLSIZE
         y:=dy + 0
-
         gdk.drawable.draw_layout(draw,gc,x,y,numlayout(i))
     next
 
     for i:=0 to TABLESIZE-1
-        dx:=CELLSIZE*0.2+if(i<10,10,0)
-        dy:=CELLSIZE*0.1
-
+        dx:=CELLSIZE*0.3
+        dy:=CELLSIZE*0.0
         x:=dx + 0
         y:=dy + (i+1)*CELLSIZE
-
-        gdk.drawable.draw_layout(draw,gc,x,y,numlayout(i))
+        gdk.drawable.draw_layout(draw,gc,x,y,abclayout(i))
     next
 
 ******************************************************************************

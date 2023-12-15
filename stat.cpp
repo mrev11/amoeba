@@ -135,20 +135,13 @@ void _clp_c_cb_button_press_stat(int argno)
 
     if( c->figure==' ' )
     {
-        printf("%4d",x);
-        printf("{%2d,%2d}",x/MAXCOL,x%MAXCOL);
+        printf(" %c",'a'+x/MAXCOL);
+        printf("%-2d",x%MAXCOL);
+
         print_pattern( 0, c->pattern[0] );
         print_pattern( 1, c->pattern[1] );
         print_pattern( 2, c->pattern[2] );
         print_pattern( 3, c->pattern[3] );
-        printf("\n");
-
-        printf("             ");
-        print_value( c->pattern[0] );
-        print_value( c->pattern[1] );
-        print_value( c->pattern[2] );
-        print_value( c->pattern[3] );
-
 
         const char *vo=num0("%4d",c->fieldval[0]);
         const char *vx=num0("%4d",c->fieldval[1]);
@@ -157,12 +150,10 @@ void _clp_c_cb_button_press_stat(int argno)
         printf(" %4s%lc %4s%lc",vo,(ARROW_T)ao,vx,(ARROW_T)ax);
 
         printf("\n");
-        printf("\n");
         fflush(0);
     }
     _ret();
     CCC_EPILOG();
 }
-
 
 //--------------------------------------------------------------------------
