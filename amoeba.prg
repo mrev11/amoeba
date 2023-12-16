@@ -25,6 +25,9 @@
 #include "tabsize.ch"
 
 
+static hbox_bestline
+static label_bestline
+
 static area
 static twostatelabel
 static label_move
@@ -113,6 +116,9 @@ local button_load
 local button_save
 local hboxfill
 
+local lab
+
+
     gtk.init()
 
     window:=gtkwindowNew()
@@ -139,6 +145,12 @@ local hboxfill
     //=============================
     // vboxlef
     //=============================
+
+    vboxlef:pack_start(hbox_bestline:=gtkhboxNew())
+    hbox_bestline:pack_start( lab:=gtklabelNew(),.f. ); lab:set_size_request(CELLSIZE,-1)
+    hbox_bestline:pack_start( lab:=gtklabelNew(),.f. ); lab:set_text("Best line: "); lab:set_use_markup(.t.)
+    hbox_bestline:pack_start( lab:=gtklabelNew(),.f. ); label_bestline:=lab
+    hbox_bestline:pack_start( lab:=gtklabelNew(),.t. )  // expand
 
     vboxlef:pack_start( area:=gtkdrawingareaNew() )
     vboxlef:pack_start( hboxsep:=gtkhboxNew(.f.,0) )
@@ -261,11 +273,10 @@ local x,y,but,cx,fm,n
                 cx:=y*TABLESIZE+x
                 forw(cx)
                 drawtop()
+                label_move()
                 label_turn()
-            end
-            if( winner()==32 )
                 cb_move()
-             end
+            end
 
         //elseif( but==2 )
         //    // middle-button
@@ -350,6 +361,7 @@ static function cb_new(w,combo)
     //combo:set_active(0)
     c_cb_new()
     drawall()
+    label_bestline("")
     label_move()
     label_rate(0)
 
@@ -443,6 +455,7 @@ local amoeba:="amoeba"+TABLESIZE::str::alltrim
     c_cb_new(cells)
     drawall()
 
+    label_bestline("")
     label_move()
     label_turn()
     label_rate()
@@ -498,6 +511,12 @@ static function cb_info(w)
     //if(gtk.main_depth()>1);return NIL;end
     //engedni kell a rekurziót
     infolevel(w:get_active)
+    if( w:get_active )
+        label_bestline:show
+    else
+        label_bestline:hide
+    end
+        
 
 
 ******************************************************************************
@@ -510,25 +529,23 @@ static function cb_power(w)
 
 ******************************************************************************
 static function cb_motion_notify(area,event)
-local x,n
-    //? "cb_motion_notify", gtk.main_depth()
-    if(gtk.main_depth()>1);return NIL;end
 
-    // mozgásra hunyorog
-    // (nem annyira jó ötlet)
-    //if( (x:=topcell())!=NIL )
-    //    drawcell(x)
-    //    sleep(200)
-    //    drawtop(x)
-    //    sleep(200)
-    //end
 
+******************************************************************************
+function label_bestline(x)
+    label_bestline:set_markup("<b>"+x+"</b>")
 
 
 ******************************************************************************
 function label_move()
 local m:=movecount()
-    label_move:set_markup( "Move: <b>"+m::str::alltrim+"</b>" )
+local x:=topcell()
+    if( x!=NIL )
+        x:=rc(x)
+        label_move:set_markup( "Last move: <b>"+m::str::alltrim+":"+x+"</b>" )
+    else
+        label_move:set_markup( "Last move: <b>"+m::str::alltrim+"</b>" )
+    end
     label_turn()
 
 
@@ -565,18 +582,6 @@ local mc:=movecount()
     end
     label_turn:pack_end(image)
     label_turn:show_all
-
-
-function old_label_turn()
-local mc:=movecount()
-local circle:=chr(0x25cf)
-local text:="Turn: <span size='x-large' color='COLOR'>"+circle+"</span>"
-    if( (mc%2)==0 )
-        text::=strtran("COLOR","black" )
-    else
-        text::=strtran("COLOR","white" )
-    end
-    label_turn:set_markup( text )
 
 
 ******************************************************************************

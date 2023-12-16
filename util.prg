@@ -172,8 +172,8 @@ local r,c
         r:="-"
         c:="-"
     else
-        r:=chr( asc("a")+int(pos/TABLESIZE) )
-        c:=(pos%TABLESIZE)::str::alltrim::padr(2)
+        r:=chr(97+int(pos/TABLESIZE))
+        c:=(pos%TABLESIZE)::str::alltrim
     end
     return r+c
 

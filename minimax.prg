@@ -28,10 +28,14 @@ static treshold
 #define PRUNING         //  .f. .and.
 
 
+static movestack:=array(ROWCOL)
+
+
 ******************************************************************************************
 function go_eval()
 
 local cx,x,v,n
+local list:=""
 
     cell_save()
 
@@ -48,10 +52,10 @@ local cx,x,v,n
     xbest:=NIL
     setwidth(movecount(),.t.)
     treshold:=len(width())*0.5
-    v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN)
+    v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@list)
     x:=xbest
 
-    ? turn(), "["+v::int::str(5)+"]", rc(x), node, any2str(width()), treshold
+    ? turn(), "["+v::int::str(5)+"]", rc(x)::padr(2), node, any2str(width()), treshold
 
     label_rate(v)
 
@@ -72,11 +76,13 @@ local cx,x,v,n
 
     cell_restore()
 
+    //? list
 
 ******************************************************************************************
 function go_move()
 
 local x,v,n
+local list:=""
 
     ? "-----------------------------------------------------------------------------";?
 
@@ -84,10 +90,10 @@ local x,v,n
     xbest:=NIL
     setwidth(movecount())
     treshold:=len(width())*0.5
-    v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN)
+    v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@list)
     x:=xbest
 
-    ? turn(), "["+v::int::str(5)+"]", rc(x), node, any2str(width())
+    ? turn(), "["+v::int::str(5)+"]", rc(x)::padr(2), node, any2str(width())
 
     if( NIL!=x )
         forw(x)
@@ -99,14 +105,17 @@ local x,v,n
         next
     end
     label_rate(v)
+    
+    //? list
 
 
 ******************************************************************************************
-static function minimax(depth,alfa,beta)
+static function minimax(depth,alfa,beta,list)
 
 local width:=width()
 local ilevel:=infolevel()
 local n,fm,x,v,xopt,vopt
+local list1:=""
 
     //width:={4} //debug
 
@@ -132,12 +141,13 @@ local n,fm,x,v,xopt,vopt
 
         for n:=1 to len(fm)
             forw(x:=fm[n])
+            movestack[depth]:=x
             if( ilevel>=depth )
                 drawalt(x)
                 sleep(100)
             end
 
-            v:=minimax(depth,alfa,beta)
+            v:=minimax(depth,alfa,beta,@list1)
 
             back()
             if( ilevel>=depth )
@@ -149,6 +159,7 @@ local n,fm,x,v,xopt,vopt
                 alfa:=v
                 vopt:=v
                 xopt:=x
+                list:=rcbl(depth,x,v,list1)
             end
 
             if( PRUNING beta<=alfa )
@@ -168,12 +179,13 @@ local n,fm,x,v,xopt,vopt
 
         for n:=1 to len(fm)
             forw(x:=fm[n])
+            movestack[depth]:=x
             if( ilevel>=depth )
                 drawalt(x)
                 sleep(100)
             end
 
-            v:=minimax(depth,alfa,beta)
+            v:=minimax(depth,alfa,beta,@list1)
 
             back()
             if( ilevel>=depth )
@@ -185,6 +197,7 @@ local n,fm,x,v,xopt,vopt
                 beta:=v
                 vopt:=v
                 xopt:=x
+                list:=rcbl(depth,x,v,list1)
             end
 
             if( PRUNING beta<=alfa )
@@ -216,7 +229,7 @@ static function info(x,v,depth)
     local level:=1
     if( depth<=level )
         ?? space((depth-1)*4)
-        ?? turn(), "["+v::int::str(5)+"]", rc(x), node
+        ?? turn(), "["+v::int::str(5)+"]", rc(x)::padr(2), node
         ?
     end
 #else
@@ -258,3 +271,38 @@ local m
 
 
 ******************************************************************************************
+static function rcbl(depth,pos,val,list)
+local bl
+local n,head:="",labtxt
+
+    bl:=rc(pos)
+    if( !empty(list) )
+        bl+=","+list
+    end
+
+    if( depth<=1 )
+        //for n:=1 to depth-1
+        //    pos:=movestack[n]
+        //    r:=chr(97+int(pos/TABLESIZE))
+        //    c:=(pos%TABLESIZE)::str::alltrim
+        //    head+=r+c+","
+        //end
+
+        labtxt:=""
+        labtxt+=bl
+        if( abs(val)>9000 )
+            labtxt+="#"
+        end
+        labtxt+=" ("+val::str::alltrim+")"
+
+        // labtxt:=head    
+        // labtxt:=(movecount()+1)::str::alltrim+":"
+
+        label_bestline(labtxt)
+    end
+
+    return bl
+
+
+******************************************************************************************
+
