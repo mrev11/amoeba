@@ -301,7 +301,7 @@ local cp:=.t.
     while( cp .and. !game_over() )
         twostatelabel:set_state(.f.)
         area:set_sensitive(.f.)
-        go()
+        go_move()
         area:set_sensitive(.t.)
         twostatelabel:set_state(.t.)
         markmovecount()
