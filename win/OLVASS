@@ -3,9 +3,6 @@ Egy directoryban el kell helyezni ezeket:
     pack-standalone
     amoeba.exe
     amoeba.ico
-    amoeba.png
-    black.png
-    white.png
     s.bat
 
 pack-standalone-ban át kell írni /clang64-et arra

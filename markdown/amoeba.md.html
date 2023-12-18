@@ -113,8 +113,8 @@ viszonyított fontosságát. Amikor az alakzatok összegződnek, akkor
 az összegnek értelmes helyre kell kerülnie a pontértékek sorrendjében.</p>
 <h4>3) Lépés kiválasztás</h4>
 <p>A csökkentett méretű elemzőfa ágai rövidek: általában nem érnek el 
-a játék végállásáig. Az ágak hosszán kívül a fa ágainak számát is számát 
-is csökkentenünk kell. Képtelenség ugyanis minden lehetséges lépést, vagyis 
+a játék végállásáig. Az ágak hosszán kívül a fa ágainak számát is
+csökkentenünk kell. Képtelenség ugyanis minden lehetséges lépést, vagyis 
 a tábla minden  szabad mezejét kiértékelni. Ki kell választanunk azokat a 
 fontosnak látszó lépéseket (mezőket), amikkel érdemes foglalkozni, 
 azaz érdemes elindítani  rájuk a minimax algoritmust.</p>
@@ -130,7 +130,8 @@ három egymásra épülő komponens alkotja:</p>
 <li>lépés kiválasztás</li>
 </ul>
 <p>A statikus állás értékelés értéket rendel az elemzőfa leveleihez.
-A fontosnak vélt lépésekhez tartozó érték a minimax algoritmusból adódik.</p>
+A minimax algoritmus a levelek alapján kiszámítja fontosnak gondolt 
+lépésekhez tartozó értéket.</p>
 <p>A minimax algoritmuson nincs sok töprengeni való, úgy kell leprogramozni,
 ahogy a korábbi linkekben le van írva. A program játékereje azon múlik,
 hogy a statikus állás értékelés és a lépés kiválasztás milyen jól
@@ -157,10 +158,42 @@ aki gondolkodik. Persze nincs, de mégis olyan. Pedig ez még csak nem is AI.</p
 vagy elemezhetjük az állást. Ha a <code>&lt;tablesize&gt;</code> nincs összhangban azzal a táblával, 
 amin a betöltendő játékot eredetileg játszották (és mentették),
 akkor a táblaméretet a játékhoz igazítja.            </p>
+<h4>Környezeti változók</h4>
+<p>A fenti paramétereken kívül környezeti változók is befolyásolják
+a program működését.</p>
+<ul>
+<li>
+<p><code>export AMOEBA_POWER_WHITE=&lt;power&gt;</code><br />
+  A program fehérrel az itt megadott erősséggel játszik
+  függetlenül attól, hogy mit állítunk be interaktívan.
+  Az erősség lehetséges értékei 0...8. A 0 szám felel meg az auto módnak.</p>
+</li>
+<li>
+<p><code>export AMOEBA_POWER_BLACK=&lt;power&gt;</code><br />
+  A program feketével az itt megadott erősséggel játszik
+  függetlenül attól, hogy mit állítunk be interaktívan.</p>
+</li>
+<li>
+<p><code>export AMOEBA_CONTINUOUS_PLAY=true</code>  <br />
+  A program folyamatosan játszik önmaga ellen. 
+  Az előző kettővel  kombinálva ez a beállítás lehetővé teszi, 
+  hogy a program  két erősségi szintet játszasson egymás ellen.</p>
+</li>
+<li>
+<p><code>export AMOEBA_CELLSIZE=&lt;size&gt;</code><br />
+  Beállíthatjuk a tábla mezőinek méretét. A méret 32 és 64 (pixel)
+  között változhat.</p>
+</li>
+<li>
+<p><code>export AMOEBA_COLOR=&lt;r,g,b&gt;</code><br />
+  Beállíthatjuk a tábla színét. Három vesszővel elválasztott számmal,
+  0-tól 100-ig terjedő skálán kell megadnunk a red, green, blue színek 
+  intenzitását. Az alapértelemzett színek: 66,55,44. Egy go tábla színét
+  kapjuk a 66,66,33 számokkal.</p>
+</li>
+</ul>
 <h4>Interakció</h4>
-<p>Általában 16x16-s táblán játszunk.
-Nem olyan érdekes a játék, hogy ennél többet adjunk neki.
-A tábla bármely szabad mezejére egér balgombbal elhelyezhetjük a soron levő
+<p>A tábla bármely szabad mezejére egér balgombbal elhelyezhetjük a soron levő
 játékos kövét, feltéve, hogy a program éppen nem gondolkodik.</p>
 <p>A jobb felső sarokban levő kétállapotú (Ready/Thinking) gomb mutatja,
 hogy a program kész fogadni az inputot, vagy el van foglalva a számításokkal.
@@ -172,7 +205,7 @@ amíg végez, megteszi a lépését, és Ready állapotba kerül.</p>
 <p>Egér balgombbal léphetünk (lerakhatjuk a kövünket a táblára).</p>
 </li>
 <li>
-<p>Egér jobbgomb mutatja számbajövő folytatásokat <em>(hint)</em>.</p>
+<p>Egér jobbgomb mutatja az érdekesebb mezőket <em>(hint)</em>.</p>
 </li>
 <li>
 <p>Move gombbal lépésre utasítjuk a programot.</p>
@@ -184,13 +217,28 @@ amíg végez, megteszi a lépését, és Ready állapotba kerül.</p>
 <p>Forward gomb visszarakja az előzőleg levett követ.</p>
 </li>
 <li>
-<p>Teach checkboxszal beállíthatjuk, hogy mutassa a lépést,
-    amin éppen gondolkodik. Ha ki van kapcsolva, akkor a humán játékosnak 
-    nem sok esélye marad. Ha konzolból futtatjuk, akkor teach módban
-    infót listáz a kiértékelt mezőkben talált alakzatokról.</p>
+<p>A Info check boxszal beállíthatjuk, hogy mutassa a lépést,
+    amin éppen gondolkodik. Az ablak tetején látjuk a legjobbnak 
+    talált lépés sorozatot.  Ha ezek ki vannak kapcsolva, akkor a humán 
+    játékosnak nem marad sok esélye. Ha a programot konzolból futtatjuk, 
+    akkor infó  módban listázza a kiértékelt mezőkben talált alakzatokat. </p>
 </li>
 <li>
-<p>A Teach alatti listboxban beállíthatjuk az elemzőfa méretét.
+<p>Az Eval gombbal megpróbálhatunk a táblán megtett utolsó lépésnél erősebbet
+    keresni. A gomb működése:</p>
+<ol>
+<li>Leveszi a tábláról az utolsó követ. </li>
+<li>Megkeresi a listboxban beállított elemzőfával megtalálható legerősebb lépést.</li>
+<li>Megmutatja a lépést, e célból egy kicsit hunyorog.</li>
+<li>Visszarakja az eredeti állást.</li>
+</ol>
+<p>Az eredeti állás visszarakása után, a Back és Forward gombok a korábbi
+változatlan lépéssorozaton navigálnak előre és hátra. Ez a funkció
+mindig a listboxban interaktívan beállított elemzőfát használja,
+függetlenül az <code>AMOEBA_POWER</code> környezeti változóktól.</p>
+</li>
+<li>
+<p>Az Eval alatti listboxban beállíthatjuk az elemzőfa méretét.
     Auto beállításnál a program a lépésszám előrehaladtával
     egyre terjedelmesebb elemzőfát használ. Nem érdemes  túl nagy fát
     választani, mert lassú lesz a program. Windowson különösen lassú lesz.</p>
@@ -207,7 +255,8 @@ amíg végez, megteszi a lépését, és Ready állapotba kerül.</p>
 <p>Save gomb elmenti az aktuális állást.</p>
 </li>
 </ul>
-<p>Az ablak alsó részén látjuk, hány lépés történt, ki van lépésen, mi az állás értékelése.</p>
+<p>Az ablak alsó részén látjuk az utolsó lépést, hogy ki van lépésen, 
+mi az állás értékelése.</p>
 <hr />
 <h2>Milyen nyelven íródott az Amoeba?</h2>
 <p>A program kb. fele-fele arányban  CCC-ben és C++ ban készült. </p>

@@ -152,7 +152,7 @@ static function numlayout(n) // n=0...99
 static label:=array(100)
 local  x:=n+1
     if( label[x]==NIL )
-        if( size_cellsize()>=40 )
+        if( CELLSIZE>=40 )
             label[x]:=gtklabelNew("<b>"+n::str::alltrim+"</b>")
             label[x]:set_use_markup(.t.)
         else
@@ -168,7 +168,7 @@ static label:=array(100)
 static a:=asc("a")
 local  x:=n+1
     if( label[x]==NIL )
-        if( size_cellsize()>=40 )
+        if( CELLSIZE>=40 )
             label[x]:=gtklabelNew( "<b>"+chr(a+n)+"</b>" )
             label[x]:set_use_markup(.t.)
         else

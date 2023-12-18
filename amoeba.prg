@@ -534,7 +534,11 @@ static function cb_motion_notify(area,event)
 
 ******************************************************************************
 function label_bestline(x)
-    label_bestline:set_markup("<b>"+x+"</b>")
+    if( CELLSIZE>=40 )
+        label_bestline:set_markup("<b>"+x+"</b>")
+    else
+        label_bestline:set_markup(x)
+    end
 
 
 ******************************************************************************
