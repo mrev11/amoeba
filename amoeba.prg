@@ -267,6 +267,7 @@ local x,y,but,cx,fm,n
             end
 
             if( !game_over() )
+                label_bestline("")
                 if( topcell()!=NIL )
                     drawcell(topcell()) // -> normal shape
                 end

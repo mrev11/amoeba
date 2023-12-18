@@ -21,103 +21,32 @@
 #include "amoeba.ch"
 #include "tabsize.ch"
 
-static node
-static xbest
-static treshold
-
-#define PRUNING         //  .f. .and.
-
-
-static movestack:=array(ROWCOL)
+static node                      // ennyi állást értékelt ki
+static xbest                     // minimax futása után a legjobb lépés
+static treshold:=treshold()      // ha megközelíti a nyerést, nem keres mégjobbat
+static movestack:=array(ROWCOL)  // csak debug
 
 
 ******************************************************************************************
-function go_eval()
-
-local cx,x,v,n
-local list:=""
-
-    cell_save()
-
-    cx:=back()
-    if( cx==NIL  )
-        return NIL
-    end
-
-    ? "=============================================================================";?
-
-    drawcell(cx)
-
-    node:=0
-    xbest:=NIL
-    setwidth(movecount(),.t.)
-    treshold:=len(width())*0.5
-    v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@list)
-    x:=xbest
-
-    ? turn(), "["+v::int::str(5)+"]", rc(x)::padr(2), node, any2str(width()), treshold
-
-    label_rate(v)
-
-    if( NIL!=x )
-        forw(x)
-        for n:=1 to 5
-            drawcell(x)
-            sleep(300)
-            drawtop(x)
-            sleep(300)
-        next
-        back()
-        drawcell(x)
-    end
-
-    forw(cx)
-    drawtop()
-
-    cell_restore()
-
-    //? list
+function node()
+    return node
 
 ******************************************************************************************
-function go_move()
-
-local x,v,n
-local list:=""
-
-    ? "-----------------------------------------------------------------------------";?
-
-    node:=0
-    xbest:=NIL
-    setwidth(movecount())
-    treshold:=len(width())*0.5
-    v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@list)
-    x:=xbest
-
-    ? turn(), "["+v::int::str(5)+"]", rc(x)::padr(2), node, any2str(width())
-
-    if( NIL!=x )
-        forw(x)
-        for n:=1 to 3
-            drawcell(x)
-            sleep(80)
-            drawtop(x)
-            sleep(80)
-        next
-    end
-    label_rate(v)
-    
-    //? list
-
+function xbest()
+    return xbest
 
 ******************************************************************************************
-static function minimax(depth,alfa,beta,list)
+function minimax(depth,alfa,beta,bestline)
 
 local width:=width()
 local ilevel:=infolevel()
-local n,fm,x,v,xopt,vopt
-local list1:=""
+local n,fm,x,xopt,vopt
+local bestline1:=""
 
-    //width:={4} //debug
+    if( depth==0 )
+        node:=0
+        xbest:=NIL
+    end
 
     node++
     depth++
@@ -125,7 +54,7 @@ local list1:=""
     if( depth>len(width) )
         movegen(6)
         vopt:=posvalue()
-        //leaf(depth,vopt)
+        //leaf(depth,vopt,alfa,beta)
         return vopt
     end
 
@@ -137,34 +66,33 @@ local list1:=""
     end
 
     if( turn_x() )
-        vopt:=alfa
+        vopt:=-PVALUE_INFIN
 
         for n:=1 to len(fm)
-            forw(x:=fm[n])
+            x:=fm[n]
             movestack[depth]:=x
+            forw(x)
             if( ilevel>=depth )
                 drawalt(x)
                 sleep(100)
             end
-
-            v:=minimax(depth,alfa,beta,@list1)
-
+            vopt:=max(vopt,minimax(depth,alfa,beta,@bestline1))
             back()
             if( ilevel>=depth )
                 drawalt(x)
             end
-            info(x,v,depth)
+            info(depth,x,vopt)
 
-            if( v>alfa )
-                alfa:=v
-                vopt:=v
+            if( vopt>alfa )
+                alfa:=vopt
                 xopt:=x
-                list:=rcbl(depth,x,v,list1)
+                bestline:=update_bestline(depth,x,vopt,bestline1)
+                if( vopt>=beta )
+                    exit
+                end
             end
 
-            if( PRUNING beta<=alfa )
-                exit
-            elseif( v>PVALUE_INFIN-treshold )    
+            if( vopt>PVALUE_INFIN-treshold )
                 exit
             end
         next
@@ -175,34 +103,33 @@ local list1:=""
     end
 
     if( turn_o() )
-        vopt:=beta
+        vopt:=+PVALUE_INFIN
 
         for n:=1 to len(fm)
-            forw(x:=fm[n])
+            x:=fm[n]
             movestack[depth]:=x
+            forw(x)
             if( ilevel>=depth )
                 drawalt(x)
                 sleep(100)
             end
-
-            v:=minimax(depth,alfa,beta,@list1)
-
+            vopt:=min(vopt,minimax(depth,alfa,beta,@bestline1))
             back()
             if( ilevel>=depth )
                 drawalt(x)
             end
-            info(x,v,depth)
+            info(depth,x,vopt)
 
-            if( v<beta )
-                beta:=v
-                vopt:=v
+            if( vopt<beta )
+                beta:=vopt
                 xopt:=x
-                list:=rcbl(depth,x,v,list1)
+                bestline:=update_bestline(depth,x,vopt,bestline1)
+                if( vopt<=alfa )
+                    exit
+                end
             end
 
-            if( PRUNING beta<=alfa )
-                exit
-            elseif( v<-PVALUE_INFIN+treshold )    
+            if( vopt<-PVALUE_INFIN+treshold )
                 exit
             end
         next
@@ -219,7 +146,7 @@ local list1:=""
 
 
 ******************************************************************************************
-static function info(x,v,depth)
+static function info(depth,x,v)
 
 //#define NOTDEF
 #ifdef NOTDEF
@@ -229,7 +156,7 @@ static function info(x,v,depth)
     local level:=1
     if( depth<=level )
         ?? space((depth-1)*4)
-        ?? turn(), "["+v::int::str(5)+"]", rc(x)::padr(2), node
+        ?? turn(), "["+v::int::str(5)+"]", rc(x)::padr(3), node
         ?
     end
 #else
@@ -241,63 +168,42 @@ static function info(x,v,depth)
 
 
 ******************************************************************************************
-static function leaf(depth,v)
+static function leaf(depth,v,alfa,beta)
 
-static leaf
+static log
+local line,n
 
-local mc:=movecount()
-local md:=mc-depth+1
-local m
-
-    if( leaf==NIL )
-        set channel(leaf) to log-leaf
-    end
-    set channel(leaf) on
-
-    ? str(md,3), str(depth,2), "["+v::str(5)+"]"
-
-    for m:=md to mc-1
-        ?? str(cell(m),5)
-
-        if( m==md )
-            ?? "!"
-        elseif( m==md+1 )
-            ?? "?"
-        end
+    line:=rc(movestack[1])
+    for n:=2 to depth-1
+        line+=","+rc(movestack[n])
     next
 
-    set channel(leaf) off
-
+    if( log==NIL )
+        log:=channelNew("log-leaf")
+        log:open
+    end
+    //log:on
+    ? turn(), depth,v,alfa,beta,line
+    //log:off
 
 
 ******************************************************************************************
-static function rcbl(depth,pos,val,list)
-local bl
-local n,head:="",labtxt
+static function update_bestline(depth,pos,val,bestline)
+
+local bl,n,labtxt
 
     bl:=rc(pos)
-    if( !empty(list) )
-        bl+=","+list
+    if( !empty(bestline) )
+        bl+=","+bestline
     end
 
-    if( depth<=1 )
-        //for n:=1 to depth-1
-        //    pos:=movestack[n]
-        //    r:=chr(97+int(pos/TABLESIZE))
-        //    c:=(pos%TABLESIZE)::str::alltrim
-        //    head+=r+c+","
-        //end
-
-        labtxt:=""
+    if( depth==1 )
+        labtxt:=" <span color='green'>("+val::str::alltrim+")</span> "
         labtxt+=bl
         if( abs(val)>9000 )
+            labtxt::=strtran("green","red")
             labtxt+="#"
         end
-        labtxt+=" ("+val::str::alltrim+")"
-
-        // labtxt:=head    
-        // labtxt:=(movecount()+1)::str::alltrim+":"
-
         label_bestline(labtxt)
     end
 
