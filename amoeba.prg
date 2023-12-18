@@ -108,7 +108,7 @@ local button_back
 local button_forw
 local hboxsep2
 local button_check
-local button_eval
+local button_recalc
 local combo
 local hboxsep3
 local button_new
@@ -194,7 +194,7 @@ local lab
     vboxrig:pack_start( button_forw:=gtkbuttonNew_with_mnemonic_from_stock("_Forward","gtk-go-forward"))
     vboxrig:pack_start( hboxsep2:=gtkhboxNew(.f.,0))
     vboxrig:pack_start( button_check:=gtkcheckbuttonNew_with_mnemonic("_Info") )
-    vboxrig:pack_start( button_eval:=gtkbuttonNew_with_mnemonic_from_stock("_Eval","gtk-execute") )
+    vboxrig:pack_start( button_recalc:=gtkbuttonNew_with_mnemonic_from_stock("_Recalc","gtk-execute") )
     vboxrig:pack_start( combo:=gtkcomboboxNew_text() )
     vboxrig:pack_start( hboxsep3:=gtkhboxNew(.f.,0))
     vboxrig:pack_start( button_new:=gtkbuttonNew_with_mnemonic_from_stock("_New","gtk-new"))
@@ -205,7 +205,7 @@ local lab
     button_move:signal_connect("clicked",{|w|cb_move(w)})
     button_back:signal_connect("clicked",{|w|cb_back(w)})
     button_forw:signal_connect("clicked",{|w|cb_forward(w)})
-    button_eval:signal_connect("clicked",{|w|cb_eval(w)})
+    button_recalc:signal_connect("clicked",{|w|cb_recalc(w)})
 
     button_check:signal_connect("clicked",{|w|cb_info(w)})
     button_check:set_active(.t.)
@@ -281,7 +281,7 @@ local x,y,but,cx,fm,n
 
         //elseif( but==2 )
         //    // middle-button
-        //    go_eval()
+        //    go_recalc()
 
         elseif( but==3 .and. infolevel()>0 )
             //right-button
@@ -351,9 +351,9 @@ local cx:=topcell()
 
 
 ******************************************************************************
-static function cb_eval()
+static function cb_recalc()
     drawclean()
-    go_eval()
+    go_recalc()
 
 ******************************************************************************
 static function cb_new(w,combo)

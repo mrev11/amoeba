@@ -75,12 +75,12 @@ function width() // elemzőfa aktuális szélessége
 
 
 *****************************************************************************
-function setwidth(movecount, eval:=.f. )
+function setwidth(movecount, recalc:=.f. )
 local w
-    if( !eval .and. turn_x() .and. width_black!=NIL )
+    if( !recalc .and. turn_x() .and. width_black!=NIL )
         width_current:=width_black
 
-    elseif( !eval .and. turn_o() .and. width_white!=NIL )
+    elseif( !recalc .and. turn_o() .and. width_white!=NIL )
         width_current:=width_white
         
     elseif( power!=NIL )

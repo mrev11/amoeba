@@ -254,13 +254,13 @@ Ha a program Ready állapotban van, akkor:
 
   - Forward gomb visszarakja az előzőleg levett követ.
 
-  - A Info check boxszal beállíthatjuk, hogy mutassa a lépést,
+  - A Info checkboxszal beállíthatjuk, hogy mutassa a lépést,
     amin éppen gondolkodik. Az ablak tetején látjuk a legjobbnak 
     talált lépés sorozatot.  Ha ezek ki vannak kapcsolva, akkor a humán 
     játékosnak nem marad sok esélye. Ha a programot konzolból futtatjuk, 
     akkor infó  módban listázza a kiértékelt mezőkben talált alakzatokat. 
 
-  - Az Eval gombbal megpróbálhatunk a táblán megtett utolsó lépésnél erősebbet
+  - Az Recalc  gombbal megpróbálhatunk a táblán megtett utolsó lépésnél erősebbet
     keresni. A gomb működése:
 
     1. Leveszi a tábláról az utolsó követ. 
@@ -273,7 +273,7 @@ Ha a program Ready állapotban van, akkor:
     mindig a listboxban interaktívan beállított elemzőfát használja,
     függetlenül az `AMOEBA_POWER` környezeti változóktól.
 
-  - Az Eval alatti listboxban beállíthatjuk az elemzőfa méretét.
+  - Az Recalc alatti listboxban beállíthatjuk az elemzőfa méretét.
     Auto beállításnál a program a lépésszám előrehaladtával
     egyre terjedelmesebb elemzőfát használ. Nem érdemes  túl nagy fát
     választani, mert lassú lesz a program. Windowson különösen lassú lesz.

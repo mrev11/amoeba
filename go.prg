@@ -28,7 +28,7 @@ function treshold()
 
 
 ******************************************************************************************
-function go_eval()
+function go_recalc()
 
 local cx,x,v,n
 
