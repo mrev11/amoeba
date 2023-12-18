@@ -20,15 +20,39 @@
 
 
 
-#define DRAW_TABSIZE     16
+#include <stdio.h>
+#include <stdlib.h>
 
-#define DRAW_CELLSIZE    size_cellsize()  // 48
-#define DRAW_ORIGO_X     size_origo_x()   // 40
-#define DRAW_ORIGO_Y     size_origo_y()   // 40
-#define DRAW_RADIUS      size_radius()    // 14
-               
 
-#define DRAW_BLACK(cr)   cairo_set_source_rgb(cr,0,0,0)
-#define DRAW_WHITE(cr)   cairo_set_source_rgb(cr,1,1,1)
-#define DRAW_EMPTY(cr)   cairo_set_source_rgb(cr,tabcolor(0),tabcolor(1),tabcolor(2))
+double tabcolor(int x)
+{
+    static double color[3]={0.66,0.55,0.44};
+    static int init=0;
+    if( !init )
+    {
+        init=1;
+        const char *env=getenv("AMOEBA_COLOR");
+        if( env && *env )
+        {
+            int r,g,b;
+            if( 3==sscanf(env,"%d,%d,%d",&r,&g,&b) )
+            {
+                if( 0<=r && r<=100 )
+                {
+                    color[0]=r/100.0;
+                }
+                if( 0<=g && g<=100 )
+                {
+                    color[1]=g/100.0;
+                }
+                if( 0<=b && b<=100 )
+                {
+                    color[2]=b/100.0;
+                }
+            }
+        }
+    }
+    return color[x];
+}
+
 

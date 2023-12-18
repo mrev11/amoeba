@@ -175,9 +175,9 @@ local lab
 
     hboxsep:set_size_request(0,10)
 
-    label_move:set_size_request(250,-1)
-    label_turn:set_size_request(50,-1)
-    label_rate:set_size_request(250,-1)
+    label_move:set_size_request(CELLSIZE*(TABLESIZE-3)/2,-1)
+    label_turn:set_size_request(CELLSIZE*2,-1)
+    label_rate:set_size_request(CELLSIZE*(TABLESIZE-3)/2,-1)
 
     label_move()
     label_rate(0)
@@ -646,7 +646,9 @@ function drawingarea()
 ******************************************************************************
 function tablesize(ts)
 static tablesize:=DRAW_TABSIZE
-    if( ts!=NIL .and. 12<=ts .and. ts<=24 )
+    if( ts!=NIL )
+        ts:=max(ts,12)
+        ts:=min(ts,24)
         tablesize:=ts
         cairo_settabsize(ts)
         cell_settabsize(ts)

@@ -25,6 +25,15 @@
 #include <cccapi.h>
 #include <draw.ch>
 
+
+extern int size_cellsize();
+extern int size_origo_x();
+extern int size_origo_y();
+extern int size_radius();
+
+extern double tabcolor(int);
+
+
 static int tablesize    = DRAW_TABSIZE;
 static int cellsize     = DRAW_CELLSIZE;
 static int origo_x      = DRAW_ORIGO_X ;

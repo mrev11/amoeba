@@ -1,4 +1,4 @@
 #!/bin/bash
 mkdir -p ../amoeba-save
-mv amoeba16* ../amoeba-save
+mv amoeba16* ../amoeba-save 2>/dev/null
 ~/bin/gc

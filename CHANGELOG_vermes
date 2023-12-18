@@ -1,3 +1,7 @@
+2023-12-18
+  paraméterezhető cellaméret: AMOEBA_CELLSIZE=[32..64] default=48;
+  paraméterezhető táblaszín: AMOEBA_COLOR=r,g,b, színek:[0..100], default=66,55,44;
+
 2023-12-16 best line megjelenítése;
 
 2023-12-16 

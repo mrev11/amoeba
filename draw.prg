@@ -131,8 +131,8 @@ local x,y
 static gc:=makegc("#000000")
 
     if( figure(cx)==asc(" ") .and. num<=9 )
-        x:=CELLSIZE/5+(i+1)*CELLSIZE
-        y:=CELLSIZE/8+(j+1)*CELLSIZE
+        x:=(i+1)*CELLSIZE + CELLSIZE/5
+        y:=(j+1)*CELLSIZE + CELLSIZE/10+if(CELLSIZE<40,-4,0)
         gdk.drawable.draw_layout(draw,gc,x,y,numlayout(num))
     end
 
@@ -152,8 +152,12 @@ static function numlayout(n) // n=0...99
 static label:=array(100)
 local  x:=n+1
     if( label[x]==NIL )
-        label[x]:=gtklabelNew("<b>"+n::str::alltrim+"</b>")
-        label[x]:set_use_markup(.t.)
+        if( size_cellsize()>=40 )
+            label[x]:=gtklabelNew("<b>"+n::str::alltrim+"</b>")
+            label[x]:set_use_markup(.t.)
+        else
+            label[x]:=gtklabelNew(n::str::alltrim)
+        end
     end 
     return label[x]:get_layout()
 
@@ -164,8 +168,12 @@ static label:=array(100)
 static a:=asc("a")
 local  x:=n+1
     if( label[x]==NIL )
-        label[x]:=gtklabelNew( "<b>"+chr(a+n)+"</b>" )
-        label[x]:set_use_markup(.t.)
+        if( size_cellsize()>=40 )
+            label[x]:=gtklabelNew( "<b>"+chr(a+n)+"</b>" )
+            label[x]:set_use_markup(.t.)
+        else
+            label[x]:=gtklabelNew(chr(a+n))
+        end
     end 
     return label[x]:get_layout()
 
@@ -175,21 +183,27 @@ static function scale()
 
 static gc:=makegc("#000000")
 local draw:=area:get_drawable
-local i,x,y,dx,dy
+local i,x,y,dx,dy,cs
 
+    cs:=CELLSIZE
+
+    //horizontal:012
     for i:=0 to TABLESIZE-1
-        dx:=CELLSIZE*(0.1+if(i<10,0.1,0.0))
-        dy:=CELLSIZE*0.2
-        x:=dx + (i+1)*CELLSIZE
-        y:=dy + 0
+        dx:=cs*0.1 + if(i<10,cs*0.1,0)
+        dy:=cs*0.2 + if(cs<40,-2,0)
+
+        x:=dx + (i+1)*cs
+        y:=dy
         gdk.drawable.draw_layout(draw,gc,x,y,numlayout(i))
     next
 
+    //vertical:abc
     for i:=0 to TABLESIZE-1
-        dx:=CELLSIZE*0.3
-        dy:=CELLSIZE*0.0
-        x:=dx + 0
-        y:=dy + (i+1)*CELLSIZE
+        dx:=cs*0.3 + if(cs<40,-2,0)
+        dy:=cs*0
+
+        x:=dx
+        y:=dy + (i+1)*cs
         gdk.drawable.draw_layout(draw,gc,x,y,abclayout(i))
     next
 
