@@ -311,6 +311,7 @@ C++-ban van
   - a lépés kiválasztás.    
     
 
+
 ---------------------------------------------------------------------------------
 ## Letöltés
 
@@ -332,6 +333,17 @@ Abban sem vagyok biztos, hogy másvalaki gépén jól jelenik-e meg. A megjelen�
 hogy milyen fontok vannak installálva a rendszeren, milyen a képernyő felbontása és 
 hasonlók. Annyit mondhatok csak, hogy a saját Linux boxomban virtualizált Windows 10-en 
 elfogadhatóan működik.
+
+
+---------------------------------------------------------------------------------
+## Online játék
+
+Böngészőben is lehet amőbázni a következő linken:
+[Amoeba for the WEB](http://comfirm.hu:45678/webapp).
+
+A webes változat a szerveren játszik, a böngésző csak a megjelenítést végzi.
+A szerver egy Intel Celeron J1900 (4) @ 2.415GHz processzoron futó Arch Linux.
+A kis teljesítményű CPU-tól ne várjunk nagy sebességet. 
 
 
 ---------------------------------------------------------------------------------
