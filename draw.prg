@@ -194,7 +194,7 @@ local i,x,y,dx,dy,cs
 
         x:=dx + (i+1)*cs
         y:=dy
-        gdk.drawable.draw_layout(draw,gc,x,y,numlayout(i))
+        gdk.drawable.draw_layout(draw,gc,x,y,numlayout(i+1))
     next
 
     //vertical:abc

@@ -187,7 +187,7 @@ local lab
     //=============================
 
     vboxrig:pack_start( hboxsep0:=gtkhboxNew(.f.,0))
-    vboxrig:pack_start( twostatelabel:=gtktwostateimagelabelNew(.t.,"Ready","Thinking") )
+    vboxrig:pack_start( twostatelabel:=gtktwostateimagelabelNew(.t.,"Ready","Think") )
     vboxrig:pack_start( hboxsep1:=gtkhboxNew(.f.,0))
     vboxrig:pack_start( button_move:=gtkbuttonNew_with_mnemonic_from_stock("_Move","gtk-execute") )
     vboxrig:pack_start( button_back:=gtkbuttonNew_with_mnemonic_from_stock("_Back","gtk-go-back"))
@@ -267,7 +267,7 @@ local x,y,but,cx,fm,n
             end
 
             if( !game_over() )
-                label_bestline("")
+                //label_bestline("")
                 if( topcell()!=NIL )
                     drawcell(topcell()) // -> normal shape
                 end
@@ -276,7 +276,9 @@ local x,y,but,cx,fm,n
                 drawtop()
                 label_move()
                 label_turn()
-                cb_move()
+                if( winner()==32 )
+                    cb_move()
+                end
             end
 
         //elseif( but==2 )
@@ -353,7 +355,11 @@ local cx:=topcell()
 ******************************************************************************
 static function cb_recalc()
     drawclean()
+    twostatelabel:set_state(.f.)
+    area:set_sensitive(.f.)
     go_recalc()
+    area:set_sensitive(.t.)
+    twostatelabel:set_state(.t.)
 
 ******************************************************************************
 static function cb_new(w,combo)

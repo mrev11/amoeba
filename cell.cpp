@@ -549,7 +549,7 @@ void _clp_cell_restore(int argno)
 //--------------------------------------------------------------------------
 void _clp_cell_randomize(int argno)
 {
-    CCC_PROLOG("cell_randomize",0);
+    CCC_PROLOG("cell_randomize",2);
     int row=_parni(1);
     int col=_parni(2);
     cell::randomize(row,col);

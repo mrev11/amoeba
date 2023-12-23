@@ -96,6 +96,9 @@ static function gtktwostateimagelabel.initialize(this,state,text1,text2)
 
 static function gtktwostateimagelabel.set_state(this, state)
 
+static image_red   := circle_image(CELLSIZE*0.6, 0.7, 0  , 0, 3/4,3/4,3/4)
+static image_green := circle_image(CELLSIZE*0.6, 0  , 0.7, 0, 3/4,3/4,3/4)
+
     this:state:=state
 
     if( this:image!=NIL )
@@ -109,16 +112,15 @@ static function gtktwostateimagelabel.set_state(this, state)
 
     if( state )
         this:label:=gtklabelNew(this:active_state_text)
-        this:image:=gtkimageNew_from_stock("gtk-yes",1)
+        this:image:=image_green
     else
         this:label:=gtklabelNew(this:passive_state_text)
-        this:image:=gtkimageNew_from_stock("gtk-no",1)
+        this:image:=image_red
     end
 
     this:pack_start(this:image, .f., .f., 3)
     this:pack_start(this:label, .f., .f., 3)
-    this:image:show
-    this:label:show
+    gtk.widget.show_all(this:gobject)
     gtk.main_stabilize()
 
 
@@ -173,7 +175,7 @@ local r,c
         c:="-"
     else
         r:=chr(97+int(pos/TABLESIZE))
-        c:=(pos%TABLESIZE)::str::alltrim
+        c:=(1+(pos%TABLESIZE))::str::alltrim
     end
     return r+c
 

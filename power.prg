@@ -103,28 +103,20 @@ local w
     end
 
 
-
-/*
-    elseif( movecount<=16 )
-        width_current:=width[4]
-
-    elseif( movecount<=32 )
-        width_current:=width[5]
-
-    elseif( movecount<=64 )
-        width_current:=width[6]
-
-    else
-        width_current:=width[7]
-    end
-*/
-
 *****************************************************************************
 function setpower(p)
-    if( p=="auto" )
-        power:=NIL
+    if( valtype(p)=="N" )
+        if( p==0 )
+            power:=NIL
+        else
+            power:=width[p]
+        end
     else
-        power:=powinit(p)
+        if( p=="auto" )
+            power:=NIL
+        else
+            power:=powinit(p)
+        end
     end
 
 // power==NIL  vagy  power=={4,3,2,1...}
