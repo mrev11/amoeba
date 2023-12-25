@@ -2,7 +2,7 @@
 <META charset="UTF-8">
 </head></p>
 <hr />
-<h2>Amoeba élmény beszámoló</h2>
+<h2>Amőba élmény beszámoló</h2>
 <p>Eredetileg 1984-ben írtam az amőba programot C64-re.
 Boltban is kapható volt, a Novotrade forgalmazta. 
 Kb. tízezer forintot kerestem vele.
@@ -131,7 +131,7 @@ három egymásra épülő komponens alkotja:</p>
 </ul>
 <p>A statikus állás értékelés értéket rendel az elemzőfa leveleihez.
 A minimax algoritmus a levelek alapján kiszámítja fontosnak gondolt 
-lépésekhez tartozó értéket.</p>
+lépésekhez tartozó optimum értéket.</p>
 <p>A minimax algoritmuson nincs sok töprengeni való, úgy kell leprogramozni,
 ahogy a korábbi linkekben le van írva. A program játékereje azon múlik,
 hogy a statikus állás értékelés és a lépés kiválasztás milyen jól
@@ -166,7 +166,7 @@ a program működését.</p>
 <p><code>export AMOEBA_POWER_WHITE=&lt;power&gt;</code><br />
   A program fehérrel az itt megadott erősséggel játszik
   függetlenül attól, hogy mit állítunk be interaktívan.
-  Az erősség lehetséges értékei 0...8. A 0 szám felel meg az auto módnak.</p>
+  Az erősség lehetséges értékei 0,...,8. A 0 szám felel meg az auto módnak.</p>
 </li>
 <li>
 <p><code>export AMOEBA_POWER_BLACK=&lt;power&gt;</code><br />
@@ -189,13 +189,13 @@ a program működését.</p>
   Beállíthatjuk a tábla színét. Három vesszővel elválasztott számmal,
   0-tól 100-ig terjedő skálán kell megadnunk a red, green, blue színek 
   intenzitását. Az alapértelemzett színek: 66,55,44. Egy go tábla színét
-  kapjuk a 66,66,33 számokkal.</p>
+  kapjuk a 77,66,22 számokkal.</p>
 </li>
 </ul>
 <h4>Interakció</h4>
 <p>A tábla bármely szabad mezejére egér balgombbal elhelyezhetjük a soron levő
 játékos kövét, feltéve, hogy a program éppen nem gondolkodik.</p>
-<p>A jobb felső sarokban levő kétállapotú (Ready/Thinking) gomb mutatja,
+<p>A jobb felső sarokban levő kétállapotú (Ready/Think) címke  mutatja,
 hogy a program kész fogadni az inputot, vagy el van foglalva a számításokkal.
 Ha éppen gondolkodik, akkor semmilyen inputra nem reagál, meg kell várnunk,
 amíg végez, megteszi a lépését, és Ready állapotba kerül.</p>
@@ -232,7 +232,7 @@ amíg végez, megteszi a lépését, és Ready állapotba kerül.</p>
 <li>Megmutatja a lépést, e célból egy kicsit hunyorog.</li>
 <li>Visszarakja az eredeti állást.</li>
 </ol>
-<p>Az eredeti állás visszarakása után, a Back és Forward gombok a korábbi
+<p>Az eredeti állás visszarakása után a Back és Forward gombok a korábbi
 változatlan lépéssorozaton navigálnak előre és hátra. Ez a funkció
 mindig a listboxban interaktívan beállított elemzőfát használja,
 függetlenül az <code>AMOEBA_POWER</code> környezeti változóktól.</p>
@@ -278,7 +278,8 @@ mi az állás értékelése.</p>
 <p>A program forrása git-tel tölthető le:</p>
 <pre><code>    git clone git://comfirm.hu/amoeba.git
 </code></pre>
-<p>Linuxon CCC3 környezetben vagy Windowson MSYS2+CCC3 környezetben tudjuk lefordítani.</p>
+<p>Linuxon <a href="http://comfirm.hu/ccc3/ccc-belulrol.html">CCC3</a>
+környezetben vagy Windowson MSYS2+CCC3 környezetben tudjuk lefordítani.</p>
 <p>Windows 10-re lefordított, MSYS2 és CCC környezet nélkül futtatható zip csomag
 tölthető le innen: <a href="http://comfirm.hu/pub/amoeba.zip">http://comfirm.hu/pub/amoeba.zip</a></p>
 <p>Hangsúlyozom, hogy a program elsősorban linuxos. A windowsos verzió halvány
@@ -294,6 +295,6 @@ elfogadhatóan működik.</p>
 <p>Böngészőben is lehet amőbázni a következő linken:
 <a href="http://comfirm.hu:45678/webapp">Amoeba for the WEB</a>.</p>
 <p>A webes változat a szerveren játszik, a böngésző csak a megjelenítést végzi.
-A szerver egy Intel Celeron J1900 (4) @ 2.415GHz processzoron futó Arch Linux.
-A kis teljesítményű CPU-tól ne várjunk nagy sebességet. </p>
+E sorok írásakor a szerver egy Intel Celeron J1900 (4) @ 2.415GHz processzoron futó 
+Arch Linux. A szerény teljesítményű CPU-tól ne várjunk nagy sebességet. </p>
 <hr />

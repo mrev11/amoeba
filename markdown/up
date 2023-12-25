@@ -1,0 +1,3 @@
+#!/bin/bash
+scp amoeba.md.html tw://home/vermes
+ssh tw sudo  mv  amoeba.md.html /opt/websrv/htdocs/pub

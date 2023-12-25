@@ -5,7 +5,7 @@
 
 
 ---------------------------------------------------------------------------------
-## Amoeba élmény beszámoló
+## Amőba élmény beszámoló
 
 Eredetileg 1984-ben írtam az amőba programot C64-re.
 Boltban is kapható volt, a Novotrade forgalmazta. 
@@ -165,7 +165,7 @@ három egymásra épülő komponens alkotja:
 
 A statikus állás értékelés értéket rendel az elemzőfa leveleihez.
 A minimax algoritmus a levelek alapján kiszámítja fontosnak gondolt 
-lépésekhez tartozó értéket.
+lépésekhez tartozó optimum értéket.
 
 A minimax algoritmuson nincs sok töprengeni való, úgy kell leprogramozni,
 ahogy a korábbi linkekben le van írva. A program játékereje azon múlik,
@@ -209,7 +209,7 @@ a program működését.
   -  `export AMOEBA_POWER_WHITE=<power>`  
   A program fehérrel az itt megadott erősséggel játszik
   függetlenül attól, hogy mit állítunk be interaktívan.
-  Az erősség lehetséges értékei 0...8. A 0 szám felel meg az auto módnak.
+  Az erősség lehetséges értékei 0,...,8. A 0 szám felel meg az auto módnak.
 
   -  `export AMOEBA_POWER_BLACK=<power>`  
   A program feketével az itt megadott erősséggel játszik
@@ -228,7 +228,7 @@ a program működését.
   Beállíthatjuk a tábla színét. Három vesszővel elválasztott számmal,
   0-tól 100-ig terjedő skálán kell megadnunk a red, green, blue színek 
   intenzitását. Az alapértelemzett színek: 66,55,44. Egy go tábla színét
-  kapjuk a 66,66,33 számokkal.
+  kapjuk a 77,66,22 számokkal.
 
 
 #### Interakció
@@ -237,7 +237,7 @@ A tábla bármely szabad mezejére egér balgombbal elhelyezhetjük a soron lev�
 játékos kövét, feltéve, hogy a program éppen nem gondolkodik.
 
 
-A jobb felső sarokban levő kétállapotú (Ready/Thinking) gomb mutatja,
+A jobb felső sarokban levő kétállapotú (Ready/Think) címke  mutatja,
 hogy a program kész fogadni az inputot, vagy el van foglalva a számításokkal.
 Ha éppen gondolkodik, akkor semmilyen inputra nem reagál, meg kell várnunk,
 amíg végez, megteszi a lépését, és Ready állapotba kerül.
@@ -268,7 +268,7 @@ Ha a program Ready állapotban van, akkor:
     3. Megmutatja a lépést, e célból egy kicsit hunyorog.
     4. Visszarakja az eredeti állást.
 
-    Az eredeti állás visszarakása után, a Back és Forward gombok a korábbi
+    Az eredeti állás visszarakása után a Back és Forward gombok a korábbi
     változatlan lépéssorozaton navigálnak előre és hátra. Ez a funkció
     mindig a listboxban interaktívan beállított elemzőfát használja,
     függetlenül az `AMOEBA_POWER` környezeti változóktól.
@@ -319,7 +319,8 @@ A program forrása git-tel tölthető le:
 
         git clone git://comfirm.hu/amoeba.git
 
-Linuxon CCC3 környezetben vagy Windowson MSYS2+CCC3 környezetben tudjuk lefordítani.
+Linuxon [CCC3](http://comfirm.hu/ccc3/ccc-belulrol.html)
+környezetben vagy Windowson MSYS2+CCC3 környezetben tudjuk lefordítani.
 
 Windows 10-re lefordított, MSYS2 és CCC környezet nélkül futtatható zip csomag
 tölthető le innen: [http://comfirm.hu/pub/amoeba.zip](http://comfirm.hu/pub/amoeba.zip)
@@ -342,8 +343,8 @@ Böngészőben is lehet amőbázni a következő linken:
 [Amoeba for the WEB](http://comfirm.hu:45678/webapp).
 
 A webes változat a szerveren játszik, a böngésző csak a megjelenítést végzi.
-A szerver egy Intel Celeron J1900 (4) @ 2.415GHz processzoron futó Arch Linux.
-A kis teljesítményű CPU-tól ne várjunk nagy sebességet. 
+E sorok írásakor a szerver egy Intel Celeron J1900 (4) @ 2.415GHz processzoron futó 
+Arch Linux. A szerény teljesítményű CPU-tól ne várjunk nagy sebességet. 
 
 
 ---------------------------------------------------------------------------------

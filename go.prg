@@ -44,6 +44,7 @@ local cx,x,v,n
     ? "=============================================================================";?
 
     drawcell(cx)
+    label_turn()
 
     setwidth(movecount(),.t.)
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,"")
@@ -67,6 +68,7 @@ local cx,x,v,n
 
     forw(cx)
     drawtop()
+    label_turn()
 
     cell_restore()
 
