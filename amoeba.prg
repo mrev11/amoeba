@@ -367,7 +367,7 @@ static function cb_new(w,combo)
     if(gtk.main_depth()>1);return NIL;end
     //combo:set_active(0)
     c_cb_new()
-    drawall()
+    drawall(.t.) // törli topcell/topfig-et
     label_bestline("")
     label_move()
     label_rate(0)
@@ -460,7 +460,8 @@ local amoeba:="amoeba"+TABLESIZE::str::alltrim
         rating[n]:=rates[n]
     next
     c_cb_new(cells)
-    drawall()
+    drawall(.t.) // törli topcell/topfig-et
+    drawtop()
 
     label_bestline("")
     label_move()

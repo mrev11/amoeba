@@ -37,7 +37,8 @@ static area:=drawingarea()
 static ascx:=asc("X")
 static asco:=asc("O")
 
-static altflag:=.f.
+static topcell:=NIL
+static topfig:=NIL
 
 
 ******************************************************************************
@@ -53,61 +54,87 @@ local y:=int(cx/TABLESIZE)
         else
             fig:=FIG_EMPTY
         end
+        topcell:=NIL
+        topfig:=NIL
     end
     cairo_drawcell(area:gobject,x,y,fig)
     gtk.main_stabilize()
 
 
 ******************************************************************************
-function drawalt(cx)
-local fig
-    fig:=figure(cx)
-    if( fig==ascx )
-        altflag:=.t.
-        fig:=FIG_XA
-    elseif( fig==asco )
-        altflag:=.t.
-        fig:=FIG_OA
-    else
-        altflag:=.f.
-        fig:=FIG_EMPTY
+function drawalt()
+local top,fig
+    top:=topcell()
+    if( top==NIL )
+        return NIL
     end
-    drawcell(cx,fig)
+    fig:=figure(top)
+    if( fig==ascx )
+        fig:=FIG_XA
+        topcell:=top
+        topfig:=fig
+    elseif( fig==asco )
+        fig:=FIG_OA
+        topcell:=top
+        topfig:=fig
+    else
+        fig:=FIG_EMPTY
+        topcell:=NIL
+        topfig:=NIL
+    end
+    drawcell(top,fig)
 
 
 ******************************************************************************
 function drawtop()
-local top,fig
-    if( (top:=topcell())!=NIL )
-        fig:=figure(top)
-        if( fig==ascx )
-            fig:=FIG_XT
-        elseif( fig==asco )
-            fig:=FIG_OT
-        else
-            fig:=FIG_EMPTY
-        end
-        drawcell(top,fig)
+local top,fig 
+    top:=topcell()
+    if( top==NIL )
+        return NIL
     end
+    fig:=figure(top)
+    if( fig==ascx )
+        fig:=FIG_XT
+        topcell:=top
+        topfig:=fig
+    elseif( fig==asco )
+        fig:=FIG_OT
+        topcell:=top
+        topfig:=fig
+    else
+        fig:=FIG_EMPTY
+        topcell:=NIL
+        topfig:=NIL
+    end
+    drawcell(top,fig)
         
 
 ******************************************************************************
-function drawall()
-local cx,top
+function drawall( deltop:=.f. )
+local cx,tc,tf
+
+    if( deltop )
+        topcell:=NIL
+        topfig :=NIL
+    end
 
     cairo_drawgrid(area:gobject)
     scale()
 
-    top:=topcell()
+    tc:=topcell
+    tf:=topfig 
     for cx:=0 to ROWCOL-1
-        if( cx!=top )
+        if( cx==tc )
+            drawcell(tc,tf)
+        else
             drawcell(cx)
         end
     next
 
-    if( top!=NIL )
-        if(altflag,drawalt(top),drawtop())
-    end
+    //a ciklusban
+    //törlőd(het)nek
+    topcell := tc
+    topfig  := tf
 
 
 ******************************************************************************

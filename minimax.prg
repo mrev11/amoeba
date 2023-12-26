@@ -73,13 +73,16 @@ local bestline1:=""
             movestack[depth]:=x
             forw(x)
             if( ilevel>=depth )
-                drawalt(x)
+                drawalt()
                 sleep(100)
             end
             vopt:=max(vopt,minimax(depth,alfa,beta,@bestline1))
             back()
             if( ilevel>=depth )
-                drawalt(x)
+                drawcell(x)
+                if( depth>1 )
+                    drawalt()
+                end
             end
             info(depth,x,vopt)
 
@@ -110,13 +113,16 @@ local bestline1:=""
             movestack[depth]:=x
             forw(x)
             if( ilevel>=depth )
-                drawalt(x)
+                drawalt()
                 sleep(100)
             end
             vopt:=min(vopt,minimax(depth,alfa,beta,@bestline1))
             back()
             if( ilevel>=depth )
-                drawalt(x)
+                drawcell(x)
+                if( depth>1 )
+                    drawalt()
+                end
             end
             info(depth,x,vopt)
 

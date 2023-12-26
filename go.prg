@@ -59,7 +59,7 @@ local cx,x,v,n
         for n:=1 to 5
             drawcell(x)
             sleep(300)
-            drawtop(x)
+            drawtop()
             sleep(300)
         next
         back()
@@ -69,7 +69,6 @@ local cx,x,v,n
     forw(cx)
     drawtop()
     label_turn()
-
     cell_restore()
 
 
@@ -79,6 +78,9 @@ function go_move()
 local x,v,n
 
     label_bestline("")
+    if( topcell()!=NIL )
+        drawcell(topcell())
+    end
 
     ? "-----------------------------------------------------------------------------";?
 
@@ -93,7 +95,7 @@ local x,v,n
         for n:=1 to 3
             drawcell(x)
             sleep(80)
-            drawtop(x)
+            drawtop()
             sleep(80)
         next
     end
