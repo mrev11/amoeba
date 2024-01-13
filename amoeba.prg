@@ -68,8 +68,7 @@ local game
         cell_classinit()
     end
 
-    rating:=array(ROWCOL+1)
-    rating::afill(0)
+    rating:=array(ROWCOL)
 
     amoeba_gui(file)
 
@@ -180,7 +179,7 @@ local lab
     label_rate:set_size_request(CELLSIZE*(TABLESIZE-3)/2,-1)
 
     label_move()
-    label_rate(0)
+    label_rate()
 
     //=============================
     // vboxrig
@@ -257,7 +256,7 @@ local x,y,but,cx,fm,n
     if(gtk.main_depth()>1);return NIL;end
 
     if( validpos(event,@x,@y,@but) )
-    
+
         if( but==1 )
             //left-button
 
@@ -276,6 +275,7 @@ local x,y,but,cx,fm,n
                 drawtop()
                 label_move()
                 label_turn()
+                label_rate(original_rating()[2])
                 if( winner()==32 )
                     cb_move()
                 end
@@ -370,7 +370,7 @@ static function cb_new(w,combo)
     drawall(.t.) // törli topcell/topfig-et
     label_bestline("")
     label_move()
-    label_rate(0)
+    label_rate()
 
 
 ******************************************************************************
@@ -405,8 +405,10 @@ local amoeba:="amoeba"+TABLESIZE::str::alltrim
     if( selected_file==NIL )
         //? "nem választott"
         return NIL
-    end   
-    
+    end
+
+    ? "LOAD FROM", selected_file
+
     content:=memoread(selected_file)
 
     if( empty(content) )
@@ -425,16 +427,15 @@ local amoeba:="amoeba"+TABLESIZE::str::alltrim
     //  de akkor kötelező volna a CRC32-es neveket használni
     //  return NIL
     // end
-    
 
-    content::=strtran(chr(13),"")    
+    content::=strtran(chr(13),"")
     content::=split(chr(10))
-    
+
     if( content::len<3  )
         ? "hibás formátum1"
         return NIL
     end
-    
+
     cells:=content[2]
     rates:=content[3]
 
@@ -446,19 +447,22 @@ local amoeba:="amoeba"+TABLESIZE::str::alltrim
     for n:=1 to len(cells)
          cells[n]::=val
     next
+    ? "cells",cells::len, cells::any2str
 
     if( rates::left(1)!="{" .or. rates::right(1)!="}" )
         ? "hibás formátum3"
         return NIL
     end
     rates::=substr(2,len(rates)-2)::split
+    if( rates::len>cells::len )
+        //compatibility
+        rates::addel(1)
+    end
+    ? "rates",rates::len,rates
     for n:=1 to len(rates)
-         rates[n]::=val
+        rating[n]:=rates[n] //C stringek
     next
 
-    for n:=1 to len(rates)
-        rating[n]:=rates[n]
-    next
     c_cb_new(cells)
     drawall(.t.) // törli topcell/topfig-et
     drawtop()
@@ -473,7 +477,7 @@ local amoeba:="amoeba"+TABLESIZE::str::alltrim
 static function cb_save(window)
 local dlg,selected_file,name
 local index:=0,cellid,cells:={}
-local rates:=rating[1..movecount()+1]
+local rates:=rating[1..movecount()]
 local amoeba:="amoeba"+TABLESIZE::str::alltrim
 local content:=""
 
@@ -483,8 +487,11 @@ local content:=""
         aadd(cells,cellid)
     end
 
+    ? "cells",cells::len, cells::any2str // számok
+    ? "rates",rates::len, rates          // C stringek
+
     cells::=any2str
-    rates::=any2str
+    rates::=any2str::strtran('"','')
 
     content:=amoeba+chr(10)
     content+=cells+chr(10)
@@ -509,6 +516,7 @@ local content:=""
     end
 
     if( selected_file!=NIL )
+        ? "SAVE TO",selected_file
         memowrit(selected_file,content)
     end
 
@@ -524,7 +532,7 @@ static function cb_info(w)
     else
         label_bestline:hide
     end
-        
+
 
 
 ******************************************************************************
@@ -598,13 +606,15 @@ local mc:=movecount()
 
 ******************************************************************************
 function label_rate(x)
-local mc1:=movecount()+1
-    if( x!=NIL )
-        rating[mc1]:=x
+local mc:=movecount()
+    if( mc<=0 )
+        x:=""
+    elseif( x!=NIL )
+        rating[mc]:=x
     else
-        x:=rating[mc1]
+        x:=rating[mc]
     end
-    label_rate:set_markup( "Rating: <b>"+x::int::str::alltrim+"</b>" )
+    label_rate:set_markup( "Rating: <b>"+x+"</b>" )
 
 
 ******************************************************************************
@@ -665,6 +675,22 @@ static tablesize:=DRAW_TABSIZE
         cell_settabsize(ts)
     end
     return tablesize
+
+
+******************************************************************************
+function original_rating(x)
+local mc:=movecount()
+local mr:=if(mc>0,rating[mc],"")
+local parpos
+    if( mr==NIL )
+        return {"",""}
+    end
+    if( 0==(parpos:=at("(",mr)) )
+        mr:={mr,""}
+    else
+        mr:={mr::left(parpos-1),mr::substr(parpos)}
+    end
+    return mr
 
 
 ******************************************************************************

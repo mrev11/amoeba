@@ -26,7 +26,7 @@
 
 double tabcolor(int x)
 {
-    static double color[3]={0.66,0.55,0.44};
+    static double color[3]={0.77,0.66,0.22};
     static int init=0;
     if( !init )
     {

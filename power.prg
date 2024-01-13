@@ -30,6 +30,7 @@ static width_white:=init_width_white()
 static power
 
 
+
 *****************************************************************************
 static function init_width()
 local w:=array(8)
@@ -101,6 +102,8 @@ local w
     else
         width_current:=width[5]
     end
+    
+    return current_level()
 
 
 *****************************************************************************
@@ -147,5 +150,17 @@ static level:=.t.
         return 2
     end
 
+
+*****************************************************************************
+static function current_level()
+static level:={POW1,POW2,POW3,POW4,POW5,POW6,POW7,POW8}
+local cw:=width_current::any2str
+local cl
+    for cl:=8 to 1 step -1
+        if( level[cl]$cw )
+            exit
+        end
+    next
+    return cl // current level: 1..8 
 
 *****************************************************************************
