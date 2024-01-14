@@ -32,9 +32,9 @@ void _clp_amoeba_pixbuf(int argno)
     cairo_t   *cr=gdk_cairo_create(pixmap);
 
     //background
-    double r=0.6;
-    double g=0.6;
-    double b=0.5;
+    double r=0.77;
+    double g=0.66;
+    double b=0.22;
     cairo_set_source_rgb(cr,r,g,b);    
     cairo_rectangle(cr,0,0,100,100);
     cairo_fill(cr);

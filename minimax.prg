@@ -162,7 +162,7 @@ static function info(depth,x,v)
     local level:=1
     if( depth<=level )
         ?? space((depth-1)*4)
-        ?? turn(), "["+v::int::str(5)+"]", rc(x)::padr(3), node
+        ?? turn(), "["+v::int::str(5)+"]", pos2rc(x)::padr(3), node
         ?
     end
 #else
@@ -179,9 +179,9 @@ static function leaf(depth,v,alfa,beta)
 static log
 local line,n
 
-    line:=rc(movestack[1])
+    line:=pos2rc(movestack[1])
     for n:=2 to depth-1
-        line+=","+rc(movestack[n])
+        line+=","+pos2rc(movestack[n])
     next
 
     if( log==NIL )
@@ -198,7 +198,7 @@ static function update_bestline(depth,pos,val,bestline)
 
 local bl,n,labtxt
 
-    bl:=rc(pos)
+    bl:=pos2rc(pos)
     if( !empty(bestline) )
         bl+=","+bestline
     end

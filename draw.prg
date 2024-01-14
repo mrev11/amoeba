@@ -33,12 +33,20 @@
 #define FIG_OT      6
 
 
-static area:=drawingarea()
+static area
 static ascx:=asc("X")
 static asco:=asc("O")
 
 static topcell:=NIL
 static topfig:=NIL
+
+
+******************************************************************************
+function drawingarea(a)
+    if( a!=NIL )
+        area:=a
+    end
+    return area
 
 
 ******************************************************************************

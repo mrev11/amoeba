@@ -18,9 +18,29 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "amoeba.ch"
+#include "tabsize.ch"
 
 
-#define TABLESIZE       cell::tablesize
-#define MAXROW          TABLESIZE
-#define MAXCOL          TABLESIZE
-#define ROWCOL          MAXROW*MAXCOL
+
+******************************************************************************
+function pos2rc(pos)
+local r,c
+    if( pos==NIL )
+        r:="-"
+        c:="-"
+    else
+        r:=chr(97+int(pos/TABLESIZE))
+        c:=(1+(pos%TABLESIZE))::str::alltrim
+    end
+    return r+c
+
+
+******************************************************************************
+function rc2pos(rc)
+local row:=rc[1..1]::asc-97
+local col:=rc[2..]::val-1
+    return  row*TABLESIZE+col
+
+
+******************************************************************************

@@ -227,8 +227,7 @@ a program működését.
   - `export AMOEBA_COLOR=<r,g,b>`  
   Beállíthatjuk a tábla színét. Három vesszővel elválasztott számmal,
   0-tól 100-ig terjedő skálán kell megadnunk a red, green, blue színek 
-  intenzitását. Az alapértelemzett színek: 66,55,44. Egy go tábla színét
-  kapjuk a 77,66,22 számokkal.
+  intenzitását. Egy go tábla színét kapjuk a 77,66,22 számokkal.
 
 
 #### Interakció

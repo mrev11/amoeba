@@ -18,9 +18,28 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "gdk.ch"
+#include "gtk.ch"
+
+#include "amoeba.ch"
+#include "tabsize.ch"
 
 
-#define TABLESIZE       cell::tablesize
-#define MAXROW          TABLESIZE
-#define MAXCOL          TABLESIZE
-#define ROWCOL          MAXROW*MAXCOL
+
+******************************************************************************
+function gtkbuttonNew_with_mnemonic_from_stock(label_text,stock_id)
+local button,box,label,image
+    box:=gtkhboxNew(.f.,0)
+    box:set_border_width(2)
+    image:=gtkimageNew_from_stock(stock_id,1)
+    label:=gtklabelNew(label_text)
+    label:set_use_underline(.t.)
+    box:pack_start(image, .f., .f., 3)
+    box:pack_start(label, .f., .f., 3)
+    button:=gtkbuttonNew()
+    button:add(box)
+    return button
+
+
+
+******************************************************************************

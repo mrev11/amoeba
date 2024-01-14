@@ -409,9 +409,9 @@ void _clp_movecount(int argno)
 }
 
 //--------------------------------------------------------------------------
-void _clp_markmovecount(int argno)
+void _clp_c_markmovecount(int argno)
 {
-    CCC_PROLOG("markmovecount",0);
+    CCC_PROLOG("c_markmovecount",0);
     cell::moveforw=cell::movecount;
     _ret();
     CCC_EPILOG();
@@ -491,21 +491,9 @@ void _clp_c_cb_forward(int argno)
 //--------------------------------------------------------------------------
 void _clp_c_cb_new( int argno )
 {
-    CCC_PROLOG("c_cb_new",1);
+    CCC_PROLOG("c_cb_new",0);
     while( cell::unset()!=0 );
     cell::randomize(TABLESIZE/2,TABLESIZE/2);
-
-    if( !ISNIL(1) )
-    {
-        int len=_paralen(1);
-        for( int i=0; i<len; i++ )
-        {
-            VALUE *v=_parax(1,i);
-            unsigned x=D2UINT(v->data.number);
-            cell::cells[x]->set();
-        }
-        cell::moveforw=cell::movecount;
-    }
     _ret();
     CCC_EPILOG();
 }

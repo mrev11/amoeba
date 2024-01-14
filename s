@@ -10,4 +10,4 @@ clear
 #export AMOEBA_CELLSIZE=64
 export AMOEBA_COLOR=77,66,22
 
-amoeba.exe  -t 16  "$@" | tee log-amoeba
+amoeba.exe  -t 14  "$@" | tee log-amoeba

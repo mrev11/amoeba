@@ -50,14 +50,13 @@ local curlev
     curlev:=setwidth(movecount(),.t.)
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,"")
     x:=xbest()
-
-    ? turn(), "["+v::int::str(5)+"]", rc(x)::padr(3), node(), any2str(width())
-
+    
 
     if( NIL!=x )
         forw(x)
 
-        label_rate(original_rating()[1]+"("+v::int::str::alltrim+"/"+curlev::str::alltrim+":"+rc(x)+")")
+        recalc_store({v,curlev,x})
+        label_rate()
 
         for n:=1 to 5
             drawcell(x)
@@ -73,6 +72,9 @@ local curlev
     drawtop()
     label_turn()
     cell_restore()
+
+
+    ? turn(), "["+v::int::str(5)+"]", pos2rc(x)::padr(3), node(), any2str(width())
 
 
 ******************************************************************************************
@@ -92,10 +94,12 @@ local curlev
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,"")
     x:=xbest()
 
-    ? turn(), "["+v::int::str(5)+"]", rc(x)::padr(3), node(), any2str(width())
-
     if( NIL!=x )
         forw(x)
+
+        rating_store({v,curlev})
+        label_rate()
+
         for n:=1 to 3
             drawcell(x)
             sleep(80)
@@ -104,7 +108,7 @@ local curlev
         next
     end
 
-    label_rate(v::int::str::alltrim+"/"+curlev::str::alltrim+original_rating()[2])
+    ? turn(), "["+v::int::str(5)+"]", pos2rc(x)::padr(3), node(), any2str(width())
     
 
 
