@@ -110,9 +110,13 @@ local rp,rpm
         return NIL
     end
     rates::=substr(2,len(rates)-2)::split
-    if( rates::len>cells::len )
+    while( rates::len>cells::len )
         //compatibility
         rates::addel(1)
+    end
+    while( rates::len<cells::len )
+        //utolso nyero lepes nincs ertekelve
+        rates::aadd("")
     end
     //? "rates",rates::len,rates
     for n:=1 to len(rates)
