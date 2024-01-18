@@ -199,16 +199,26 @@ static function update_bestline(depth,pos,val,bestline)
 local bl,n,labtxt
 
     bl:=pos2rc(pos)
+    if( turn_x() )  
+        bl:="<span color='black'>"+bl+"</span>"
+    else
+        bl:="<span color='white'>"+bl+"</span>"
+    end    
+
     if( !empty(bestline) )
-        bl+=","+bestline
+        bl+=" "+bestline
     end
 
     if( depth==1 )
-        labtxt:=" <span color='green'>("+val::str::alltrim+")</span> "
+        labtxt:=" <span color='green'>("+val::str::alltrim+")</span>  "
         labtxt+=bl
         if( abs(val)>9000 )
             labtxt::=strtran("green","red")
-            labtxt+="#"
+            if( val>0 )
+                labtxt+="<span color='black'>#</span>"
+            else
+                labtxt+="<span color='white'>#</span>"
+            end
         end
         label_bestline(labtxt)
     end

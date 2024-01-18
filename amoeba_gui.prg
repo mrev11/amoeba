@@ -79,7 +79,7 @@ local lab
     window:set_resizable(.f.)
     window:set_position(1)
     wcolor:=gdk.color.new()
-    gdk.color.parse("#c0c0c0",wcolor)
+    gdk.color.parse("#b8b8b8",wcolor)
     window:modify_bg(GTK_STATE_NORMAL,wcolor)
 
     hboxwin:=gtkhboxNew(.f.,0)
@@ -385,8 +385,8 @@ local mc:=movecount()
         //gtk.gobject.ref(black) // increase ref number
         //gtk.gobject.ref(white) // increase ref number
 
-        black:=circle_image(CELLSIZE,0,0,0,3/4,3/4,3/4)
-        white:=circle_image(CELLSIZE,1,1,1,3/4,3/4,3/4)
+        black:=circle_image(CELLSIZE,0,0,0,0xb8/256,0xb8/256,0xb8/256)
+        white:=circle_image(CELLSIZE,1,1,1,0xb8/256,0xb8/256,0xb8/256)
     end
 
     if( image!=NIL )
@@ -412,7 +412,7 @@ local recalc:=recalc_string(),r
         else
             recalc:="<span color='green'>"+recalc+"</span>"
         end
-        recalc:="<span color='#c0c0c0'>!</span>"+recalc // invisible !
+        recalc:="<span color='#b8b8b8'>!</span>"+recalc // invisible !
     end
     label_rate:set_markup( "Rating: <b>"+rating+recalc+"</b>" )
 

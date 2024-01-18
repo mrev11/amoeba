@@ -1,4 +1,5 @@
 #!/bin/bash
-bapp_unix0.b  -xamoeba-icon -xcircle -bcairo
+bapp_unix0.b  -xamoeba-icon  -bcairo
 amoeba-icon.exe
-figure.exe
+convert amoeba.svg amoeba.xpm
+convert amoeba.svg amoeba.ico

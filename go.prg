@@ -33,7 +33,7 @@ function go_recalc()
 local cx,x,v,n
 local curlev
 
-    label_bestline("")
+    //label_bestline("")
 
     cell_save()
 
@@ -83,7 +83,7 @@ function go_move()
 local x,v,n
 local curlev
 
-    label_bestline("")
+    //label_bestline("")
     if( topcell()!=NIL )
         drawcell(topcell())
     end

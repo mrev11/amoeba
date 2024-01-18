@@ -57,7 +57,7 @@ void _clp_cairo_drawgrid(int argno)
     GtkWidget *da=(GtkWidget *)_parp(1); //drawing area
     cairo_t *cr=gdk_cairo_create(da->window);
 
-    double bc=0x0c/16.0;
+    double bc=0xb8/256.0;
     cairo_set_source_rgb(cr,bc,bc,bc);
     cairo_rectangle(cr,0,0,
                        100+tablesize*cellsize,

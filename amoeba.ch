@@ -20,7 +20,8 @@
 
 #include "draw.ch"
 
-#define VERSION "Amoeba 1.5.1 for GTK2"
+#define VERSION         "Amoeba 1.5.2 for GTK2"
+#define VERSION_WEB     "Amoeba 1.5.2 for the WEB"
 
 #define CELLSIZE        DRAW_CELLSIZE
 
