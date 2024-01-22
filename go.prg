@@ -51,6 +51,7 @@ local curlev
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,"")
     x:=xbest()
     
+    ? turn(), "["+v::int::str(5)+"]", pos2rc(x)::padr(3), node(), any2str(width())
 
     if( NIL!=x )
         forw(x)
@@ -74,7 +75,6 @@ local curlev
     cell_restore()
 
 
-    ? turn(), "["+v::int::str(5)+"]", pos2rc(x)::padr(3), node(), any2str(width())
 
 
 ******************************************************************************************
@@ -94,6 +94,8 @@ local curlev
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,"")
     x:=xbest()
 
+    ? turn(), "["+v::int::str(5)+"]", pos2rc(x)::padr(3), node(), any2str(width())
+
     if( NIL!=x )
         forw(x)
 
@@ -108,7 +110,6 @@ local curlev
         next
     end
 
-    ? turn(), "["+v::int::str(5)+"]", pos2rc(x)::padr(3), node(), any2str(width())
     
 
 
