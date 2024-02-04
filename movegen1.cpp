@@ -22,7 +22,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <openssl/rand.h>
 
 #include <cccapi.h>
 

@@ -26,6 +26,8 @@ static xbest                     // minimax futása után a legjobb lépés
 static treshold:=treshold()      // ha megközelíti a nyerést, nem keres mégjobbat
 static movestack:=array(ROWCOL)  // csak debug
 
+static maxenf:=val(getenv("AMOEBA_MAXENFORCED"))
+
 
 ******************************************************************************************
 function node()
@@ -35,13 +37,14 @@ function node()
 function xbest()
     return xbest
 
+
 ******************************************************************************************
-function minimax(depth,alfa,beta,bestline)
+function minimax(depth,alfa,beta,bestline,forced_count)
 
 local width:=width()
 local ilevel:=infolevel()
-local n,fm,x,xopt,vopt
-local bestline1:=""
+local candidate_move,n,x,xopt,vopt
+local bestline1:={}
 
     if( depth==0 )
         node:=0
@@ -51,32 +54,36 @@ local bestline1:=""
     node++
     depth++
 
-    if( depth>len(width) )
-        movegen(6)
+    if( depth-forced_count>len(width) )
+        movegen(10)
         vopt:=posvalue()
         //leaf(depth,vopt,alfa,beta)
         return vopt
     end
 
-    fm:=movegen(width[depth])
+    candidate_move:=movegen(width[depth-forced_count])
 
-    if( len(fm)==0 )
+    if( len(candidate_move)==0 )
         vopt:=if(turn_x(),-PVALUE_INFIN,PVALUE_INFIN )
         return vopt
+    end
+
+    if( maxenf>forced_count .and. enforced(candidate_move[1]) )
+        ++forced_count
     end
 
     if( turn_x() )
         vopt:=-PVALUE_INFIN
 
-        for n:=1 to len(fm)
-            x:=fm[n]
+        for n:=1 to len(candidate_move)
+            x:=candidate_move[n]
             movestack[depth]:=x
             forw(x)
             if( ilevel>=depth )
                 drawalt()
                 sleep(100)
             end
-            vopt:=max(vopt,minimax(depth,alfa,beta,@bestline1))
+            vopt:=max(vopt,minimax(depth,alfa,beta,@bestline1,forced_count))
             back()
             if( ilevel>=depth )
                 drawcell(x)
@@ -108,15 +115,15 @@ local bestline1:=""
     if( turn_o() )
         vopt:=+PVALUE_INFIN
 
-        for n:=1 to len(fm)
-            x:=fm[n]
+        for n:=1 to len(candidate_move)
+            x:=candidate_move[n]
             movestack[depth]:=x
             forw(x)
             if( ilevel>=depth )
                 drawalt()
                 sleep(100)
             end
-            vopt:=min(vopt,minimax(depth,alfa,beta,@bestline1))
+            vopt:=min(vopt,minimax(depth,alfa,beta,@bestline1,forced_count))
             back()
             if( ilevel>=depth )
                 drawcell(x)
@@ -196,22 +203,22 @@ local line,n
 ******************************************************************************************
 static function update_bestline(depth,pos,val,bestline)
 
-local bl,n,labtxt
+local labtxt,n,rc,color,cx
 
-    bl:=pos2rc(pos)
-    if( turn_x() )  
-        bl:="<span color='black'>"+bl+"</span>"
-    else
-        bl:="<span color='white'>"+bl+"</span>"
-    end    
-
-    if( !empty(bestline) )
-        bl+=" "+bestline
-    end
+    bestline::aiins(1,pos)
 
     if( depth==1 )
+
         labtxt:=" <span color='green'>("+val::str::alltrim+")</span>  "
-        labtxt+=bl
+
+        color:={"'black'","'white'"}
+        cx:=if(turn_x(),0,1)
+        for n:=1 to len(bestline)
+            rc:=pos2rc(bestline[n])
+            labtxt+="<span color="+color[cx+1]+">"+rc+"</span> "
+            cx:=(cx+1)%2
+        next
+
         if( abs(val)>9000 )
             labtxt::=strtran("green","red")
             if( val>0 )
@@ -223,8 +230,38 @@ local bl,n,labtxt
         label_bestline(labtxt)
     end
 
-    return bl
+    return bestline
 
+
+******************************************************************************************
+static function enforced(cx,depth)
+local enforced
+    enforced := turn_x().and.fieldval_o(cx)>=PVALUE_EGY .or.;
+                turn_o().and.fieldval_x(cx)>=PVALUE_EGY
+
+    //if( enforced )
+    //    ??  "ENFORCED",;
+    //        turn(),;
+    //        cx::pos2rc::padr(3),;
+    //        fieldval_x(cx),"X",;
+    //        fieldval_o(cx),"O",;
+    //        movestack[1..depth-1]::line2str
+    //        ""
+    //    ?
+    //end
+
+    return enforced
+
+static function line2str(line)
+local x:="",n
+    if( !empty(line) )
+        x:=str(len(line),4)+":"
+        x+=line[1]::pos2rc
+        for n:=2 to len(line)
+            x+=","+line[n]::pos2rc
+        next
+    end
+    return x
 
 ******************************************************************************************
 
