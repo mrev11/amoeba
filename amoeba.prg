@@ -30,6 +30,8 @@ local size
 local file
 local game
 
+    size:=val(getenv("AMOEBA_TABLESIZE"))
+
     for n:=1 to len(args)
         if( args[n]=="-t" .and. n<len(args) )
             size:=args[++n]::val
@@ -49,7 +51,7 @@ local game
         size:=memoread(file)::strtran("amoeba","")::val
     end
 
-    if( size!=NIL )
+    if( !empty(size) )
         tablesize(size)
         cell_classinit()
     end

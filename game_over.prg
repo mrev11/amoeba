@@ -24,8 +24,79 @@
 #include "amoeba.ch"
 #include "tabsize.ch"
 
+
+******************************************************************************
+function continuous_play()
+static env:=getenv("AMOEBA_CONTINUOUS_PLAY")
+    return env
+
+
+******************************************************************************
+static function log_stat(name)
+local ch,w,pb,pw,mc
+
+    w:=chr(winner())
+    w::=strtran(" ","=")
+    
+    pb:="PB:"+power_black()::padr(4)
+    pw:="PW:"+power_white()::padr(4)
+    mc:=movecount()
+
+    SET CHANNEL(ch) to amoeba-stat additive
+    SET CHANNEL(ch) on 
+
+    ?? w, pb , pw , mc, name, chr(10)
+
+    SET CHANNEL(ch) off
+    SET CHANNEL(ch) to
+
+
 ******************************************************************************
 function game_over()
+
+local master 
+
+    if( movecount()<ROWCOL .and. winner()==32 )
+        return .f.
+    end
+
+    if( "game"$continuous_play()  )
+
+        master:=(rating_load(1)!=NIL) 
+        // master == .t.
+        // ha nem tandem módban játszik 
+        // ha a tandemben ez a példány kezdett
+
+        if( master )
+            log_stat(save_game())
+        end
+
+        c_cb_new()
+        drawall(.t.) // törli topcell/topfig-et
+        label_bestline("")
+        label_move()
+        label_rate()
+        tandem_truncate()
+
+        if( empty(tandem_file()) )
+            //nem tandem 
+            sleep(1000)
+        elseif( master )
+            //tandem master
+            sleep(5000)
+        else
+            //tandem slave
+            sleep(10000)
+        end
+
+        return .f. // új játékot kezd
+    end 
+
+    return game_over_alert()
+
+
+******************************************************************************
+static function game_over_alert()
 
 local dlg
 local window:=mainwindow()

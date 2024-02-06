@@ -29,6 +29,9 @@ static width_black:=init_width_black()
 static width_white:=init_width_white()
 static power
 
+static maxenf:=0
+static maxenf_black:=init_maxenf_black()
+static maxenf_white:=init_maxenf_white()
 
 
 *****************************************************************************
@@ -48,8 +51,8 @@ local w:=array(8)
 *****************************************************************************
 static function init_width_black()
 local p
-    if( !getenv("AMOEBA_POWER_BLACK")::empty )
-        p:=getenv("AMOEBA_POWER_BLACK")::val
+    if( !power_black()::empty )
+        p:=power_black()::val
         p::=max(1)
         p::=min(8)
         ? "Black plays at power", p, width[p]::any2str
@@ -60,14 +63,47 @@ local p
 
 static function init_width_white()
 local p
-    if( !getenv("AMOEBA_POWER_WHITE")::empty )
-        p:=getenv("AMOEBA_POWER_WHITE")::val
+    if( !power_white()::empty )
+        p:=power_white()::val
         p::=max(1)
         p::=min(8)
         ? "White plays at power", p, width[p]::any2str
         ?
         return width[p]
     end
+
+
+*****************************************************************************
+static function init_maxenf_black()
+local maxenf:=power_black()::split::asize(2)[2]
+    if( maxenf==NIL )
+        maxenf:=0
+    else
+        maxenf::=val
+    end
+    return maxenf
+
+
+static function init_maxenf_white()
+local maxenf:=power_white()::split::asize(2)[2]
+    if( maxenf==NIL )
+        maxenf:=0
+    else
+        maxenf::=val
+    end
+    return maxenf
+
+
+*****************************************************************************
+function power_black()
+static power:=getenv("AMOEBA_POWER_BLACK")
+    return power
+
+
+*****************************************************************************
+function power_white()
+static power:=getenv("AMOEBA_POWER_WHITE")
+    return power
 
 
 *****************************************************************************
@@ -104,6 +140,23 @@ local w
     end
     
     return current_level()
+
+
+*****************************************************************************
+function maxenf()
+    return maxenf
+
+// kényszerlépés hosszabbíthatja az elemzőfát
+// a megengedett maximális hosszabbodás: maxenf()
+//
+// Példa: export AMOEBA_POWER_BLACK=3,2
+//  a 3-as erősséggel játszik
+//  plusz az elemzőfa 2-vel szinttel mélyülhet
+
+
+*****************************************************************************
+function setmaxenf()
+    maxenf:=if(turn_x(),maxenf_black ,maxenf_white)
 
 
 *****************************************************************************

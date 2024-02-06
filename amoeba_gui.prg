@@ -261,6 +261,7 @@ static function cb_move()
 local cp:=.t.
     if(gtk.main_depth()>1);return NIL;end
     while( cp .and. !game_over() )
+        tandem_read()
         twostatelabel:set_state(.f.)
         area:set_sensitive(.f.)
         go_move()
@@ -268,7 +269,7 @@ local cp:=.t.
         twostatelabel:set_state(.t.)
         markmovecount()
         label_move()
-        cp:=getenv("AMOEBA_CONTINUOUS_PLAY")=="true"
+        cp:=tandem_write() .or. !empty(continuous_play())
     end
 
 
@@ -320,6 +321,7 @@ static function cb_new(w,combo)
     label_bestline("")
     label_move()
     label_rate()
+    tandem_truncate()
 
 
 ******************************************************************************

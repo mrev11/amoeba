@@ -48,6 +48,7 @@ local bestline:={}
     drawcell(cx)
     label_turn()
 
+    setmaxenf()
     curlev:=setwidth(movecount(),.t.)
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@bestline,0)
     x:=xbest()
@@ -93,6 +94,7 @@ local bestline:={}
 
     ? "-----------------------------------------------------------------------------";?
 
+    setmaxenf()
     curlev:=setwidth(movecount())
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@bestline,0)
     x:=xbest()

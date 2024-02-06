@@ -1,4 +1,10 @@
 #!/bin/bash
-mkdir -p ../amoeba-save
-mv amoeba16* ../amoeba-save 2>/dev/null
+# echo HATASTALAN
+# exit 1
+
+
+# mkdir -p ../amoeba-save
+# mv amoeba??-*  ../amoeba-save 2>/dev/null
+
+
 ~/bin/gc

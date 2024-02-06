@@ -1,13 +1,10 @@
 #!/bin/bash
-cd ~/amoeba
-. ~/envccc
-clear
 
+export AMOEBA_TANDEM=log-tandem
 export AMOEBA_CONTINUOUS_PLAY=game
+
 export AMOEBA_POWER_BLACK=1
 export AMOEBA_POWER_WHITE=1,3
-
 export AMOEBA_CELLSIZE=40
-export AMOEBA_COLOR=77,66,22
 
-amoeba.exe  -t 14  "$@" | tee log-amoeba_$$
+time amoeba.exe  -t 14  "$@" | tee log-amoeba_$$

@@ -26,8 +26,6 @@ static xbest                     // minimax futása után a legjobb lépés
 static treshold:=treshold()      // ha megközelíti a nyerést, nem keres mégjobbat
 static movestack:=array(ROWCOL)  // csak debug
 
-static maxenf:=val(getenv("AMOEBA_MAXENFORCED"))
-
 
 ******************************************************************************************
 function node()
@@ -42,6 +40,7 @@ function xbest()
 function minimax(depth,alfa,beta,bestline,forced_count)
 
 local width:=width()
+local maxenf:=maxenf()
 local ilevel:=infolevel()
 local candidate_move,n,x,xopt,vopt
 local bestline1:={}
