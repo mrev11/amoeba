@@ -70,7 +70,9 @@ struct cell
     
     // osztály függvények
     static int  classinit();            // inicializálja az osztály adatokat
-    static void randomize(int,int);     // randomizálás 
+    static void randomize();            // randomizálás középre
+    static void randomize(int);         // randomizálás cellaindexre
+    static void randomize(int,int);     // randomizálás koordinátákra
     static cell *unset();               // leveszi az utolsó figurát a tábláról
     static int  movegen(int);           // megkeresi a fontos lépéseket
     static int  movegen1(int);          // megkeresi a fontos lépéseket (alternatív)

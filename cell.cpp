@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <openssl/rand.h>
 
 #include <cccapi.h>
@@ -68,13 +69,29 @@ int cell::classinit() // inicializálja az osztály adatokat
         cell::spiral[n]=n;
         cell::cells[n]->modval();
     }
-    cell::randomize(TABLESIZE/2,TABLESIZE/2);
+    cell::randomize();
 
     return 1;
 }
 
 //--------------------------------------------------------------------------
-void cell::randomize( int r, int c ) // újragenerálja a dist tagokat és rendezi a spirált
+void cell::randomize() // újragenerálja a dist tagokat és rendezi a spirált
+{
+    int r=TABLESIZE/2;
+    int c=TABLESIZE/2;
+    cell:randomize(r,c);
+}
+
+//--------------------------------------------------------------------------
+void cell::randomize(int cx) // újragenerálja a dist tagokat és rendezi a spirált
+{
+    int r=cx/TABLESIZE;
+    int c=cx%TABLESIZE;
+    cell:randomize(r,c);
+}
+
+//--------------------------------------------------------------------------
+void cell::randomize(int r, int c) // újragenerálja a dist tagokat és rendezi a spirált
 {
     for( int cx=0; cx<ROWCOL; cx++ )
     {
@@ -109,8 +126,8 @@ cell::cell(int r, int c)  // konstruktor (inicializálja az objektumokat)
 double cell::calcdist(int r, int c) // távolság a cx cellától
 {
     unsigned char d;
-    RAND_bytes(&d,1); 
-    dist=abs(row-r)+abs(col-c)+(int)d/256.0;
+    RAND_bytes(&d,1);
+    dist=sqrt((row-r)*(row-r)+(col-c)*(col-c))+(int)d/512.0;
     return dist;
 }
 
@@ -326,7 +343,7 @@ void _clp_movegen(int argno)
     }
     for(int i=0;i<cnt; i++)
     {
-        number( cell::best[i].cx ); 
+        number( cell::best[i].cx );
     }
     array(cnt);
     _rettop();
@@ -345,7 +362,7 @@ void _clp_movegen1(int argno) //alternatív movegen (egymás ellen játszatható
     int cnt=cell::movegen1(total);
     for(int i=0;i<cnt; i++)
     {
-        number( cell::best[i].cx ); 
+        number( cell::best[i].cx );
     }
     array(cnt);
     _rettop();
@@ -373,7 +390,7 @@ void _clp_back(int argno)
     else
     {
         _ret();
-    } 
+    }
     CCC_EPILOG();
 }
 
@@ -504,7 +521,7 @@ void _clp_c_cb_forward(int argno)
     {
         cell *c=cell::cells[cell::movestack[cell::movecount]];
         c->set();
-        
+
     }
     _ret();
     CCC_EPILOG();
@@ -515,7 +532,6 @@ void _clp_c_cb_new( int argno )
 {
     CCC_PROLOG("c_cb_new",0);
     while( cell::unset()!=0 );
-    cell::randomize(TABLESIZE/2,TABLESIZE/2);
     _ret();
     CCC_EPILOG();
 }
@@ -560,9 +576,21 @@ void _clp_cell_restore(int argno)
 void _clp_cell_randomize(int argno)
 {
     CCC_PROLOG("cell_randomize",2);
-    int row=_parni(1);
-    int col=_parni(2);
-    cell::randomize(row,col);
+    if( argno==0 )
+    {
+        cell::randomize();
+    }
+    else if( argno==1 )
+    {
+        int cx=_parni(1);
+        cell::randomize(cx);
+    }
+    else
+    {
+        int r=_parni(1);
+        int c=_parni(2);
+        cell::randomize(r,c);
+    }
     _ret();
     CCC_EPILOG();
 }

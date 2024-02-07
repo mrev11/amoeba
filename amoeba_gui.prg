@@ -210,11 +210,6 @@ local x,y,but,cx,fm,n
         if( but==1 )
             //left-button
 
-            if( movecount()==0 )
-                ? "RANDOMIZE",y,x
-                cell_randomize(y,x)
-            end
-
             if( !game_over() )
                 //label_bestline("")
                 if( topcell()!=NIL )
@@ -261,6 +256,13 @@ static function cb_move()
 local cp:=.t.
     if(gtk.main_depth()>1);return NIL;end
     while( cp .and. !game_over() )
+
+        if( movecount()==0 )
+            cell_randomize()
+        elseif( movecount()==1 )
+            cell_randomize(topcell())
+        end
+
         tandem_read()
         twostatelabel:set_state(.f.)
         area:set_sensitive(.f.)
