@@ -56,6 +56,7 @@ local bestline1:={}
     if( depth-forced_count>len(width) )
         movegen(10)
         vopt:=posvalue()
+        bestline:={}
         //leaf(depth,vopt,alfa,beta)
         return vopt
     end
