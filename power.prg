@@ -55,7 +55,7 @@ local p
         p:=power_black()::val
         p::=max(1)
         p::=min(8)
-        ? "Black plays at power", p, width[p]::any2str
+        ?? "Black plays at power", p, width[p]::any2str
         ?
         return width[p]
     end
@@ -67,7 +67,7 @@ local p
         p:=power_white()::val
         p::=max(1)
         p::=min(8)
-        ? "White plays at power", p, width[p]::any2str
+        ?? "White plays at power", p, width[p]::any2str
         ?
         return width[p]
     end

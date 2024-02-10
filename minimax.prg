@@ -68,8 +68,20 @@ local bestline1:={}
         return vopt
     end
 
-    if( maxenf>forced_count .and. enforced(candidate_move[1]) )
-        ++forced_count
+    if( enforced(candidate_move[1]) )
+        // kényszerhelyzet
+        if( depth<=1 )
+            // azonnal válaszol
+            movegen(10)
+            vopt:=posvalue()
+            xbest:=candidate_move[1]
+            bestline:={xbest}
+            return vopt
+        elseif( depth<=maxenf )
+            // hosszabbítja az elemzőfát
+            // (be nem vált kísérlet)
+            ++forced_count
+        end
     end
 
     if( turn_x() )

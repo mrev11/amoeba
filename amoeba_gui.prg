@@ -185,6 +185,7 @@ local lab
     mainwindow(window)
     window:show_all
     loadfile(amoebafile)
+    ?
     gtk.main()
     ?
 
@@ -211,7 +212,6 @@ local x,y,but,cx,fm,n
             //left-button
 
             if( !game_over() )
-                //label_bestline("")
                 if( topcell()!=NIL )
                     drawcell(topcell()) // -> normal shape
                 end
@@ -263,7 +263,6 @@ local cp:=.t.
             cell_randomize(topcell())
         end
 
-        tandem_read()
         twostatelabel:set_state(.f.)
         area:set_sensitive(.f.)
         go_move()
@@ -271,7 +270,8 @@ local cp:=.t.
         twostatelabel:set_state(.t.)
         markmovecount()
         label_move()
-        cp:=tandem_write() .or. !empty(continuous_play())
+
+        cp:=!empty(continuous_play())
     end
 
 
@@ -323,7 +323,6 @@ static function cb_new(w,combo)
     label_bestline("")
     label_move()
     label_rate()
-    tandem_truncate()
 
 
 ******************************************************************************

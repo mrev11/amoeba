@@ -24,11 +24,48 @@
 #include "amoeba.ch"
 #include "tabsize.ch"
 
+static maxmove:=ROWCOL
+static maxdraw:=8
+
 
 ******************************************************************************
-function continuous_play()
-static env:=getenv("AMOEBA_CONTINUOUS_PLAY")
-    return env
+static function init_cp()
+local env:=getenv("AMOEBA_CONTINUOUS_PLAY")
+    //?  "AMOEBA_CONTINUOUS_PLAY", getenv("AMOEBA_CONTINUOUS_PLAY")
+    if( empty(env) )
+        return 0
+    elseif( env=="true" )
+        return 1
+    else
+        return val(env)
+    end
+
+
+******************************************************************************
+function continuous_play(x)
+static cp:=init_cp()
+    if( x!=NIL )
+        cp:=x
+    end
+    return cp
+
+
+******************************************************************************
+function gamecount(x)
+static gc:=0
+    if( x!=NIL )
+        gc:=x
+    end
+    return gc
+
+
+******************************************************************************
+function drawmeter(x)
+static meter:=0
+    if( x!=NIL )
+        meter:=x
+    end
+    return meter
 
 
 ******************************************************************************
@@ -53,46 +90,38 @@ local ch,w,pb,pw,mc
 
 ******************************************************************************
 function game_over()
+local result
 
-local master 
-
-    if( movecount()<ROWCOL .and. winner()==32 )
+    if( movecount()<maxmove .and. winner()==32 .and. drawmeter()<maxdraw )
         return .f.
     end
 
-    if( "game"$continuous_play()  )
+    if( 1<continuous_play() )
+        log_stat(save_game())
+    end
 
-        master:=(rating_load(1)!=NIL) 
-        // master == .t.
-        // ha nem tandem módban játszik 
-        // ha a tandemben ez a példány kezdett
-
-        if( master )
-            log_stat(save_game())
-        end
-
+    if( gamecount()+1<continuous_play()  )
+        sleep(3000)
         c_cb_new()
         drawall(.t.) // törli topcell/topfig-et
         label_bestline("")
         label_move()
         label_rate()
-        tandem_truncate()
-
-        if( empty(tandem_file()) )
-            //nem tandem 
-            sleep(1000)
-        elseif( master )
-            //tandem master
-            sleep(5000)
-        else
-            //tandem slave
-            sleep(10000)
-        end
-
+        gamecount(gamecount()+1)
+        drawmeter(0)
         return .f. // új játékot kezd
     end 
 
-    return game_over_alert()
+    result:=game_over_alert()
+
+    gamecount(0)
+    drawmeter(0)
+    
+    if( 0<continuous_play() )
+        continuous_play(1)
+    end
+
+    return result
 
 
 ******************************************************************************
@@ -102,7 +131,7 @@ local dlg
 local window:=mainwindow()
 local text
 
-    if( movecount()>=ROWCOL )
+    if( movecount()>=maxmove .or. drawmeter()>=maxdraw  )
         dlg:=gtkmessagedialogNew(window,;
                 GTK_DIALOG_MODAL,;
                 GTK_MESSAGE_INFO,;

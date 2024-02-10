@@ -27,6 +27,7 @@ function treshold()
     return len(width())*0.5
 
 
+
 ******************************************************************************************
 function go_recalc()
 
@@ -92,12 +93,26 @@ local bestline:={}
         drawcell(topcell())
     end
 
-    ? "-----------------------------------------------------------------------------";?
+
+    ? "-----------------------------------------------------------------------------"
+
+    if( continuous_play()>1 )
+        ? "move/game/draw", (1+movecount())::str::alltrim+"/"+;
+                            (1+gamecount())::str::alltrim+"of"+continuous_play()::str::alltrim+"/"+;
+                            drawmeter()::str::alltrim
+    end
+    ?
 
     setmaxenf()
     curlev:=setwidth(movecount())
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@bestline,0)
     x:=xbest()
+
+    if( v==0 )
+        drawmeter(drawmeter()+1)
+    else
+        drawmeter(0)
+    end
 
     ? turn(), "["+v::int::str(5)+"]", pos2rc(x)::padr(3), node(), bestline::line2str(v)
 
