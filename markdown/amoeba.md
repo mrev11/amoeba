@@ -322,7 +322,7 @@ Linuxon [CCC3](http://comfirm.hu/ccc3/ccc-belulrol.html)
 környezetben vagy Windowson MSYS2+CCC3 környezetben tudjuk lefordítani.
 
 Windows 10-re lefordított, MSYS2 és CCC környezet nélkül futtatható zip csomag
-tölthető le innen: [http://comfirm.hu/pub/amoeba.zip](http://comfirm.hu/pub/amoeba.zip)
+tölthető le innen: [https://comfirm.hu/pub/amoeba.zip](https://comfirm.hu/pub/amoeba.zip)
    
 
 Hangsúlyozom, hogy a program elsősorban linuxos. A windowsos verzió halvány
@@ -347,5 +347,6 @@ Arch Linux. A szerény teljesítményű CPU-tól ne várjunk nagy sebességet.
 
 
 ---------------------------------------------------------------------------------
+
 
 

@@ -25,34 +25,41 @@
 #include "tabsize.ch"
 
 ******************************************************************************
-function validpos(event,x,y,but)
+function validpos(event,xx,yy,but)
 
 static cellsize  := DRAW_CELLSIZE
 static orig_x    := DRAW_ORIGO_X
 static orig_y    := DRAW_ORIGO_Y
 
-local xy:=gdk.event.get_coords(event)
+local xy,x,ix,y,iy
 
-    x:=xy[1]
-    y:=xy[2]
+    xx:=0 //kimenet
+    yy:=0 //kimenet
+
     but:=gdk.event_button.get_button(event) //1,2,3 -- bal,köz,jobb
 
-    if( x%cellsize<2 .or. x%cellsize>cellsize-2 )
+    xy:=gdk.event.get_coords(event)
+    x:=xy[1]-orig_x; ix:=int(x/cellsize)
+    y:=xy[2]-orig_y; iy:=int(y/cellsize)
+
+    if( ix<0 .or. tablesize()<=ix )
         return .f.
-    elseif( y%cellsize<2 .or. y%cellsize>cellsize-2 )
+
+    elseif( iy<0 .or. tablesize()<=iy )
+        return .f.
+
+    elseif( figure(iy*tablesize()+ix)!=32 )
+        return .f.
+
+    elseif( abs(x-(ix+0.5)*cellsize)>cellsize/3 )
+        return .f.
+
+    elseif( abs(y-(iy+0.5)*cellsize)>cellsize/3 )
         return .f.
     end
-
-    x:=int(x/cellsize)-1
-    y:=int(y/cellsize)-1
-
-    if( x<0 .or. tablesize()<=x )
-        return .f.
-    elseif( y<0 .or. tablesize()<=y )
-        return .f.
-    elseif( figure(y*tablesize()+x)!=32 )
-        return .f.
-    end
+    
+    xx:=ix //kimenet
+    yy:=iy //kimenet
 
     return  .t.
 
