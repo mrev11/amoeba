@@ -19,7 +19,6 @@
  */
 
 #include "amoeba.ch"
-#include "tabsize.ch"
 
 
 

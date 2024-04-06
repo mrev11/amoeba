@@ -22,7 +22,6 @@
 #include "gtk.ch"
 
 #include "amoeba.ch"
-#include "tabsize.ch"
 
 static maxmove:=ROWCOL
 static maxdraw:=8
@@ -97,7 +96,7 @@ local result
     end
 
     if( 1<continuous_play() )
-        log_stat(save_game())
+        log_stat(savegame())
     end
 
     if( gamecount()+1<continuous_play()  )

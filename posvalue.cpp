@@ -27,7 +27,6 @@
 #include <cccapi.h>
 
 #include <amoeba.ch>
-#include <tabsize.h>
 #include <pattern.h>
 #include <cell.h>
 
@@ -62,7 +61,7 @@ int cell::posvalue() //statikus állásértékelés
     //if( cell::movecount>0 )
     //{
     //    int cx=cell::movestack[cell::movecount-1];
-    //    printf( "lastmove=%d{%d,%d}\n",cx,cx/TABLESIZE,cx%TABLESIZE );
+    //    printf( "lastmove=%d{%d,%d}\n",cx,cx/cell::tablesize,cx%cell::tablesize );
     //}
     //else
     //{

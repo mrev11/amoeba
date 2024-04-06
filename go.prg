@@ -19,7 +19,6 @@
  */
 
 #include "amoeba.ch"
-#include "tabsize.ch"
 
 
 ******************************************************************************************
@@ -118,8 +117,8 @@ local bestline:={}
 
     if( NIL!=x )
         forw(x)
-
         rating_store({v,curlev})
+        recalc_store()
         label_rate()
 
         for n:=1 to 3

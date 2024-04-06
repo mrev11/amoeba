@@ -22,7 +22,6 @@
 #include "gtk.ch"
 
 #include "amoeba.ch"
-#include "tabsize.ch"
 
 
 static hbox_bestline
@@ -33,7 +32,6 @@ static twostatelabel
 static label_move
 static label_turn
 static label_rate
-static power:=0
 
 
 ******************************************************************************
@@ -65,7 +63,7 @@ local button_load
 local button_save
 local hboxfill
 
-local lab
+local box,lab
 
 
     gtk.init()
@@ -75,11 +73,12 @@ local lab
     //window:set_icon_from_file("amoeba.png")
     window:set_icon(amoeba_pixbuf())
     window:signal_connect("destroy",{||quit()})
-    window:set_border_width(16)
+    window:set_border_width(24)
     window:set_resizable(.f.)
     window:set_position(1)
     wcolor:=gdk.color.new()
     gdk.color.parse("#b8b8b8",wcolor)
+    //gdk.color.parse("#ffffff",wcolor) //debug
     window:modify_bg(GTK_STATE_NORMAL,wcolor)
 
     hboxwin:=gtkhboxNew(.f.,0)
@@ -95,18 +94,19 @@ local lab
     // vboxlef
     //=============================
 
+    //pack_start(widget,flag_expand,flag_fill,padding)
+
     vboxlef:pack_start(hbox_bestline:=gtkhboxNew())
-    hbox_bestline:pack_start( lab:=gtklabelNew(),.f. ); lab:set_size_request(CELLSIZE,-1)
-    hbox_bestline:pack_start( lab:=gtklabelNew(),.f. ); lab:set_text("Best line: "); lab:set_use_markup(.t.)
-    hbox_bestline:pack_start( lab:=gtklabelNew(),.f. ); label_bestline:=lab
+    hbox_bestline:pack_start( lab:=gtklabelNew(),.f. ); lab:set_text("Best line:"); lab:set_use_markup(.t.)
+    hbox_bestline:pack_start( lab:=gtklabelNew(),.f. ); label_bestline:=lab; lab:set_use_markup(.t.)
     hbox_bestline:pack_start( lab:=gtklabelNew(),.t. )  // expand
 
     vboxlef:pack_start( drawingarea(area:=gtkdrawingareaNew()) )
     vboxlef:pack_start( hboxsep:=gtkhboxNew(.f.,0) )
     vboxlef:pack_start( hboxlab:=gtkhboxNew(.f.,0) )
 
-    hboxlab:pack_start( label_move:=gtklabelNew() )
-    //hboxlab:pack_start( label_turn:=gtklabelNew() )
+
+    hboxlab:pack_start( label_move:=gtklabelNew() ); label_move:set_alignment(0,0.5)
     hboxlab:pack_start( label_turn:=gtkhboxNew() )
     hboxlab:pack_start( label_rate:=gtklabelNew() )
 
@@ -170,7 +170,7 @@ local lab
     combo:append_text(POW6)
     combo:append_text(POW7)
     combo:append_text(POW8)
-    combo:set_active(power)
+    combo:set_active(power())
 
     button_new:signal_connect("clicked",{|w|cb_new(w,combo)})
     button_load:signal_connect("clicked",{||cb_load(window)})
@@ -217,12 +217,13 @@ local x,y,but,cx,fm,n
                 end
                 cx:=y*TABLESIZE+x
                 forw(cx)
+                markmovecount()
+                rating_store() //delete
+                recalc_store() //delete
                 drawtop()
                 label_move()
                 label_turn()
-                rating_store() //delete
                 label_rate()
-                markmovecount()
                 if( winner()==32 )
                     cb_move()
                 end

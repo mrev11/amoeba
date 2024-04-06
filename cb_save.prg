@@ -22,7 +22,6 @@
 #include "gtk.ch"
 
 #include "amoeba.ch"
-#include "tabsize.ch"
 
 
 ******************************************************************************
@@ -47,18 +46,22 @@ local content:=content(@name)
     end
 
     if( selected_file!=NIL )
-        ? "SAVE TO",selected_file
-        memowrit(selected_file,content)
+        savefile(selected_file,content)
     end
 
 
 ******************************************************************************
-function save_game() // mentés dialog nélkül
-local content,name
-    content:=content(@name)
-    ? "SAVE TO",name
-    memowrit(name,content)
-    return name
+function savegame() // mentés dialog nélkül
+local content,filename
+    content:=content(@filename)
+    savefile(filename,content)
+    return filename
+
+
+******************************************************************************
+static function savefile(filename,content)
+    ? "SAVE TO",filename
+    memowrit(filename,content)
 
 
 ******************************************************************************

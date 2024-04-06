@@ -18,47 +18,39 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include  "draw.ch"
-
 
 *****************************************************************************
 function main(*)
 
 local args:={*},n
-local power
 local size
+local power
 local file
-local game
-
-    size:=val(getenv("AMOEBA_TABLESIZE"))
 
     for n:=1 to len(args)
         if( args[n]=="-t" .and. n<len(args) )
-            size:=args[++n]::val
+            size:=args[++n]::val::max(10)::min(24)
 
         elseif( args[n]=="-p" .and. n<len(args) )
             power:=args[++n]::val::max(0)::min(8)
 
         elseif( file(args[n]) )
             file:=args[n]
-
+            size:=memoread(file)::strtran("amoeba","")::val
+            if( 10<=size<=24 )
+                //OK
+            else
+                ? "Invalid amoebafile:", file
+                usage()
+            end
         else
             usage()
         end
     next
-
-    if( file!=NIL )
-        size:=memoread(file)::strtran("amoeba","")::val
-    end
-
-    if( !empty(size) )
-        tablesize(size)
-        cell_classinit()
-    end
-
-    if( power!=NIL )
-        power(power)
-    end   
+    
+    tablesize(size)
+    power(power)
+    cell_classinit()
 
     amoeba_gui(file)
 
@@ -69,33 +61,12 @@ static function usage()
     ? "Usage: amoeba.exe [-t <tablesize>] [-p <power>] [<amoebafile>]  "
     ?
     ? "defaults:"
-    ? "     tablesize  - 16"
+    ? "     tablesize  - 12"
     ? "     power      - 0 (=auto)"
     ? "     amoebafile - empty"
     ?
     quit
 
-
-******************************************************************************
-function tablesize(ts)  // command line option
-static tablesize:=DRAW_TABSIZE
-    if( ts!=NIL )
-        ts:=max(ts,12)
-        ts:=min(ts,24)
-        tablesize:=ts
-        cairo_settabsize(ts)
-        cell_settabsize(ts)
-    end
-    return tablesize
-
-
-******************************************************************************
-function power(pw)  // command line option
-static power:=0
-    if( pw!=NIL )
-        power:=pw
-    end
-    return power
 
 
 ******************************************************************************

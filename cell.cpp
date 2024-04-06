@@ -29,13 +29,11 @@
 
 #include <amoeba.ch>
 #include <draw.ch>
-#include <tabsize.h>
 #include <pattern.h>
 #include <cell.h>
 
 
 //--------------------------------------------------------------------------
-int     cell::init=cell::classinit();       // inicializálja az osztály adatokat
 cell  * cell::cells[MAXCELLS];              // az összes cella tömbje (ez maga a tábla)
 int     cell::spiral[MAXCELLS];             // cellák középről kifele sorendben
 int     cell::movestack[MAXCELLS];          // lépések
@@ -44,7 +42,7 @@ int     cell::moveforw=0;                   // eddig lehet előremenni (hátral�
 char    cell::winner= ' ';                  // ' ' vagy 'O' vagy 'X'
 BEST    cell::best[MAXBEST];                // movegen után a legjobb lépések
 int     cell::bestcnt;                      // lépések száma best-ben
-int     cell::tablesize=DRAW_TABSIZE;       // táblaméret
+int     cell::tablesize=0;                  // táblaméret, később kap értéket
 
 int     cell::save_move[MAXCELLS];          // lépések
 int     cell::save_count=0;                 // lépésszám
@@ -53,18 +51,19 @@ int     cell::save_forw=0;                  // eddig lehet előremenni (hátral�
 //--------------------------------------------------------------------------
 int cell::classinit() // inicializálja az osztály adatokat
 {
-    //printf("CLASSINIT\n");
+    extern int tablesize();
+    cell::tablesize=tablesize(); // csak a CCC inicializálása után hívható
 
     ponttab_init();
 
     int i,j;
-    for( i=0; i<MAXROW; i++ )
-    for( j=0; j<MAXCOL; j++ )
+    for( i=0; i<cell::tablesize; i++ )
+    for( j=0; j<cell::tablesize; j++ )
     {
         cell *c=new cell(i,j);
     }
 
-    for(int n=0; n<ROWCOL; n++ )
+    for(int n=0; n<(cell::tablesize*cell::tablesize); n++ )
     {
         cell::spiral[n]=n;
         cell::cells[n]->modval();
@@ -77,27 +76,27 @@ int cell::classinit() // inicializálja az osztály adatokat
 //--------------------------------------------------------------------------
 void cell::randomize() // újragenerálja a dist tagokat és rendezi a spirált
 {
-    int r=TABLESIZE/2;
-    int c=TABLESIZE/2;
+    int r=cell::tablesize/2;
+    int c=cell::tablesize/2;
     cell:randomize(r,c);
 }
 
 //--------------------------------------------------------------------------
 void cell::randomize(int cx) // újragenerálja a dist tagokat és rendezi a spirált
 {
-    int r=cx/TABLESIZE;
-    int c=cx%TABLESIZE;
+    int r=cx/cell::tablesize;
+    int c=cx%cell::tablesize;
     cell:randomize(r,c);
 }
 
 //--------------------------------------------------------------------------
 void cell::randomize(int r, int c) // újragenerálja a dist tagokat és rendezi a spirált
 {
-    for( int cx=0; cx<ROWCOL; cx++ )
+    for( int cx=0; cx<(cell::tablesize*cell::tablesize); cx++ )
     {
         cell::cells[cx]->calcdist(r,c);
     }
-    qsort(cell::spiral,ROWCOL,sizeof(int),cell::cmp_dist);
+    qsort(cell::spiral,(cell::tablesize*cell::tablesize),sizeof(int),cell::cmp_dist);
 }
 
 //--------------------------------------------------------------------------
@@ -106,8 +105,8 @@ cell::cell(int r, int c)  // konstruktor (inicializálja az objektumokat)
     row=r;
     col=c;
     figure=' ';
-    count=row*MAXCOL+col;
-    calcdist(TABLESIZE/2,TABLESIZE/2);
+    count=row*cell::tablesize+col;
+    calcdist(cell::tablesize/2,cell::tablesize/2);
 
     for( int i=0; i<4; i++ )
     {
@@ -127,14 +126,14 @@ double cell::calcdist(int r, int c) // távolság a cx cellától
 {
     unsigned char d;
     RAND_bytes(&d,1);
-    dist=sqrt((row-r)*(row-r)+(col-c)*(col-c))+(int)d/512.0;
+    dist=sqrt((row-r)*(row-r)+(col-c)*(col-c))+(int)d/256.0; //+[0,1)
     return dist;
 }
 
 //--------------------------------------------------------------------------
 cell *cell::set() // felteszi magát a táblára
 {
-    if( (cell::winner==' ') && (cell::movecount<ROWCOL) )
+    if( (cell::winner==' ') && (cell::movecount<(cell::tablesize*cell::tablesize)) )
     {
         movestack[cell::movecount++]=count;
 
@@ -199,7 +198,7 @@ void cell::modval() // újraszámolja a szomszéd cellák értékét
         if( i==0 ) continue;
         j--;
         int x=count+i;
-        if( x<0 || ROWCOL<=x ) continue;
+        if( x<0 || (cell::tablesize*cell::tablesize)<=x ) continue;
         cell *c=cell::cells[x];
         if( c->row!=row ) continue;
         c->pattern[0][j]=figure;
@@ -210,8 +209,8 @@ void cell::modval() // újraszámolja a szomszéd cellák értékét
     {
         if( i==0 ) continue;
         j--;
-        int x=count-i*(MAXCOL-1) ;
-        if( x<0 || ROWCOL<=x ) continue;
+        int x=count-i*(cell::tablesize-1) ;
+        if( x<0 || (cell::tablesize*cell::tablesize)<=x ) continue;
         cell *c=cell::cells[x];
         if( c->row+c->col!=row+col ) continue;
         c->pattern[1][j]=figure;
@@ -222,8 +221,8 @@ void cell::modval() // újraszámolja a szomszéd cellák értékét
     {
         if( i==0 ) continue;
         j--;
-        int x=count-i*MAXCOL ;
-        if( x<0 || ROWCOL<=x ) continue;
+        int x=count-i*cell::tablesize ;
+        if( x<0 || (cell::tablesize*cell::tablesize)<=x ) continue;
         cell *c=cell::cells[x];
         if( c->col!=col ) continue;
         c->pattern[2][j]=figure;
@@ -234,8 +233,8 @@ void cell::modval() // újraszámolja a szomszéd cellák értékét
     {
         if( i==0 ) continue;
         j--;
-        int x=count+i*(MAXCOL+1) ;
-        if( x<0 || ROWCOL<=x ) continue;
+        int x=count+i*(cell::tablesize+1) ;
+        if( x<0 || (cell::tablesize*cell::tablesize)<=x ) continue;
         cell *c=cell::cells[x];
         if( c->row-c->col!=row-col ) continue;
         c->pattern[3][j]=figure;
@@ -536,14 +535,6 @@ void _clp_c_cb_new( int argno )
     CCC_EPILOG();
 }
 
-//--------------------------------------------------------------------------
-void _clp_cell_settabsize(int argno)
-{
-    CCC_PROLOG("cell_settabsize",1);
-    cell::tablesize=_parni(1);
-    _ret();
-    CCC_EPILOG();
-}
 
 //--------------------------------------------------------------------------
 void _clp_cell_classinit(int argno)

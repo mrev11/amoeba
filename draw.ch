@@ -19,15 +19,6 @@
  */
 
 
-
-#define DRAW_TABSIZE     16
-
-#define DRAW_CELLSIZE    size_cellsize()  // 48
-#define DRAW_ORIGO_X     size_origo_x()   // 40
-#define DRAW_ORIGO_Y     size_origo_y()   // 40
-#define DRAW_RADIUS      size_radius()    // 14
-               
-
 #define DRAW_BLACK(cr)   cairo_set_source_rgb(cr,0,0,0)
 #define DRAW_WHITE(cr)   cairo_set_source_rgb(cr,1,1,1)
 #define DRAW_EMPTY(cr)   cairo_set_source_rgb(cr,tabcolor(0),tabcolor(1),tabcolor(2))

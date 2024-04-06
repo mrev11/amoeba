@@ -22,14 +22,13 @@
 #include "gtk.ch"
 
 #include "amoeba.ch"
-#include "tabsize.ch"
 
 ******************************************************************************
 function validpos(event,xx,yy,but)
 
-static cellsize  := DRAW_CELLSIZE
-static orig_x    := DRAW_ORIGO_X
-static orig_y    := DRAW_ORIGO_Y
+static cellsize  := cellsize()
+static orig_x    := cellsize()*5/6
+static orig_y    := cellsize()*5/6
 
 local xy,x,ix,y,iy
 

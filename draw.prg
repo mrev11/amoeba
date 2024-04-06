@@ -21,7 +21,6 @@
 #include "gdk.ch"
 #include "gtk.ch"
 #include "amoeba.ch"
-#include "tabsize.ch"
 
 
 #define FIG_EMPTY   0
@@ -187,7 +186,8 @@ static function numlayout(n) // n=0...99
 static label:=array(100)
 local  x:=n+1
     if( label[x]==NIL )
-        if( CELLSIZE>=40 )
+        if( CELLSIZE>100 )
+            // sosem
             label[x]:=gtklabelNew("<b>"+n::str::alltrim+"</b>")
             label[x]:set_use_markup(.t.)
         else
@@ -203,7 +203,8 @@ static label:=array(100)
 static a:=asc("a")
 local  x:=n+1
     if( label[x]==NIL )
-        if( CELLSIZE>=40 )
+        if( CELLSIZE>100 )
+            // sosem
             label[x]:=gtklabelNew( "<b>"+chr(a+n)+"</b>" )
             label[x]:set_use_markup(.t.)
         else

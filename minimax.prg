@@ -19,7 +19,6 @@
  */
 
 #include "amoeba.ch"
-#include "tabsize.ch"
 
 static node                      // ennyi állást értékelt ki
 static xbest                     // minimax futása után a legjobb lépés
@@ -215,19 +214,19 @@ local line,n
 ******************************************************************************************
 static function update_bestline(depth,pos,val,bestline)
 
-local labtxt,n,rc,color,cx
+local sp,labtxt,n,rc,color,cx
 
     bestline::aiins(1,pos)
 
     if( depth==1 )
-
-        labtxt:=" <span color='green'>("+val::str::alltrim+")</span>  "
+        sp:="<span color='#b8b8b8'>.</span>"
+        labtxt:="<span color='green'>("+val::str::alltrim+")</span>"+sp
 
         color:={"'black'","'white'"}
         cx:=if(turn_x(),0,1)
         for n:=1 to len(bestline)
             rc:=pos2rc(bestline[n])
-            labtxt+="<span color="+color[cx+1]+">"+rc+"</span> "
+            labtxt+=" <span color="+color[cx+1]+">"+rc+"</span> "
             cx:=(cx+1)%2
         next
 
@@ -251,29 +250,8 @@ local enforced
     enforced := turn_x().and.fieldval_o(cx)>=PVALUE_EGY .or.;
                 turn_o().and.fieldval_x(cx)>=PVALUE_EGY
 
-    //if( enforced )
-    //    ??  "ENFORCED",;
-    //        turn(),;
-    //        cx::pos2rc::padr(3),;
-    //        fieldval_x(cx),"X",;
-    //        fieldval_o(cx),"O",;
-    //        movestack[1..depth-1]::line2str
-    //        ""
-    //    ?
-    //end
-
     return enforced
 
-static function line2str(line)
-local x:="",n
-    if( !empty(line) )
-        x:=str(len(line),4)+":"
-        x+=line[1]::pos2rc
-        for n:=2 to len(line)
-            x+=","+line[n]::pos2rc
-        next
-    end
-    return x
 
 ******************************************************************************************
 

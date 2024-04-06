@@ -23,8 +23,6 @@
 function markmovecount()
 local mc:=movecount(),n
     c_markmovecount()
-    rating_reset(mc)
-    recalc_reset(mc)
 
 
 ******************************************************************************

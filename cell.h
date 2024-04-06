@@ -54,7 +54,6 @@ struct cell
     void   modval();                    // újraszámolja a szomszéd cellák értékét
 
     // osztály adatok
-    static int  init;                   // osztály adatok inicializálása 
     static cell *cells[MAXCELLS];       // az összes cella tömbje (ez maga a tábla)
     static int  spiral[MAXCELLS];       // cellák középről kifele sorrendben (perturbálva)
     static int  movestack[MAXCELLS];    // stack a lépéseknek

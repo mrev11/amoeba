@@ -23,32 +23,64 @@
 #include <math.h>
 
 #include <cccapi.h>
-#include <draw.ch>
+#include <amoeba.ch>
 
-
-extern int size_cellsize();
-extern int size_origo_x();
-extern int size_origo_y();
-extern int size_radius();
 
 extern double tabcolor(int);
 
 
-static int tablesize    = DRAW_TABSIZE;
-static int cellsize     = DRAW_CELLSIZE;
-static int origo_x      = DRAW_ORIGO_X ;
-static int origo_y      = DRAW_ORIGO_Y;
-static int radius       = DRAW_RADIUS;
+//----------------------------------------------------------------------------------------
+static int init_tablesize()
+{
+    extern void _clp_tablesize(int); 
+    _clp_tablesize(0);
+    int size=TOP()->data.number;
+    pop();
+    return size;
+}
 
 
 //----------------------------------------------------------------------------------------
-void _clp_cairo_settabsize(int argno)
+static int init_cellsize()
 {
-    CCC_PROLOG("cairo_settabsize",1);
-    tablesize=_parni(1);
-    _ret();
-    CCC_EPILOG();
+    extern void _clp_cellsize(int); 
+    _clp_cellsize(0);
+    int size=TOP()->data.number;
+    pop();
+    return size;
 }
+
+//----------------------------------------------------------------------------------------
+static int draw_tablesize()
+{
+    static int size=init_tablesize();
+    return size;
+}
+
+static int draw_cellsize()
+{
+    static int size=init_cellsize();
+    return size;
+}
+
+static int draw_origo_x()
+{
+    static int size=(int)(draw_cellsize()*5.0/6.0);
+    return size;
+}  
+
+static int draw_origo_y()  
+{
+    static int size=(int)(draw_cellsize()*5.0/6.0);
+    return size;
+}
+
+static int draw_radius()   
+{
+    static int size=(int)(draw_cellsize()*14.0/48.0);
+    return size;
+}
+
 
 //----------------------------------------------------------------------------------------
 void _clp_cairo_drawgrid(int argno)
@@ -60,26 +92,26 @@ void _clp_cairo_drawgrid(int argno)
     double bc=0xb8/256.0;
     cairo_set_source_rgb(cr,bc,bc,bc);
     cairo_rectangle(cr,0,0,
-                       100+tablesize*cellsize,
-                       100+tablesize*cellsize);
+                       100+draw_tablesize()*draw_cellsize(),
+                       100+draw_tablesize()*draw_cellsize());
     cairo_fill(cr);
 
 
     DRAW_EMPTY(cr);
-    cairo_rectangle(cr,origo_x,origo_y,tablesize*cellsize,tablesize*cellsize);
+    cairo_rectangle(cr,draw_origo_x(),draw_origo_y(),draw_tablesize()*draw_cellsize(),draw_tablesize()*draw_cellsize());
     cairo_fill(cr);
 
     DRAW_BLACK(cr);
     cairo_set_line_width(cr,1);
-    for( int i=0; i<=tablesize; i++)
+    for( int i=0; i<=draw_tablesize(); i++)
     {
-        cairo_move_to(cr, origo_x                    ,origo_y+i*cellsize);
-        cairo_line_to(cr, origo_x+tablesize*cellsize ,origo_y+i*cellsize);
+        cairo_move_to(cr, draw_origo_x()                    ,draw_origo_y()+i*draw_cellsize());
+        cairo_line_to(cr, draw_origo_x()+draw_tablesize()*draw_cellsize() ,draw_origo_y()+i*draw_cellsize());
     }
-    for( int i=0; i<=tablesize; i++)
+    for( int i=0; i<=draw_tablesize(); i++)
     {
-        cairo_move_to(cr, origo_x+ i*cellsize  ,origo_y+0);
-        cairo_line_to(cr, origo_x+ i*cellsize  ,origo_y+tablesize*cellsize);
+        cairo_move_to(cr, draw_origo_x()+ i*draw_cellsize()  ,draw_origo_y()+0);
+        cairo_line_to(cr, draw_origo_x()+ i*draw_cellsize()  ,draw_origo_y()+draw_tablesize()*draw_cellsize());
     }
     cairo_stroke(cr);
 
@@ -128,8 +160,8 @@ void _clp_cairo_drawcell(int argno)  // gobject,x,y,fig
     // fig==5 top-black
     // fig==6 top-white
 
-    int cs=cellsize;
-    int rd=radius;
+    int cs=draw_cellsize();
+    int rd=draw_radius();
 
     if( fig==0 )
     {
@@ -137,24 +169,24 @@ void _clp_cairo_drawcell(int argno)  // gobject,x,y,fig
     }
 
     cairo_new_sub_path(cr);
-    cairo_arc(cr, origo_x+x*cs+cs/2, origo_y+y*cs+cs/2,rd,0,2*M_PI);
+    cairo_arc(cr, draw_origo_x()+x*cs+cs/2, draw_origo_y()+y*cs+cs/2,rd,0,2*M_PI);
     setcolor(cr,fig);
     cairo_fill(cr);
 
     if( fig>=3 )
     {
-        rd=radius*0.75;
+        rd=draw_radius()*0.75;
         cairo_new_sub_path(cr);
-        cairo_arc(cr, origo_x+x*cs+cs/2, origo_y+y*cs+cs/2,rd,0,2*M_PI);
+        cairo_arc(cr, draw_origo_x()+x*cs+cs/2, draw_origo_y()+y*cs+cs/2,rd,0,2*M_PI);
         setcolor(cr,0);
         cairo_fill(cr);
     }
 
     if( fig>=5 )
     {
-        rd=radius*0.4;
+        rd=draw_radius()*0.4;
         cairo_new_sub_path(cr);
-        cairo_arc(cr, origo_x+x*cs+cs/2, origo_y+y*cs+cs/2,rd,0,2*M_PI);
+        cairo_arc(cr, draw_origo_x()+x*cs+cs/2, draw_origo_y()+y*cs+cs/2,rd,0,2*M_PI);
         setcolor(cr,fig);
         cairo_fill(cr);
     }

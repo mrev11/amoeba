@@ -20,7 +20,6 @@
 
 
 #include "amoeba.ch"
-#include "tabsize.ch"
 
 
 static rating:=array(ROWCOL)
@@ -49,20 +48,13 @@ function rating_string(mc)
 local rp:=rating_load(mc)
 local r,p
     if( rp==NIL )
-        rp:=""
+        rp:="n.a."
     else
         r:=rp[1]::int::str::alltrim
         p:=rp[2]::int::str::alltrim
         rp:=r+"/"+p
     end
     return rp
-
-
-function rating_reset()
-local mc:=movecount(),n
-    for n:=mc+1 to ROWCOL
-        rating[n]:=NIL
-    next
 
 
 ******************************************************************************
@@ -97,11 +89,5 @@ local r,p,m
     end
     return rpm
 
-
-function recalc_reset()
-local mc:=movecount(),n
-    for n:=mc+1 to ROWCOL
-        recalc[n]:=NIL
-    next
 
 ******************************************************************************

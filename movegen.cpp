@@ -26,7 +26,6 @@
 #include <cccapi.h>
 
 #include <amoeba.ch>
-#include <tabsize.h>
 #include <pattern.h>
 #include <cell.h>
 
@@ -40,7 +39,7 @@ int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
         return 0;
     }
 
-    int maxtotal=min(MAXBEST,ROWCOL-cell::movecount);
+    int maxtotal=min(MAXBEST,(cell::tablesize*cell::tablesize)-cell::movecount);
     total=min(total,maxtotal);
 
     int turn=(cell::movecount&1)==0 ? 1:0;
@@ -53,7 +52,7 @@ int cell::movegen(int total) //kikeresi a megadott számú "legfontosabb" mezőt
     int maxoppo=-1;
     int maxoppo_cx=-1;
 
-    for( int i=0; i<ROWCOL; i++ )
+    for( int i=0; i<(cell::tablesize*cell::tablesize); i++ )
     {
         int  cx=cell::spiral[i]; //középről kifelé
         cell *c=cell::cells[cx];
@@ -161,8 +160,8 @@ if( total>=7 )
         printf("%2d   cx=%3d{%2d,%2d}   vo=%4d   vt=%4d   vs=%4d\n"
             ,i
             ,cell::best[i].cx
-            ,cell::best[i].cx/TABLESIZE
-            ,cell::best[i].cx%TABLESIZE
+            ,cell::best[i].cx/cell::tablesize
+            ,cell::best[i].cx%cell::tablesize
             ,cell::best[i].vo
             ,cell::best[i].vt
             ,cell::best[i].vs
@@ -196,8 +195,8 @@ if( total>=7 )
         printf("%2d   cx=%3d{%2d,%2d}   vo=%4d   vt=%4d   vs=%4d\n"
             ,i
             ,cell::best[i].cx
-            ,cell::best[i].cx/TABLESIZE
-            ,cell::best[i].cx%TABLESIZE
+            ,cell::best[i].cx/cell::tablesize
+            ,cell::best[i].cx%cell::tablesize
             ,cell::best[i].vo
             ,cell::best[i].vt
             ,cell::best[i].vs

@@ -34,6 +34,15 @@ static maxenf_black:=init_maxenf_black()
 static maxenf_white:=init_maxenf_white()
 
 
+******************************************************************************
+function power(pw)  // command line option
+static power:=0
+    if( pw!=NIL )
+        power:=pw
+    end
+    return power
+
+
 *****************************************************************************
 static function init_width()
 local w:=array(8)

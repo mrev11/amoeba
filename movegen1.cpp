@@ -26,7 +26,6 @@
 #include <cccapi.h>
 
 #include <amoeba.ch>
-#include <tabsize.h>
 #include <pattern.h>
 #include <cell.h>
 
@@ -53,7 +52,7 @@ int cell::movegen1(int total) //kikeresi a megadott számú "legfontosabb" mező
     int maxturn=-1;
     int maxoppo=-1;
 
-    for( int i=0; i<ROWCOL; i++ )
+    for( int i=0; i<cell::tablesize*cell::tablesize; i++ )
     {
         int  cx=cell::spiral[i]; //középről kifelé
         cell *c=cell::cells[cx];
@@ -134,8 +133,8 @@ int cell::movegen1(int total) //kikeresi a megadott számú "legfontosabb" mező
         printf("%2d   cx=%3d{%2d,%2d}   vo=%4d   vt=%4d   vs=%4d\n"
             ,i
             ,cell::best[i].cx
-            ,cell::best[i].cx/TABLESIZE
-            ,cell::best[i].cx%TABLESIZE
+            ,cell::best[i].cx/cell::tablesize
+            ,cell::best[i].cx%cell::tablesize
             ,cell::best[i].vo
             ,cell::best[i].vt
             ,cell::best[i].vs
