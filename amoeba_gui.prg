@@ -18,11 +18,11 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
 #include "gdk.ch"
 #include "gtk.ch"
 
 #include "amoeba.ch"
-
 
 static hbox_bestline
 static label_bestline
@@ -33,6 +33,15 @@ static label_move
 static label_turn
 static label_rate
 
+static semaphor_busy:=.f.
+
+#clang
+#include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
+#undef FALSE
+#undef TRUE
+#include <cccapi.h>
+#cend
 
 ******************************************************************************
 function amoeba_gui(amoebafile)
@@ -73,6 +82,7 @@ local box,lab
     //window:set_icon_from_file("amoeba.png")
     window:set_icon(amoeba_pixbuf())
     window:signal_connect("destroy",{||quit()})
+    window:signal_connect("key-press-event",{|*|cb_key_press(*)})
     window:set_border_width(24)
     window:set_resizable(.f.)
     window:set_position(1)
@@ -112,10 +122,10 @@ local box,lab
 
 
     area:set_size_request(CELLSIZE*(TABLESIZE+1)+1,CELLSIZE*(TABLESIZE+1)+1)
-    area:signal_connect("expose_event",{|w,e|cb_expose(w,e)})
-    area:signal_connect("button_press_event",{|w,e|cb_button_press(w,e)})
-    area:signal_connect("button_release_event",{|w,e|cb_button_release(w,e)})
-    area:signal_connect("motion_notify_event",{|w,e|cb_motion_notify(w,e)})
+    area:signal_connect("expose_event",{|*|cb_expose(*)})
+    area:signal_connect("button_press_event",{|*|cb_button_press(*)})
+    area:signal_connect("button_release_event",{|*|cb_button_release(*)})
+    area:signal_connect("motion_notify_event",{|*|cb_motion_notify(*)})
     mask:=area:get_events
     mask:=numor(mask,GDK_BUTTON_PRESS_MASK)
     mask:=numor(mask,GDK_BUTTON_RELEASE_MASK)
@@ -151,15 +161,15 @@ local box,lab
     vboxrig:pack_start( button_save:=gtkbuttonNew_with_mnemonic_from_stock("_Save","gtk-save"))
     vboxrig:pack_start( hboxfill:=gtkhboxNew(.f.,0))
 
-    button_move:signal_connect("clicked",{|w|cb_move(w)})
-    button_back:signal_connect("clicked",{|w|cb_back(w)})
-    button_forw:signal_connect("clicked",{|w|cb_forward(w)})
-    button_recalc:signal_connect("clicked",{|w|cb_recalc(w)})
+    button_move:signal_connect("clicked",{|*|cb_move(*)})
+    button_back:signal_connect("clicked",{|*|cb_back(*)})
+    button_forw:signal_connect("clicked",{|*|cb_forward(*)})
+    button_recalc:signal_connect("clicked",{|*|cb_recalc(*)})
 
-    button_check:signal_connect("clicked",{|w|cb_info(w)})
+    button_check:signal_connect("clicked",{|*|cb_info(*)})
     button_check:set_active(.t.)
 
-    combo:signal_connect("changed",{|w|cb_power(w)})
+    combo:signal_connect("changed",{|*|cb_power(*)})
     combo:set_size_request(100,-1)
     combo:append_text(POW0)
     combo:append_text(POW1)
@@ -172,9 +182,9 @@ local box,lab
     combo:append_text(POW8)
     combo:set_active(power())
 
-    button_new:signal_connect("clicked",{|w|cb_new(w,combo)})
-    button_load:signal_connect("clicked",{||cb_load(window)})
-    button_save:signal_connect("clicked",{||cb_save(window)})
+    button_new:signal_connect("clicked",{|*|cb_new(*)})
+    button_load:signal_connect("clicked",{|*|cb_load(*)})
+    button_save:signal_connect("clicked",{|*|cb_save(*)})
 
     hboxsep0:set_size_request(-1,40)
     hboxsep1:set_size_request(-1,10)
@@ -202,9 +212,52 @@ function cb_expose(area,event)
 
 
 ******************************************************************************
+static function cb_key_press(window,keyevent)
+    //? "CB_KEY_PRESS",{*}
+    if( semaphor_busy )
+        return NIL
+    end
+#clang
+    // hianyzik a csatolobol
+    GdkEventKey *event=(GdkEventKey*)_parp(2);
+    int keyval=event->keyval;
+    //printf("keyval=%x\n",keyval);
+    if( keyval==GDK_KEY_Escape )
+    {
+        exit(0);
+    }
+    else if( keyval==GDK_KEY_Left )
+    {
+        _clp_cb_back(0);
+        pop();
+    }
+    else if( keyval==GDK_KEY_Right )
+    {
+        _clp_cb_forward(0);
+        pop();
+    }
+    else if( keyval==GDK_KEY_Home )
+    {
+        _clp_cb_home(0);
+        pop();
+    }
+    else if( keyval==GDK_KEY_End )
+    {
+        _clp_cb_end(0);
+        pop();
+    }
+#cend
+
+******************************************************************************
 static function cb_button_press(area,event)
 local x,y,but,cx,fm,n
-    if(gtk.main_depth()>1);return NIL;end
+
+    if(gtk.main_depth()>1)
+        return NIL
+    end
+    if( semaphor_busy )
+        return NIL
+    end
 
     if( validpos(event,@x,@y,@but) )
 
@@ -253,9 +306,17 @@ static function cb_button_release(area,event)
 
 
 ******************************************************************************
-static function cb_move()
-local cp:=.t.
-    if(gtk.main_depth()>1);return NIL;end
+static function cb_move(button)
+local cp
+    if(gtk.main_depth()>1)
+        return NIL
+    end
+    if( semaphor_busy )
+        return NIL
+    end
+    semaphor_busy:=.t.
+
+    cp:=(0<=continuous_play() .or. button!=NIL)
     while( cp .and. !game_over() )
 
         if( movecount()==0 )
@@ -272,14 +333,48 @@ local cp:=.t.
         markmovecount()
         label_move()
 
-        cp:=!empty(continuous_play())
+        cp:=(0<continuous_play())
     end
+    semaphor_busy:=.f.
 
 
 ******************************************************************************
-static function cb_back(w)
+static function cb_end()
+    if( semaphor_busy )
+        return NIL
+    end
+    while( c_cb_forward() )
+    end
+    drawall(.t.)
+    drawtop()
+    label_move()
+    label_turn()
+    label_rate()
+
+
+******************************************************************************
+static function cb_home()
+    if( semaphor_busy )
+        return NIL
+    end
+    while( back()!=NIL )
+    end
+    drawall(.t.)
+    label_move()
+    label_turn()
+    label_rate()
+
+
+******************************************************************************
+static function cb_back()
 local cx:=topcell()
-    if(gtk.main_depth()>1);return NIL;end
+    if(gtk.main_depth()>1)
+        return NIL
+    end
+    if( semaphor_busy )
+        return NIL
+    end
+
     drawclean()
     if( cx!=NIL )
         c_cb_back()
@@ -291,9 +386,15 @@ local cx:=topcell()
 
 
 ******************************************************************************
-static function cb_forward(w)
+static function cb_forward()
 local cx:=topcell()
-    if(gtk.main_depth()>1);return NIL;end
+    if(gtk.main_depth()>1)
+        return NIL
+    end
+    if( semaphor_busy )
+        return NIL
+    end
+
     drawclean()
     c_cb_forward()
     if( cx!=NIL )
@@ -306,6 +407,14 @@ local cx:=topcell()
 
 ******************************************************************************
 static function cb_recalc()
+    if(gtk.main_depth()>1)
+        return NIL
+    end
+    if( semaphor_busy )
+        return NIL
+    end
+    semaphor_busy:=.t.
+
     drawclean()
     twostatelabel:set_state(.f.)
     area:set_sensitive(.f.)
@@ -313,12 +422,16 @@ static function cb_recalc()
     area:set_sensitive(.t.)
     twostatelabel:set_state(.t.)
 
+    semaphor_busy:=.f.
+
 
 ******************************************************************************
-static function cb_new(w,combo)
-    //? "cb_new", gtk.main_depth()
-    if(gtk.main_depth()>1);return NIL;end
-    //combo:set_active(0)
+static function cb_new(button)
+    //? "CB_NEW",{*}
+    if(gtk.main_depth()>1)
+        return NIL
+    end
+
     c_cb_new()
     drawall(.t.) // törli topcell/topfig-et
     label_bestline("")
@@ -327,12 +440,11 @@ static function cb_new(w,combo)
 
 
 ******************************************************************************
-static function cb_info(w)
-    //? "cb_info", gtk.main_depth()
-    //if(gtk.main_depth()>1);return NIL;end
+static function cb_info(check)
+    //? "CB_INFO",{*}
     //engedni kell a rekurziót
-    infolevel(w:get_active)
-    if( w:get_active )
+    infolevel(check:get_active)
+    if( check:get_active )
         label_bestline:show
     else
         label_bestline:hide
@@ -340,8 +452,9 @@ static function cb_info(w)
 
 
 ******************************************************************************
-static function cb_power(w)
-    setpower(w:get_active_text)
+static function cb_power(combo)
+    //? "CB_POWER",{*}
+    setpower(combo:get_active_text)
 
 
 ******************************************************************************

@@ -220,7 +220,7 @@ local sp,labtxt,n,rc,color,cx
 
     if( depth==1 )
         sp:="<span color='#b8b8b8'>.</span>"
-        labtxt:="<span color='green'>("+val::str::alltrim+")</span>"+sp
+        labtxt:=sp+"<span color='green'>("+val::str::alltrim+")</span>"+sp
 
         color:={"'black'","'white'"}
         cx:=if(turn_x(),0,1)

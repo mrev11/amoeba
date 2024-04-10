@@ -94,6 +94,14 @@ local result
     if( movecount()<maxmove .and. winner()==32 .and. drawmeter()<maxdraw )
         return .f.
     end
+    
+    if( winner()==32 )
+        ? "Draw - table is near full."
+    elseif( winner()==asc("X") )
+        ? "Black won."
+    elseif( winner()==asc("O") )
+        ? "White won."
+    end
 
     if( 1<continuous_play() )
         log_stat(savegame())

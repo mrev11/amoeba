@@ -43,6 +43,8 @@ char    cell::winner= ' ';                  // ' ' vagy 'O' vagy 'X'
 BEST    cell::best[MAXBEST];                // movegen után a legjobb lépések
 int     cell::bestcnt;                      // lépések száma best-ben
 int     cell::tablesize=0;                  // táblaméret, később kap értéket
+int     cell::movegen_white=0;              // movegen paramétere, amikor white gondolkodik
+int     cell::movegen_black=0;              // movegen paramétere, amikor black gondolkodik
 
 int     cell::save_move[MAXCELLS];          // lépések
 int     cell::save_count=0;                 // lépésszám
@@ -349,25 +351,6 @@ void _clp_movegen(int argno)
     CCC_EPILOG();
 }
 
-// megjegyzés:
-// a különböző lépésgenerálások egymás ellen játszathatók
-// ehhez bele kell itt nyúlni a forrásba és újrafordítani
-
-//--------------------------------------------------------------------------
-void _clp_movegen1(int argno) //alternatív movegen (egymás ellen játszathatók)
-{
-    CCC_PROLOG("movegen1",1);
-    int total=_parni(1);
-    int cnt=cell::movegen1(total);
-    for(int i=0;i<cnt; i++)
-    {
-        number( cell::best[i].cx );
-    }
-    array(cnt);
-    _rettop();
-    CCC_EPILOG();
-}
-
 //--------------------------------------------------------------------------
 void _clp_forw(int argno)
 {
@@ -447,9 +430,9 @@ void _clp_movecount(int argno)
 }
 
 //--------------------------------------------------------------------------
-void _clp_c_markmovecount(int argno)
+void _clp_markmovecount(int argno)
 {
-    CCC_PROLOG("c_markmovecount",0);
+    CCC_PROLOG("markmovecount",0);
     cell::moveforw=cell::movecount;
     _ret();
     CCC_EPILOG();
@@ -519,10 +502,12 @@ void _clp_c_cb_forward(int argno)
     if( cell::movecount<cell::moveforw )
     {
         cell *c=cell::cells[cell::movestack[cell::movecount]];
-        c->set();
-
+        _retl(c->set());
     }
-    _ret();
+    else
+    {
+        _retl(0);
+    }
     CCC_EPILOG();
 }
 
@@ -585,5 +570,31 @@ void _clp_cell_randomize(int argno)
     _ret();
     CCC_EPILOG();
 }
+
+//--------------------------------------------------------------------------
+void _clp_movegen_white(int argno)
+{
+    CCC_PROLOG("movegen_white",1);
+    if( !ISNIL(1) )
+    {
+        cell::movegen_white=_parni(1);
+    }
+    _retni(cell::movegen_white);
+    CCC_EPILOG();
+}
+
+
+//--------------------------------------------------------------------------
+void _clp_movegen_black(int argno)
+{
+    CCC_PROLOG("movegen_black",1);
+    if( !ISNIL(1) )
+    {
+        cell::movegen_black=_parni(1);
+    }
+    _retni(cell::movegen_black);
+    CCC_EPILOG();
+}
+
 
 //--------------------------------------------------------------------------

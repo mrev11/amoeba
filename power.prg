@@ -35,6 +35,22 @@ static maxenf_white:=init_maxenf_white()
 
 
 ******************************************************************************
+function parse_power(p)
+local pw:=p::val::max(0)::min(8)
+    if( "+"$p )
+        movegen_white(0)    // movegen erosebb modja
+        movegen_black(0)    // movegen erosebb modja
+    elseif( "-"$p )
+        movegen_white(1000) // movegen gyengebb modja
+        movegen_black(1000) // movegen gyengebb modja
+    else
+        movegen_white(1000) // movegen gyengebb modja
+        movegen_black(1000) // movegen gyengebb modja
+    end
+    return(pw)
+
+
+******************************************************************************
 function power(pw)  // command line option
 static power:=0
     if( pw!=NIL )
@@ -61,10 +77,15 @@ local w:=array(8)
 static function init_width_black()
 local p
     if( !power_black()::empty )
+        if( "+"$power_black() )
+            movegen_black(0)
+        else
+            movegen_black(1000)
+        end
         p:=power_black()::val
         p::=max(1)
         p::=min(8)
-        ?? "Black plays at power", p, width[p]::any2str
+        ?? "Black plays at power", power_black(), width[p]::any2str
         ?
         return width[p]
     end
@@ -73,10 +94,15 @@ local p
 static function init_width_white()
 local p
     if( !power_white()::empty )
+        if( "+"$power_white() )
+            movegen_white(0)
+        else
+            movegen_white(1000)
+        end
         p:=power_white()::val
         p::=max(1)
         p::=min(8)
-        ?? "White plays at power", p, width[p]::any2str
+        ?? "White plays at power", power_white(), width[p]::any2str
         ?
         return width[p]
     end

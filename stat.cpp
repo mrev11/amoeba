@@ -115,7 +115,7 @@ static void print_value( XPATTERN pat)
 void _clp_c_cb_button_press_pos(int argno)
 {
     CCC_PROLOG("c_cb_button_press_pos",0);
-    
+
     printf( "turn:%c ",cell::movecount&1?'O':'X');
     printf( "posvalue=%d\n",cell::posvalue() );
     fflush(0);
@@ -144,9 +144,21 @@ void _clp_c_cb_button_press_stat(int argno)
 
         const char *vo=num0("%4d",c->fieldval[0]);
         const char *vx=num0("%4d",c->fieldval[1]);
+        const char *vs=num0("%3d",c->fieldval[0]+c->fieldval[1]);
+
+        int force=' ';
+        if( (cell::movecount&1)==1 && cell::movegen_white==0 && c->fieldval[0]>=PVALUE_KET1)
+        {
+            force='+';
+        }
+        if( (cell::movecount&1)==0 && cell::movegen_black==0 && c->fieldval[1]>=PVALUE_KET1)
+        {
+            force='+';
+        }
+
         int ao=arrow(c->valuedir[0]);
         int ax=arrow(c->valuedir[1]);
-        printf(" %4s%lc %4s%lc",vo,(ARROW_T)ao,vx,(ARROW_T)ax);
+        printf(" %4s%lc %4s%lc  [%3s]%c",vo,(ARROW_T)ao,vx,(ARROW_T)ax,vs,force);
 
         printf("\n");
         fflush(0);

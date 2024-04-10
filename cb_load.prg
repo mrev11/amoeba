@@ -29,7 +29,9 @@ function cb_load(window)
 
 local dlg,selected_file
 
-    if(gtk.main_depth()>1);return NIL;end
+    if(gtk.main_depth()>1)
+        return NIL
+    end
 
     selected_file:=selfil()
     if( selected_file==NIL )

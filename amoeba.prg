@@ -32,7 +32,7 @@ local file
             size:=args[++n]::val::max(10)::min(24)
 
         elseif( args[n]=="-p" .and. n<len(args) )
-            power:=args[++n]::val::max(0)::min(8)
+            power:=parse_power(args[++n])
 
         elseif( file(args[n]) )
             file:=args[n]

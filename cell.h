@@ -61,6 +61,8 @@ struct cell
     static int  moveforw;               // eddig lehet előremenni (hátralépések után)
     static char winner;                 // ' ' vagy 'O' vagy 'X'
     static int  tablesize;              // táblaméret (default=16)
+    static int  movegen_white;          // movegen paramétere, amikor white gondolkodik
+    static int  movegen_black;          // movegen paramétere, amikor black gondolkodik
 
     static int  save_move[MAXCELLS];    // stack a lépéseknek
     static int  save_count;             // lépésszám (stack pointer)
@@ -74,7 +76,6 @@ struct cell
     static void randomize(int,int);     // randomizálás koordinátákra
     static cell *unset();               // leveszi az utolsó figurát a tábláról
     static int  movegen(int);           // megkeresi a fontos lépéseket
-    static int  movegen1(int);          // megkeresi a fontos lépéseket (alternatív)
     static int  posvalue();             // statikus állás kiértékelés
 
     static void save();

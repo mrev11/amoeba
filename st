@@ -13,4 +13,4 @@ let p=$OO*100/$total; echo O=$p%
 let p=$EE*100/$total; echo E=$p%
 
 
-
+read

@@ -43,7 +43,7 @@ local bestline:={}
         return NIL
     end
 
-    ? "=============================================================================";?
+    ? "=====================================================================================";?
 
     drawcell(cx)
     label_turn()
@@ -53,7 +53,11 @@ local bestline:={}
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@bestline,0)
     x:=xbest()
 
-    ? turn(), "["+v::int::str(5)+"]", pos2rc(x)::padr(3), node(), bestline::line2str(v) 
+    ? turn(), "["+v::int::str(5)+"]",;
+              pos2rc(x)::padr(3),;
+              " Nodes="+alltrim(str(node())),;
+              " Power="+powstr(curlev),;
+              bestline::line2str(v)
 
 
     if( NIL!=x )
@@ -79,7 +83,6 @@ local bestline:={}
 
 
 
-
 ******************************************************************************************
 function go_move()
 
@@ -93,12 +96,12 @@ local bestline:={}
     end
 
 
-    ? "-----------------------------------------------------------------------------"
+    ? "-------------------------------------------------------------------------------------"
 
     if( continuous_play()>1 )
-        ? "move/game/draw", (1+movecount())::str::alltrim+"/"+;
-                            (1+gamecount())::str::alltrim+"of"+continuous_play()::str::alltrim+"/"+;
-                            drawmeter()::str::alltrim
+        ?  "Game="+(1+gamecount())::str::alltrim+"/"+continuous_play()::str::alltrim
+        ?? " Move="+(1+movecount())::str::alltrim
+        ?? " Draw="+drawmeter()::str::alltrim
     end
     ?
 
@@ -113,7 +116,11 @@ local bestline:={}
         drawmeter(0)
     end
 
-    ? turn(), "["+v::int::str(5)+"]", pos2rc(x)::padr(3), node(), bestline::line2str(v)
+    ? turn(), "["+v::int::str(5)+"]",;
+              pos2rc(x)::padr(3),;
+              " Nodes="+alltrim(str(node())),;
+              " Power="+powstr(curlev),;
+              bestline::line2str(v)
 
     if( NIL!=x )
         forw(x)
@@ -128,6 +135,7 @@ local bestline:={}
             sleep(80)
         next
     end
+
 
 
 ******************************************************************************************
@@ -147,5 +155,16 @@ local x:="",n
 
 
 ******************************************************************************************
+static function powstr(x)
+    x::=str::alltrim
+    if( turn_x() .and. movegen_black()==0 )
+        x+="+"
+    end
+    if( turn_o() .and. movegen_white()==0 )
+        x+="+"
+    end
+    return x
 
+******************************************************************************************
 
+    

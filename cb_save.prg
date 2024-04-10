@@ -26,9 +26,13 @@
 
 ******************************************************************************
 function cb_save(window) // interaktív mentés
+local dlg,selected_file,name,content
 
-local dlg,selected_file,name
-local content:=content(@name)
+    if(gtk.main_depth()>1)
+        return NIL
+    end
+
+    content:=content(@name)
 
     selected_file:=selfil(name)
     if( selected_file==NIL )
@@ -71,8 +75,6 @@ local index:=0,cellid
 local cells:={},rates:={}
 local amoeba:="amoeba"+TABLESIZE::str::alltrim
 local content:=""
-
-    if(gtk.main_depth()>1);return NIL;end
 
     while( NIL!=(cellid:=cell(index++)) )
         aadd(cells,cellid)

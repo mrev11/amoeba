@@ -1,3 +1,31 @@
+2024-04-10 verzio: 1.6.3
+  hibas optimalizacio movegen()-bol kiszedve;
+  AMOEBA_CONTINUOUS_PLAY=-1 eseten nincs automatikus valaszlepes;
+  Power ertelmezese valtozott:
+    peldaul: -p 3 (6,5,5,4,4,3,3,2,2,1,1) jelentese
+        az elso szinten az elemzofanak pontosan 6 aga van,
+        a masodik szinten az elemzofanak pontosan 5 aga van,
+        stb.
+    uj lehetoseg: -p 3+ (ugyanugy 6,5,5,4,4,3,3,2,2,1,1), de
+        az elemzofaba bevesz minden kenyszerito lepest,
+        plusz elso szinten a legertekesebb 6 mezot,
+        plusz masodik szinten a legertekesebb 5 mezot,
+        stb.
+    kornyezeti valtozokban ezeket szinenkent kulon is meg lehet adni
+        peldaul: export AMOEBA_POWER_BLACK=3+
+    a CCC valtozatban a '+' modosito default
+    a Python valtozat nem eleg gyors a + modhoz, de kulon bekapcsolhato
+    a '-' módosítóval az esetleges default '+' torolheto, peldaul: -p 3-    
+  Billentyu esemenyek:
+    Left - gyorsan tekeri a lepeseket visszafele;
+    Right - gyorsan tekeri a lepeseket elorefele;
+    Home - egybol a jatek elejere all (ures tabla);
+    End - egybol a jatek vegere all;
+    (eddig is mukodtek: Enter/ALT-m=Move, ALT-b=Back,...stb.)
+  Informativabb listak;
+  callback fuggvenyek szemaforozva;
+  callback fuggvenyek parameterezese atnezve;
+
 2024-04-06 verzio: 1.6.2
 
 2024-03-27 1.6.1 
