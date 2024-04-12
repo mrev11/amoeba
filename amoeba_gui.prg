@@ -20,6 +20,7 @@
 
 
 #include "gdk.ch"
+#include "gdkkey.ch"
 #include "gtk.ch"
 
 #include "amoeba.ch"
@@ -35,13 +36,6 @@ static label_rate
 
 static semaphor_busy:=.f.
 
-#clang
-#include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
-#undef FALSE
-#undef TRUE
-#include <cccapi.h>
-#cend
 
 ******************************************************************************
 function amoeba_gui(amoebafile)
@@ -118,7 +112,8 @@ local box,lab
 
     hboxlab:pack_start( label_move:=gtklabelNew() ); label_move:set_alignment(0,0.5)
     hboxlab:pack_start( label_turn:=gtkhboxNew() )
-    hboxlab:pack_start( label_rate:=gtklabelNew() )
+    hboxlab:pack_start( box:=gtkhboxNew() )
+    hboxlab:pack_start( label_rate:=gtklabelNew() ); label_rate:set_alignment(0,0.5)
 
 
     area:set_size_request(CELLSIZE*(TABLESIZE+1)+1,CELLSIZE*(TABLESIZE+1)+1)
@@ -134,9 +129,8 @@ local box,lab
 
     hboxsep:set_size_request(0,10)
 
-    label_move:set_size_request(CELLSIZE*(TABLESIZE-3)/2,-1)
-    label_turn:set_size_request(CELLSIZE*2,-1)
-    label_rate:set_size_request(CELLSIZE*(TABLESIZE-3)/2,-1)
+    label_move:set_size_request(CELLSIZE*TABLESIZE/3,-1)
+    label_rate:set_size_request(CELLSIZE*TABLESIZE/3,-1)
 
     label_move()
     label_rate()
@@ -213,40 +207,25 @@ function cb_expose(area,event)
 
 ******************************************************************************
 static function cb_key_press(window,keyevent)
-    //? "CB_KEY_PRESS",{*}
+local keyval:=gdk.event_key.get_keyval(keyevent)
+
+    //? "CB_KEY_PRESS",{*},keyval::l2hex
     if( semaphor_busy )
         return NIL
     end
-#clang
-    // hianyzik a csatolobol
-    GdkEventKey *event=(GdkEventKey*)_parp(2);
-    int keyval=event->keyval;
-    //printf("keyval=%x\n",keyval);
+
     if( keyval==GDK_KEY_Escape )
-    {
-        exit(0);
-    }
-    else if( keyval==GDK_KEY_Left )
-    {
-        _clp_cb_back(0);
-        pop();
-    }
-    else if( keyval==GDK_KEY_Right )
-    {
-        _clp_cb_forward(0);
-        pop();
-    }
-    else if( keyval==GDK_KEY_Home )
-    {
-        _clp_cb_home(0);
-        pop();
-    }
-    else if( keyval==GDK_KEY_End )
-    {
-        _clp_cb_end(0);
-        pop();
-    }
-#cend
+        quit()
+    elseif( keyval==GDK_KEY_Left )
+        cb_back()
+    elseif( keyval==GDK_KEY_Right )
+        cb_forward()
+    elseif( keyval==GDK_KEY_Home )
+        cb_home()
+    elseif( keyval==GDK_KEY_End )
+        cb_end()
+    end
+
 
 ******************************************************************************
 static function cb_button_press(area,event)

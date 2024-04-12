@@ -1,3 +1,8 @@
+2024-04-12 
+  cb_key_press() atirva CCC-re
+  (korabban #clang volt, mert hianyzott a gdk.event_key.get_keyval)
+  jobb pozicionalas: label_move,label_rate
+
 2024-04-10 verzio: 1.6.3
   hibas optimalizacio movegen()-bol kiszedve;
   AMOEBA_CONTINUOUS_PLAY=-1 eseten nincs automatikus valaszlepes;
