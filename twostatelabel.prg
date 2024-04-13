@@ -47,8 +47,9 @@ static function gtktwostateimagelabel.initialize(this,state,text1,text2)
 
 static function gtktwostateimagelabel.set_state(this, state)
 
-static image_red   := circle_image(CELLSIZE*0.6, 0.7, 0  , 0, 3/4,3/4,3/4)
-static image_green := circle_image(CELLSIZE*0.6, 0  , 0.7, 0, 3/4,3/4,3/4)
+static grey:=0xb8/0x100
+static image_red   := circle_image(CELLSIZE*0.6, 0.7, 0  , 0, grey,grey,grey)
+static image_green := circle_image(CELLSIZE*0.6, 0  , 0.7, 0, grey,grey,grey)
 
     this:state:=state
 

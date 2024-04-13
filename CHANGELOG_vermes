@@ -1,3 +1,5 @@
+2024-04-13 Ready/Think ikon hátterszíne javítva. 
+
 2024-04-12 
   cb_key_press() atirva CCC-re
   (korabban #clang volt, mert hianyzott a gdk.event_key.get_keyval)
