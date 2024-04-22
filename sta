@@ -5,9 +5,12 @@ XWIN=$(grep X amoeba??-* | wc -l)
 OWIN=$(grep O amoeba??-* | wc -l)
 DRAW=$(($TOTAL-$XWIN-$OWIN))
 
-echo TOTAL=$TOTAL
-echo XWIN=$XWIN  $(($XWIN*100/$TOTAL))%
-echo OWIN=$OWIN  $(($OWIN*100/$TOTAL))%
-echo DRAW=$DRAW  $(($DRAW*100/$TOTAL))%
+echo TOTAL=$TOTAL 
+echo XWIN=$XWIN   $(( $XWIN*100/$TOTAL ))%
+echo OWIN=$OWIN   $(( $OWIN*100/$TOTAL ))%
+echo DRAW=$DRAW   $(( $DRAW*100/$TOTAL ))%
+
+echo
+echo dominance=$(( ($XWIN+$XWIN+$DRAW)*50/$TOTAL ))%
 
 read

@@ -33,10 +33,10 @@
 
 
 #define PVALUE_INFIN    9999
-#define PVALUE_EGY       100
-#define PVALUE_KET2       20
-#define PVALUE_KET1       10
-#define PVALUE_HAR2        6
+#define PVALUE_EGY       200
+#define PVALUE_KET2       40
+#define PVALUE_KET1       20
+#define PVALUE_HAR2       15
 #define PVALUE_HAR1        3
 #define PVALUE_NEGY2       2
 #define PVALUE_NEGY1       1
