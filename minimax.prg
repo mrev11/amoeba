@@ -20,11 +20,12 @@
 
 #include "amoeba.ch"
 
-static node                      // ennyi állást értékelt ki
-static xbest                     // minimax futása után a legjobb lépés
-static treshold:=treshold()      // ha megközelíti a nyerést, nem keres mégjobbat
-static movestack:=array(ROWCOL)  // csak debug
-
+static node                         // ennyi állást értékelt ki
+static xbest                        // minimax futása után a legjobb lépés
+static treshold:=len(width())*0.5   // ha megközelíti a nyerést, nem keres mégjobbat
+static movestack:=array(ROWCOL)     // csak debug
+static ascx:=asc("X")
+static asco:=asc("O")
 
 ******************************************************************************************
 function node()
@@ -43,6 +44,7 @@ local maxenf:=maxenf()
 local ilevel:=infolevel()
 local candidate_move,n,x,xopt,vopt
 local bestline1:={}
+local winner
 
     if( depth==0 )
         node:=0
@@ -53,8 +55,7 @@ local bestline1:={}
     depth++
 
     if( depth-forced_count>len(width) )
-        movegen(10)
-        vopt:=posvalue()
+        vopt:=posvalue(10)
         bestline:={}
         //leaf(depth,vopt,alfa,beta)
         return vopt
@@ -63,7 +64,14 @@ local bestline1:={}
     candidate_move:=movegen(width[depth-forced_count])
 
     if( len(candidate_move)==0 )
-        vopt:=if(turn_x(),-PVALUE_INFIN,PVALUE_INFIN )
+        winner:=winner()
+        if( winner==32  )
+            vopt:=posvalue(10)
+        elseif( winner==asco )
+            vopt:=-PVALUE_INFIN
+        elseif( winner==ascx )
+            vopt:=PVALUE_INFIN
+        end         
         return vopt
     end
 
@@ -71,11 +79,8 @@ local bestline1:={}
         // kényszerhelyzet
         if( depth<=1 )
             // azonnal válaszol
-            movegen(10)
-            vopt:=posvalue()
             xbest:=candidate_move[1]
-            bestline:={xbest}
-            return vopt
+            return NIL
         elseif( depth<=maxenf )
             // hosszabbítja az elemzőfát
             // (be nem vált kísérlet)
@@ -206,42 +211,25 @@ local line,n
         log:=channelNew("log-leaf")
         log:open
     end
-    //log:on
+    log:on
     ? turn(), depth,v,alfa,beta,line
-    //log:off
+    log:off
 
 
 ******************************************************************************************
 static function update_bestline(depth,pos,val,bestline)
 
-local sp,labtxt,n,rc,color,cx
+local labtxt
 
     bestline::aiins(1,pos)
 
     if( depth==1 )
-        sp:="<span color='#b8b8b8'>.</span>"
-        labtxt:=sp+"<span color='green'>("+val::str::alltrim+")</span>"+sp
-
-        color:={"'black'","'white'"}
-        cx:=if(turn_x(),0,1)
-        for n:=1 to len(bestline)
-            rc:=pos2rc(bestline[n])
-            labtxt+=" <span color="+color[cx+1]+">"+rc+"</span> "
-            cx:=(cx+1)%2
-        next
-
-        if( abs(val)>9000 )
-            labtxt::=strtran("green","red")
-            if( val>0 )
-                labtxt+="<span color='black'>#</span>"
-            else
-                labtxt+="<span color='white'>#</span>"
-            end
-        end
+        labtxt:=bestline_format(bestline,val,if(turn_x(),0,1))
         label_bestline(labtxt)
     end
 
     return bestline
+
 
 
 ******************************************************************************************

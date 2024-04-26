@@ -25,20 +25,20 @@
 
 
 ******************************************************************************
-function cb_save(window) // interaktív mentés
-local dlg,selected_file,name,content
+function cb_save() // interaktív mentés
+local dlg,selected_file,name
 
     if(gtk.main_depth()>1)
         return NIL
     end
 
-    content:=content(@name)
+    name:=uniquename()
 
     selected_file:=selfil(name)
     if( selected_file==NIL )
         // nem választott
     elseif( file(selected_file) )
-        dlg:=gtkmessagedialogNew(window,;
+        dlg:=gtkmessagedialogNew(mainwindow(),;
                 GTK_DIALOG_MODAL,;
                 GTK_MESSAGE_WARNING,;
                 GTK_BUTTONS_YES_NO,;
@@ -50,57 +50,77 @@ local dlg,selected_file,name,content
     end
 
     if( selected_file!=NIL )
-        savefile(selected_file,content)
+        savefile(selected_file)
     end
 
 
 ******************************************************************************
 function savegame() // mentés dialog nélkül
-local content,filename
-    content:=content(@filename)
-    savefile(filename,content)
+local filename:=uniquename()
+    savefile(filename)
     return filename
 
 
 ******************************************************************************
-static function savefile(filename,content)
+static function savefile(filename)
+
+local channel
+local n,cellid
+local move,rate,calc,line
+
     ? "SAVE TO",filename
-    memowrit(filename,content)
 
+    channel:=channelNew(filename)
+    channel:open
+    channel:on
 
-******************************************************************************
-static function content(name)
+    ?? "amoeba"+TABLESIZE::str::alltrim+"("+VERSION+")";?
+    
+    
+    ?? spiral(1)::str::alltrim
+    for n:=2 to TABLESIZE**2
+        ?? ","+spiral(n)::str::alltrim
+    next
+    ?
+    
+    
+    n:=0
+    while( NIL!=(cellid:=cell(n++)) )
+        move:=pos2rc(cellid)
+        rate:=rating_string(n)::strtran("n.a.","")
+        calc:=recalc_string(n)::strtran("n.a.","")
+        line:=bestline_string(n)
 
-local index:=0,cellid
-local cells:={},rates:={}
-local amoeba:="amoeba"+TABLESIZE::str::alltrim
-local content:=""
-
-    while( NIL!=(cellid:=cell(index++)) )
-        aadd(cells,cellid)
-        aadd(rates,rating_string(index)+recalc_string(index))
+        ??  n::str::alltrim+","+move
+        if( !empty(rate) .or. !empty(calc) .or. !empty(line) )
+            ?? ","+rate
+        end
+        if( !empty(calc) .or. !empty(line) )
+            ?? ","+calc
+        end
+        if( !empty(line) )
+            ?? ","+line
+        end
+        ?
     end
+    ?? chr(winner())
 
-    //? "cells",cells::len, cells::any2str // számok
-    //? "rates",rates::len, rates          // C stringek
-
-    cells::=any2str
-    rates::=any2str::strtran('"','')
-
-    content:=amoeba+"("+VERSION+")"+chr(10)
-    content+=cells+chr(10)
-    content+=rates+chr(10)
-    content+=chr(winner())+chr(10)
-
-    name:=amoeba+"-"+content::str2bin::crc32::l2hex::padl(8,"0")
-
-    return content
+    channel:off
+    channel:close
 
 
 ******************************************************************************
+static function uniquename()
+local amoeba:="amoeba"+TABLESIZE::str::alltrim
+local game:="",cellid,n
+    n:=0
+    while( NIL!=(cellid:=cell(n++)) )
+        game+=pos2rc(cellid)
+    end
+    for n:=1 to ROWCOL
+        game+=spiral(n)::str::alltrim
+    next
+    return amoeba+"-"+game::str2bin::crc32::l2hex::padl(8,"0")
 
 
-
-
-
-
+******************************************************************************

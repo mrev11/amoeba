@@ -22,12 +22,12 @@
 
 #include "amoeba.ch"
 
+static power_current
 static width_current
 
 static width:=init_width()
-static width_black:=init_width_black()
-static width_white:=init_width_white()
-static power
+static width_black //:=init_width_black()
+static width_white //:=init_width_white()
 
 static maxenf:=0
 static maxenf_black:=init_maxenf_black()
@@ -35,8 +35,9 @@ static maxenf_white:=init_maxenf_white()
 
 
 ******************************************************************************
-function parse_power(p)
+function parse_power(p:=getenv("AMOEBA_POWER"))
 local pw:=p::val::max(0)::min(8)
+
     if( "+"$p )
         movegen_white(0)    // movegen erosebb modja
         movegen_black(0)    // movegen erosebb modja
@@ -47,6 +48,11 @@ local pw:=p::val::max(0)::min(8)
         movegen_white(1000) // movegen gyengebb modja
         movegen_black(1000) // movegen gyengebb modja
     end
+
+    // explicit inicializalas!
+    width_black:=init_width_black()
+    width_white:=init_width_white()
+
     return(pw)
 
 
@@ -155,23 +161,35 @@ local w
     elseif( !recalc .and. turn_o() .and. width_white!=NIL )
         width_current:=width_white
         
-    elseif( power!=NIL )
-        width_current:=power
+    elseif( power_current!=NIL )
+        width_current:=power_current
 
-    elseif( movecount<=2 )
+    elseif( movecount<4 )
         width_current:=width[1]
 
-    elseif( movecount<=4 )
+    elseif( movecount<8 )
         width_current:=width[2]
 
-    elseif( movecount<=8 )
+    elseif( movecount<16 )
         width_current:=width[3]
 
-    elseif( movecount<=16 )
-        width_current:=width[4]
-  
     else
-        width_current:=width[5]
+        width_current:=width[4]
+
+    end
+
+    setmaxenf()
+    
+    if( turn_x() .and. movegen_black()==0 )
+        width_current:=aclone(width_current)
+        width_current::aadd(0)
+        width_current::aadd(0)
+    end
+
+    if( turn_o() .and. movegen_white()==0 )
+        width_current:=aclone(width_current)
+        width_current::aadd(0)
+        width_current::aadd(0)
     end
     
     return current_level()
@@ -198,19 +216,19 @@ function setmaxenf()
 function setpower(p)
     if( valtype(p)=="N" )
         if( p==0 )
-            power:=NIL
+            power_current:=NIL
         else
-            power:=width[p]
+            power_current:=width[p]
         end
     else
         if( p=="auto" )
-            power:=NIL
+            power_current:=NIL
         else
-            power:=powinit(p)
+            power_current:=powinit(p)
         end
     end
 
-// power==NIL  vagy  power=={4,3,2,1...}
+// power_current==NIL  vagy  power_current=={4,3,2,1...}
 
 
 *****************************************************************************

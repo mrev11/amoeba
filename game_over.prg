@@ -111,7 +111,7 @@ local result
         sleep(3000)
         c_cb_new()
         drawall(.t.) // törli topcell/topfig-et
-        label_bestline("")
+        label_bestline()
         label_move()
         label_rate()
         gamecount(gamecount()+1)
@@ -173,14 +173,6 @@ local text
 
     return .t.     
 
-
-******************************************************************************
-function mainwindow(w)
-static window
-    if( w!=NIL )
-        window:=w
-    end
-    return window
 
 
 ******************************************************************************

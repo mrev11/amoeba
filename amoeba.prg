@@ -32,7 +32,7 @@ local file
             size:=args[++n]::val::max(10)::min(24)
 
         elseif( args[n]=="-p" .and. n<len(args) )
-            power:=parse_power(args[++n])
+            power:=args[++n]
 
         elseif( file(args[n]) )
             file:=args[n]
@@ -47,9 +47,9 @@ local file
             usage()
         end
     next
-    
+ 
+    power(parse_power(power))
     tablesize(size)
-    power(power)
     cell_classinit()
 
     amoeba_gui(file)

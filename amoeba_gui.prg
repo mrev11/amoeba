@@ -329,6 +329,7 @@ static function cb_end()
     label_move()
     label_turn()
     label_rate()
+    label_bestline()
 
 
 ******************************************************************************
@@ -342,6 +343,7 @@ static function cb_home()
     label_move()
     label_turn()
     label_rate()
+    label_bestline()
 
 
 ******************************************************************************
@@ -362,6 +364,7 @@ local cx:=topcell()
     end
     label_move()
     label_rate()
+    label_bestline()
 
 
 ******************************************************************************
@@ -382,6 +385,7 @@ local cx:=topcell()
     drawtop()
     label_move()
     label_rate()
+    label_bestline()
 
 
 ******************************************************************************
@@ -413,7 +417,7 @@ static function cb_new(button)
 
     c_cb_new()
     drawall(.t.) // törli topcell/topfig-et
-    label_bestline("")
+    label_bestline()
     label_move()
     label_rate()
 
@@ -442,6 +446,21 @@ static function cb_motion_notify(area,event)
 
 ******************************************************************************
 function label_bestline(x)
+local v
+    if( x==NIL )
+        if( !empty(v:=recalc_string()) )
+            v::=val
+        elseif( !empty(v:=rating_string()) )
+            v::=val
+        else
+            v:=0
+        end
+        if( !empty(x:=bestline_array())  )
+            x:=bestline_format(x,v,if(turn_x(),1,0))
+        else
+            x:=""
+        end
+    end
     if( CELLSIZE>=40 )
         label_bestline:set_markup("<b>"+x+"</b>")
     else
@@ -500,10 +519,9 @@ local mc:=movecount()
 ******************************************************************************
 function label_rate()
 local rating:=rating_string()
-local recalc:=recalc_string(),r
+local recalc:=recalc_string()
     if( !empty(recalc) )
-        r:=recalc_load()[1]
-        if( abs(r)>PVALUE_INFIN-100 )
+        if( abs(val(recalc))>PVALUE_INFIN-100 )
             recalc:="<span color='red'>"+recalc+"</span>"
         else
             recalc:="<span color='green'>"+recalc+"</span>"

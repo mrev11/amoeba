@@ -100,11 +100,6 @@ int cell::movegen(int total) //kikeresi a megadott szamu "legfontosabb" mezot
             continue;
         }
 
-        if( vs<=minv && vt<PVALUE_KET1+MOVEGEN )
-        {
-            continue;
-        }
-
         maxturn=max(maxturn,vt);
         maxoppo=max(maxoppo,vo);
 
@@ -120,6 +115,12 @@ int cell::movegen(int total) //kikeresi a megadott szamu "legfontosabb" mezot
             cell::best[0].vt=vt;
             cell::best[0].vs=vs;
             cell::bestcnt=cnt;
+            continue;
+        }
+
+
+        if( vs<=minv && vt<PVALUE_KET1+MOVEGEN )
+        {
             continue;
         }
 

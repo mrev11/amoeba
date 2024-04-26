@@ -321,14 +321,6 @@ void cell::restore()
 //--------------------------------------------------------------------------
 // CLIPPER interfész
 //--------------------------------------------------------------------------
-void _clp_posvalue(int argno)
-{
-    CCC_PROLOG("posvalue",0);
-    _retni(cell::posvalue());
-    CCC_EPILOG();
-}
-
-//--------------------------------------------------------------------------
 void _clp_movegen(int argno)
 {
     CCC_PROLOG("movegen",1);
@@ -350,6 +342,21 @@ void _clp_movegen(int argno)
     _rettop();
     CCC_EPILOG();
 }
+
+
+//--------------------------------------------------------------------------
+void _clp_posvalue(int argno)
+{
+    CCC_PROLOG("posvalue",1);
+    if( !ISNIL(1) )
+    {
+        _clp_movegen(1);
+        pop();
+    }
+    _retni(cell::posvalue());
+    CCC_EPILOG();
+}
+
 
 //--------------------------------------------------------------------------
 void _clp_forw(int argno)
@@ -593,6 +600,25 @@ void _clp_movegen_black(int argno)
         cell::movegen_black=_parni(1);
     }
     _retni(cell::movegen_black);
+    CCC_EPILOG();
+}
+
+
+//--------------------------------------------------------------------------
+void _clp_spiral(int argno)
+{
+    CCC_PROLOG("spiral",2);
+    int x=_parni(1)-1;
+    if( ISNIL(2) )
+    {
+        _retni(cell::spiral[x]);
+    }
+    else
+    {
+        int cx=_parni(2);
+        cell::spiral[x]=cx;
+        _ret();
+    }
     CCC_EPILOG();
 }
 

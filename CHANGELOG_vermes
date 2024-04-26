@@ -1,3 +1,16 @@
+2024-04-24  1.7.0
+  uj file formatum (lepesenkent egy sor, spiral mentve, bestline mentve);
+  + mod alkalmazva az ilyen agakra: ... 1,0,0 (0-nal az ag hosszabbodhat, ha van kenyszerito lepes);
+  kovetkezmeny: movegen()==0 nem csak vegallasokban lehet;
+  rating string bovult az esetleges + moddal;
+  posvalue() meghivhatja movegent()-t;
+  go_recalc() es go_move() felcserelve;
+  treshold() fuggveny(kent) megszunt;
+  setwidth() meghivja setmaxenf()-et;
+  minimax() return erteke NIL is lehet, ha nem ertekelte az allast;
+  -p opcio helyett mukodik AMOEBA_POWER
+
+
 2024-04-22
   a nagy ponterteku alakzatok felszorozva 2-vel,
   ezzel a kis ponterteku alakzatok relativ sulya csokken;

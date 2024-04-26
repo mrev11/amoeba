@@ -25,7 +25,7 @@
 
 
 ******************************************************************************
-function cb_load(window)
+function cb_load()
 
 local dlg,selected_file
 
@@ -37,7 +37,7 @@ local dlg,selected_file
     if( selected_file==NIL )
         // nem választott
     elseif( !file(selected_file) )
-        dlg:=gtkmessagedialogNew(window,;
+        dlg:=gtkmessagedialogNew(mainwindow(),;
                 GTK_DIALOG_MODAL,;
                 GTK_MESSAGE_WARNING,;
                 GTK_BUTTONS_OK,;
@@ -53,10 +53,9 @@ local dlg,selected_file
 
 ******************************************************************************
 function loadfile(selected_file)
-local content
-local cells,rates,n
+
 local amoeba:="amoeba"+TABLESIZE::str::alltrim
-local rp,rpm
+local content,spiral,line,n,p
 
     if( selected_file==NIL )
         //? "nem választott"
@@ -66,123 +65,53 @@ local rp,rpm
     ? "LOAD FROM", selected_file
 
     content:=memoread(selected_file)
-
-    if( empty(content) )
-        ? "nem létezik vagy üres"
-        return NIL
-    end
-
-    if( at(amoeba,content)!=1  )
-        ? "nem amoeba fájl"
-        return NIL
-    end
-
-    // if( content::str2bin::crc32::l2hex::padl(8,"0")!=selected_file::right(8)  )
-    //  hibás CRC32
-    //  így lehetne ellenőrizni a tartalom sértetlenségét
-    //  de akkor kötelező volna a CRC32-es neveket használni
-    //  return NIL
-    // end
-
     content::=strtran(chr(13),"")
     content::=split(chr(10))
-
     if( content::len<3 )
         ? "hibás formátum1"
         return NIL
     end
-
-
-    cells:=content[2]
-    if( cells::left(1)!="{" .or. cells::right(1)!="}" )
+    if( at(amoeba,content[1])!=1  )
         ? "hibás formátum2"
         return NIL
     end
-    cells::=substr(2,len(cells)-2)::split
-    for n:=1 to len(cells)
-         cells[n]::=val
-    next
-    //? "cells",cells::len, cells::any2str
-
-
-    rates:=content[3]
-    if( rates::left(1)!="{" .or. rates::right(1)!="}" )
-        ? "hibás formátum3"
-        return NIL
-    end
-    rates::=substr(2,len(rates)-2)::split
-    while( rates::len>cells::len )
-        //compatibility
-        rates::addel(1)
-    end
-    while( rates::len<cells::len )
-        //utolso nyero lepes nincs ertekelve
-        rates::aadd("")
-    end
-    //? "rates",rates::len,rates
-    for n:=1 to len(rates)
-        rates[n]::=ratstr2numdat
-    next
 
     c_cb_new()
-    for n:=1 to len(cells)
-        forw(cells[n])
-        {rp,rpm}:=rates[n]
-        rating_store(rp) 
-        recalc_store(rpm) 
+
+    spiral:=content[2]::split
+    for n:=1 to len(spiral)
+        spiral(n,val(spiral[n]))
     next
+
+    for n:=3 to len(content)-1  // utolso sor: 'X'/'O'/' '
+        line:=content[n]::split
+        if( len(line)>=2 )
+            forw(rc2pos(line[2]))
+        end
+        
+        if( len(line)>=3 )
+            rating_store(line[3])
+        end
+        if( len(line)>=4 )
+            recalc_store(line[4])
+        end
+        if( len(line)>=5 )
+            line:=line[5..]
+            p:=0;aeval(line,{||++p,line[p]::=rc2pos})
+            bestline_store(line)
+        end
+       
+    next
+
     markmovecount()
-    
 
     drawall(.t.) // törli topcell/topfig-et
     drawtop()
 
-    label_bestline("")
+    label_bestline()
     label_move()
     label_turn()
     label_rate()
-
-
-******************************************************************************
-static function ratstr2numdat(rs)
-
-local rp,rpm
-local rpm1,rpm2
-local r,p,m
-local parpos:=at("(",rs)
-
-    if( parpos==0 )
-        rp:=rs
-        rpm:=""
-    else
-        rp:=rs[1..parpos-1]
-        rpm:=rs[parpos+1..len(rs)-1]
-    end
-
-    if( empty(rp) )
-        rp:={}
-    else
-        rp::=split("/") 
-        rp::aadd("0") // compatibility
-        rp[1]::=val
-        rp[2]::=val
-    end
-
-    if( empty(rpm) )
-        rpm:={}
-    else
-        {rpm1,rpm2}:=split(rpm,":")
-        rpm1::=split("/")
-        rpm1::aadd("0") // compatibility
-        rpm1[1]::=val
-        rpm1[2]::=val
-        r:=rpm1[1]
-        p:=rpm1[2]
-        m:=rc2pos(rpm2)
-        rpm:={r,p,m}
-    end
-    
-    return {rp,rpm}
 
 
 ******************************************************************************

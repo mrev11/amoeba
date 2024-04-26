@@ -20,8 +20,8 @@
 
 #include "draw.ch"
 
-#define VERSION         "Amoeba 1.6.3 for GTK2"
-#define VERSION_WEB     "Amoeba 1.6.3 for the WEB"
+#define VERSION         "Amoeba 1.7.0 for GTK2"
+#define VERSION_WEB     "Amoeba 1.7.0 for the WEB"
 
 
 #define TABLESIZE       tablesize()
