@@ -1,3 +1,5 @@
+2024-04-29 refactoring: cell.cpp es celfun.cpp szetszedve;
+
 2024-04-24  1.7.0
   uj file formatum (lepesenkent egy sor, spiral mentve, bestline mentve);
   + mod alkalmazva az ilyen agakra: ... 1,0,0 (0-nal az ag hosszabbodhat, ha van kenyszerito lepes);

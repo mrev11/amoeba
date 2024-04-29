@@ -81,7 +81,7 @@ local winner
             // azonnal válaszol
             xbest:=candidate_move[1]
             return NIL
-        elseif( depth<=maxenf )
+        elseif( forced_count<maxenf )
             // hosszabbítja az elemzőfát
             // (be nem vált kísérlet)
             ++forced_count
