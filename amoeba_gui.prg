@@ -42,6 +42,7 @@ function amoeba_gui(amoebafile)
 
 local window
 local wcolor
+local vboxwin
 local hboxwin
 local vboxlef,vboxsep,vboxrig
 
@@ -85,8 +86,11 @@ local box,lab
     //gdk.color.parse("#ffffff",wcolor) //debug
     window:modify_bg(GTK_STATE_NORMAL,wcolor)
 
-    hboxwin:=gtkhboxNew(.f.,0)
-    window:add(hboxwin)
+    vboxwin:=gtkvboxNew(.f.,0)
+    window:add(vboxwin)
+    vboxwin:pack_start(hbox_bestline:=gtkhboxNew(.f.,0))
+    vboxwin:pack_start(hboxwin:=gtkhboxNew(.f.,0))
+
     hboxwin:pack_start( vboxlef:=gtkvboxNew(.f.,0) )
     hboxwin:pack_start( vboxsep:=gtkvboxNew(.f.,0) )
     hboxwin:pack_start( vboxrig:=gtkvboxNew(.f.,0) )
@@ -100,7 +104,7 @@ local box,lab
 
     //pack_start(widget,flag_expand,flag_fill,padding)
 
-    vboxlef:pack_start(hbox_bestline:=gtkhboxNew())
+    //vboxlef:pack_start(hbox_bestline:=gtkhboxNew())
     hbox_bestline:pack_start( lab:=gtklabelNew(),.f. ); lab:set_text("Best line:"); lab:set_use_markup(.t.)
     hbox_bestline:pack_start( lab:=gtklabelNew(),.f. ); label_bestline:=lab; lab:set_use_markup(.t.)
     hbox_bestline:pack_start( lab:=gtklabelNew(),.t. )  // expand
@@ -164,7 +168,7 @@ local box,lab
     button_check:set_active(.t.)
 
     combo:signal_connect("changed",{|*|cb_power(*)})
-    combo:set_size_request(100,-1)
+    combo:set_size_request(160,-1) // az osszes (!) button szelessege
     combo:append_text(POW0)
     combo:append_text(POW1)
     combo:append_text(POW2)
@@ -461,8 +465,11 @@ local v
             x:=""
         end
     end
-    if( CELLSIZE>=40 )
+    if( CELLSIZE>100 )
+        //sosem
         label_bestline:set_markup("<b>"+x+"</b>")
+    elseif( CELLSIZE<40 )
+        label_bestline:set_markup("<small>"+x+"</small>")
     else
         label_bestline:set_markup(x)
     end

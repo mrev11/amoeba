@@ -189,10 +189,12 @@ local  x:=n+1
         if( CELLSIZE>100 )
             // sosem
             label[x]:=gtklabelNew("<b>"+n::str::alltrim+"</b>")
-            label[x]:set_use_markup(.t.)
+        elseif( CELLSIZE<40 )
+            label[x]:=gtklabelNew("<small>"+n::str::alltrim+"</small>")
         else
             label[x]:=gtklabelNew(n::str::alltrim)
         end
+        label[x]:set_use_markup(.t.)
     end 
     return label[x]:get_layout()
 
@@ -225,7 +227,7 @@ local i,x,y,dx,dy,cs
 
     //horizontal:012
     for i:=0 to TABLESIZE-1
-        dx:=cs*0.1 + if(i<10,cs*0.1,0)
+        dx:=cs*0.1 + if(i<9,cs*0.1,0)
         dy:=cs*0.2 + if(cs<40,-2,0)
 
         x:=dx + (i+1)*cs

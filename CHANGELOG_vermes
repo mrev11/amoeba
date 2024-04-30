@@ -1,3 +1,7 @@
+2024-05-01 1.7.1 
+  best_line label kiterjesztve az ablak teljes szelessegere;
+  szelesebb buttonok, feliratok meretezese finomitva;
+
 2024-04-29 refactoring: cell.cpp es celfun.cpp szetszedve;
 
 2024-04-24  1.7.0
