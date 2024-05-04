@@ -1,0 +1,27 @@
+#!/bin/bash
+
+echo
+grep Nodes log-amoeba  | grep X | sort -t = -k 2 -n | tail
+echo
+grep Nodes log-amoeba  | grep O | sort -t = -k 2 -n | tail
+echo
+grep TOTAL_NODES log-amoeba | tail -n 1
+echo
+
+
+AMOEBA='amoeba??-*'
+
+if (ls $AMOEBA 1>/dev/null 2>/dev/null); then
+  GAMES=$(ls -l $AMOEBA | wc -l)
+  BLACK=$(grep X $AMOEBA | wc -l)
+  WHITE=$(grep O $AMOEBA | wc -l)
+  DRAW=$(($GAMES-$BLACK-$WHITE))
+
+  echo GAMES=$GAMES   $(( ($BLACK+$BLACK+$DRAW)*50/$GAMES ))% 
+  echo BLACK=$BLACK   $(( $BLACK*100/$GAMES ))%
+  echo WHITE=$WHITE   $(( $WHITE*100/$GAMES ))%
+  echo DRAW=$DRAW     $(( $DRAW*100/$GAMES ))%
+
+fi
+
+sleep 3

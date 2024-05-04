@@ -46,6 +46,8 @@ local bestline:={}
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@bestline,0)
     x:=xbest()
 
+    total_nodes(node())
+
     if( v==0 )
         drawmeter(drawmeter()+1)
     else
@@ -54,7 +56,7 @@ local bestline:={}
 
     ? turn(), "["+valstr(v)+"]",;
               pos2rc(x)::padr(3),;
-              " Nodes="+alltrim(str(node())),;
+              " Nodes="+nodestr(node()),;
               " Power="+powstr(curlev),;
               bestline::line2str(v)
 
@@ -99,7 +101,7 @@ local bestline:={}
 
     ? turn(), "["+valstr(v)+"]",;
               pos2rc(x)::padr(3),;
-              " Nodes="+alltrim(str(node())),;
+              " Nodes="+nodestr(node()),;
               " Power="+powstr(curlev),;
               bestline::line2str(v)
 
@@ -157,6 +159,11 @@ static function powstr(x)
         x+="+"
     end
     return x
+
+
+******************************************************************************************
+static function nodestr(n)
+    return n::transform("999,999,999,999",n)::alltrim
 
 
 ******************************************************************************************

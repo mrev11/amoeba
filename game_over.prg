@@ -102,6 +102,7 @@ local result
     elseif( winner()==asc("O") )
         ? "White won."
     end
+    total_nodes()
 
     if( 1<continuous_play() )
         log_stat(savegame())

@@ -250,7 +250,7 @@ static level:=.t.
 
     if( !level  )
         return 0
-    elseif( width_current::len<16 )
+    elseif( width_current::len<9999 )
         return 1
     else
         return 2
