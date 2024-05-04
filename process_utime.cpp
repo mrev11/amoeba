@@ -4,7 +4,7 @@
 #include <sys/time.h>
 #include <cccapi.h>
 
-void _clp_utime(int argno)
+void _clp_process_utime(int argno)
 {
     stack-=argno;
     struct rusage usage;

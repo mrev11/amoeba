@@ -24,6 +24,7 @@
 #include "gtk.ch"
 
 #include "amoeba.ch"
+#include "pvalue.h"
 
 static hbox_bestline
 static label_bestline
@@ -273,11 +274,11 @@ local x,y,but,cx,fm,n
                 ?
                 for n:=1 to len(fm)
                     drawnum(fm[n],n)
-                    c_cb_button_press_stat(fm[n])
+                    print_cell_pattern(fm[n])
                 next
                 cx:=y*TABLESIZE+x
-                c_cb_button_press_stat(cx)
-                c_cb_button_press_pos()
+                print_cell_pattern(cx)
+                print_posvalue()
                 drawclean(.t.)
             end
         end

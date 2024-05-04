@@ -18,59 +18,54 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <openssl/rand.h>
 
-#include <cccapi.h>
 
-#include <amoeba.ch>
-#include <pattern.h>
-#include <pvalue.h>
-#include <cell.h>
-
+#define MAXSTR 32
 
 //--------------------------------------------------------------------------
-int cell::posvalue() //statikus állásértékelés
+const char* numformat(const char *format, int num)
 {
-    int v=0;
+    // megformaz egy szamot
+    // visszaadja a megformazott szam string pointeret
+    // a visszaadott stringeket statikusan tarolja
+    // egyszerre maximum MAXSTR stringet tarol
+    // MAXSTR elerese utan a legregebbit elfelejti
 
-    if( cell::winner=='O' )
+    static int x=-1;
+    static const char *ptr[MAXSTR];
+    if( x==-1 )
     {
-        v=-PVALUE_INFIN;
+        x=0;
+        for(int i=0; i<MAXSTR; i++)
+        {
+            ptr[i]=0;
+        }
     }
-    else if( cell::winner=='X' )
+
+    const char *p;
+    if( num )
     {
-        v=PVALUE_INFIN;
+        char buf[128];
+        sprintf(buf,format,num);
+        p=strdup(buf);
+
+        if( ptr[x] )
+        {
+            free( (char*)ptr[x] );
+        }
+        ptr[x]=p;
+        x++;
+        x%=MAXSTR;
     }
     else
     {
-        for( int i=0; i<cell::bestcnt; i++ )
-        {
-            v+=cell::best[i].vt;
-            v-=cell::best[i].vo;
-        }
-        if( cell::movecount&1 )
-        {
-            v=-v;
-        }
+        p="";
     }
 
-    //printf("POSVALUE=%d movecount=%d ",v,cell::movecount);
-    //if( cell::movecount>0 )
-    //{
-    //    int cx=cell::movestack[cell::movecount-1];
-    //    printf( "lastmove=%d{%d,%d}\n",cx,cx/cell::tablesize,cx%cell::tablesize );
-    //}
-    //else
-    //{
-    //    printf("\n");
-    //}
-
-    return v;
+    return p;
 }
-
 
 //--------------------------------------------------------------------------

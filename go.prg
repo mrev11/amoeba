@@ -19,6 +19,7 @@
  */
 
 #include "amoeba.ch"
+#include "pvalue.h"
 
 
 ******************************************************************************************
@@ -46,13 +47,13 @@ local bestline:={}
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@bestline,0)
     x:=xbest()
 
-    total_nodes(node())
-
     if( v==0 )
         drawmeter(drawmeter()+1)
     else
         drawmeter(0)
     end
+
+    total_nodes(node())
 
     ? turn(), "["+valstr(v)+"]",;
               pos2rc(x)::padr(3),;
@@ -162,13 +163,13 @@ static function powstr(x)
 
 
 ******************************************************************************************
-static function nodestr(n)
-    return n::transform("999,999,999,999",n)::alltrim
+static function valstr(v)
+    return if( v==NIL, space(5), v::int::str(5) )
 
 
 ******************************************************************************************
-static function valstr(v)
-    return if( v==NIL, space(5), v::int::str(5) )
+static function nodestr(n)
+    return n::transform("999,999,999,999",n)::alltrim
 
 
 ******************************************************************************************

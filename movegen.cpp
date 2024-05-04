@@ -26,16 +26,17 @@
 #include <cccapi.h>
 
 #include <amoeba.ch>
+#include <pvalue.h>
 #include <pattern.h>
 #include <cell.h>
 
 
-//#define MOVEGEN 0  
+//#define MOVEGEN 0
 // ha MOVEGEN definialva van
 //  - es erteke 0, akkor total-t boviti a PVALUE_KET1 mezokkel
 //  - es erteke egy nagy szam, akkor a total-t nem boviti
 // ha MOVEGEN nincs definialva
-//  - akkor parameterekbol veszi az erteket  
+//  - akkor parameterekbol veszi az erteket
 
 //--------------------------------------------------------------------------
 int cell::movegen(int total) //kikeresi a megadott szamu "legfontosabb" mezot
@@ -57,9 +58,6 @@ int cell::movegen(int total) //kikeresi a megadott szamu "legfontosabb" mezot
     }
     #endif
 
-    int turn=(cell::movecount&1)==0 ? 1:0;
-    int oppo=(cell::movecount&1)==0 ? 0:1;
-
     int cnt=0;
     int minx=-1;
     int minv=-1;
@@ -77,8 +75,18 @@ int cell::movegen(int total) //kikeresi a megadott szamu "legfontosabb" mezot
             continue;
         }
 
-        vo=c->fieldval[oppo];
-        vt=c->fieldval[turn];
+        if( (cell::movecount&1)==0 )
+        {
+            // fekete lep
+            vo=c->fieldval[c->layer].white; // oppo
+            vt=c->fieldval[c->layer].black; // turn
+        }
+        else//if( (cell::movecount&1)==1 )
+        {
+            // feher lep
+            vt=c->fieldval[c->layer].white; // turn
+            vo=c->fieldval[c->layer].black; // oppo
+        }
         vs=vo+vt;
 
         if( vt>=PVALUE_EGY )
@@ -198,48 +206,6 @@ int cell::movegen(int total) //kikeresi a megadott szamu "legfontosabb" mezot
 }
 
 //--------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

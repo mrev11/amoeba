@@ -20,8 +20,8 @@
 
 #include "draw.ch"
 
-#define VERSION         "Amoeba 1.7.1 for GTK2"
-#define VERSION_WEB     "Amoeba 1.7.0 for the WEB"
+#define VERSION         "Amoeba 2.0.0 for GTK2"
+#define VERSION_WEB     "Amoeba 2.0.0 for the WEB"
 
 
 #define TABLESIZE       tablesize()
@@ -32,17 +32,6 @@
 #define CELLSIZE        cellsize()
 
 
-#define PVALUE_INFIN    9999
-#define PVALUE_EGY       200
-#define PVALUE_KET2       40
-#define PVALUE_KET1       20
-#define PVALUE_HAR2       15
-#define PVALUE_HAR1        3
-#define PVALUE_NEGY2       2
-#define PVALUE_NEGY1       1
-
-//Athlon-64/3000 processzor sebességével
-//üres táblán nem jó POW6-7-8-cal játszani.
 
 #define POW0  "auto"
 #define POW1  "4,4,3,3,2,2,1,1"                 //  2-ig

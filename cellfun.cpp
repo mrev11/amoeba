@@ -95,8 +95,9 @@ void _clp_back(int argno)
 void _clp_fieldval_x(int argno)
 {
     CCC_PROLOG("fieldval_x",1);
-    int x=_parni(1);
-    _retni(cell::cells[x]->fieldval[1]); // index 1
+    int cx=_parni(1);
+    cell *c=cell::cells[cx];
+    _retni(c->fieldval[c->layer].black);
     CCC_EPILOG();
 }
 
@@ -105,8 +106,9 @@ void _clp_fieldval_x(int argno)
 void _clp_fieldval_o(int argno)
 {
     CCC_PROLOG("fieldval_o",1);
-    int x=_parni(1);
-    _retni(cell::cells[x]->fieldval[0]); // index 0
+    int cx=_parni(1);
+    cell *c=cell::cells[cx];
+    _retni(c->fieldval[c->layer].white);
     CCC_EPILOG();
 }
 

@@ -23,37 +23,80 @@
 #define MAXTABLE    24
 #define MAXCELLS    MAXTABLE*MAXTABLE
 #define MAXBEST     64
+#define MAXLAYER    33      // egy cellalnak max 32 szomszedja lehet
+
+#define KELET       0       // kelet
+#define EKELET      1       // észak-kelet
+#define ESZAK       2       // észak
+#define DKELET      3       // dél-kelet
+
+
+struct PATTERN
+{
+    char white[4];          // feher alakzatok negy iranyban (1 alakzat==1 byte)
+    char black[4];          // fekete alakzatok negy iranyban (1 alakzat==1 byte)
+};
+
+
+struct FLDVAL
+{
+    int white;              // feher alakzatok osszpontszama
+    int black;              // fekete alakzatok osszpontszama
+};
+
+
+struct SIBLING
+{
+    int cx;                 // szomszed cella indexe
+    int mask;               // modosulo bit pozicioja 
+    int direction;          // milyen iranyban van a szomszed
+};
 
 
 struct BEST
 {
-    int cx;
-    int vo;    // oppo
-    int vt;    // turn
-    int vs;    // sum
+    int cx;                 // cella index
+    int vo;                 // oppo  az ellenfel alakzatainak erteke
+    int vt;                 // turn  a sajat alakzatok erteke
+    int vs;                 // vo es vt osszege
 };
+
 
 
 struct cell
 {
-    int row;                            // sor index (0-tól, fentről lefele)
-    int col;                            // oszlop index (0-tól, balról jobbra)
-    int count;                          // index a táblában
-    char figure;                        // ' ' vagy 'O' vagy 'X'
-    double dist;                        // középpontól vett távolság (perturbálva)
-
-    XPATTERN pattern[4];                // alakzatok négy irányban: K,Ék,É,Dk
-    int fieldval[2];                    // cella értrék a két játékosra: [0]='O', [1]='X'
-    int valuedir[2];                    // milyen irányú a legértékesebb alakzat
-
     cell(int r, int c);                 // konstruktor
 
-    double calcdist(int r, int c);      // [r,c]-től vett távolság (perturbálva)
-    cell   *set();                      // felteszi magát a táblára
-    void   calcval();                   // kiszámítja a saját értékét
-    void   modval();                    // újraszámolja a szomszéd cellák értékét
 
-    // osztály adatok
+    //----- objektum adatok -----
+
+    int row;                            // sor index (0-tól, fentről lefele)
+    int col;                            // oszlop index (0-tól, balról jobbra)
+    int count;                          // cella index a táblában (0->MAXCELLS-1)
+    char figure;                        // ' ' vagy 'O' vagy 'X'
+    int layer;                          // layer index
+    double dist;                        // középpontól vett távolság (perturbálva)
+
+    char wall[4];                       // tablarol lelogo resz maszkja negy iranyban
+    FLDVAL fieldval[MAXLAYER+1];        // cella érték a két játékosra retegenkent
+    PATTERN pattern[MAXLAYER+1];        // alakzatok négy irányban: K,Ék,É,Dk, retegenkent
+    SIBLING siblings[MAXLAYER+1];       // szomszed cellak (max 32 lehet, az utolso utan cx=-1, mask==0)
+
+
+    //----- objektum metodusok -----
+
+    void   initsiblings();              // osszegyujti a szomszedokat, inicializalja wall-t
+    int    pushlayer();                 // uj reteget tesz fel
+    int    poplayer();                  // leszedi a folso reteget
+    cell   *set();                      // felteszi magát a táblára
+    void   updatesiblings();            // újraszámolja a szomszéd cellák értékét set() utan
+    void   calcval();                   // kiszámítja a saját cella értékét
+    double calcdist(int r, int c);      // [r,c]-től vett távolság (perturbálva)
+    void   print();                     // debug info
+
+
+    //----- osztály adatok -----
+
     static cell *cells[MAXCELLS];       // az összes cella tömbje (ez maga a tábla)
     static int  spiral[MAXCELLS];       // cellák középről kifele sorrendben (perturbálva)
     static int  movestack[MAXCELLS];    // stack a lépéseknek
@@ -68,8 +111,9 @@ struct cell
     static int  save_count;             // lépésszám (stack pointer)
     static int  save_forw;              // eddig lehet előremenni (hátralépések után)
 
-    
-    // osztály függvények
+
+    //----- osztály függvények -----
+
     static int  classinit();            // inicializálja az osztály adatokat
     static void randomize();            // randomizálás középre
     static void randomize(int);         // randomizálás cellaindexre

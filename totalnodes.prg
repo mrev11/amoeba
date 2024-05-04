@@ -23,7 +23,7 @@ local nodes,sec
         ?? "  white="+numstr(nodes_white)
         ?? "  black="+numstr(nodes_black)
 
-        sec:=utime()
+        sec:=process_utime()
         if( sec>0 )
             ?? "  time="+timestr(sec)
             ?? "  "+numstr(nodes/sec)+"/s"
