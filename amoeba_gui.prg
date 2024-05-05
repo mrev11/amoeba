@@ -179,7 +179,7 @@ local box,lab
     combo:append_text(POW6)
     combo:append_text(POW7)
     combo:append_text(POW8)
-    combo:set_active(power())
+    combo:set_active(opt_power())
 
     button_new:signal_connect("clicked",{|*|cb_new(*)})
     button_load:signal_connect("clicked",{|*|cb_load(*)})

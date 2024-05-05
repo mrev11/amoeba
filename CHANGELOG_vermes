@@ -1,3 +1,11 @@
+
+2024-05-06 windows vacakolas;
+  nevutkozesek elkerulese
+    power() -> opt_power() 
+    PATTERN -> xPATTERN 
+  process_utime() windows implementacio;
+
+
 2024-05-04 2.0.0  C reszek (alakzatok kezelese) ujrairva;
 
 2024-05-03 informativabb kiirasok;

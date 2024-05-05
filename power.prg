@@ -57,7 +57,7 @@ local pw:=p::val::max(0)::min(8)
 
 
 ******************************************************************************
-function power(pw)  // command line option
+function opt_power(pw)  // command line option
 static power:=0
     if( pw!=NIL )
         power:=pw

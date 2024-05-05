@@ -335,7 +335,7 @@ void cell::calcval() // kiszámítja a cella értékét
     fieldval[layer].white=0;
     fieldval[layer].black=0;
 
-    PATTERN *p=pattern+layer;
+    xPATTERN *p=pattern+layer;
     char *po=p->white;
     char *px=p->black;
     char *pw=this->wall;

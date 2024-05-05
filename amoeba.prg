@@ -48,7 +48,7 @@ local file
         end
     next
  
-    power(parse_power(power))
+    opt_power(parse_power(power))
     tablesize(size)
     cell_classinit()
 
