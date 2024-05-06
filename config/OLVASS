@@ -1,0 +1,6 @@
+
+Az x scriptekkel lehet próbálgatni a méretezést.
+
+A feliratok (GtkLabel-ek) betűméretének beállításához
+az itteni .gtkrc-2.0 fájlt át kell másolni ${HOME}-ba,
+és bele kell írni a kívánt font specifikációt.

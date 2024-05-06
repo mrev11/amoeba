@@ -2,9 +2,9 @@
 
 style "font"
 {
-    font_name="Sans 11"
+    font_name="Sans 12"
 }
 
 widget_class "*" style "font"
 
-gtk-font-name = "Sans 11"
+

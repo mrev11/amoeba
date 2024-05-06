@@ -71,7 +71,7 @@ local x:=val(getenv("AMOEBA_CELLSIZE"))
         x:=48
     else
         x:=max(x,32)
-        x:=min(x,64)
+        x:=min(x,96)
     end
     return x
 

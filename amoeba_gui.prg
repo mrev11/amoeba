@@ -53,20 +53,18 @@ local hboxsep
 local hboxlab
 
 // vboxrig
-local hboxsep0
 local hboxsep1
 local button_move
 local button_back
 local button_forw
-local hboxsep2
 local button_check
 local button_recalc
 local combo
-local hboxsep3
+local hboxsep2
 local button_new
 local button_load
 local button_save
-local hboxfill
+local hboxsep3
 
 local box,lab
 
@@ -94,7 +92,7 @@ local box,lab
 
     hboxwin:pack_start( vboxlef:=gtkvboxNew(.f.,0) )
     hboxwin:pack_start( vboxsep:=gtkvboxNew(.f.,0) )
-    hboxwin:pack_start( vboxrig:=gtkvboxNew(.f.,0) )
+    hboxwin:pack_start( vboxrig:=gtkvboxNew(.f.,4) )
 
     vboxsep:set_size_request(10,-1)
 
@@ -144,21 +142,19 @@ local box,lab
     // vboxrig
     //=============================
 
-    vboxrig:pack_start( hboxsep0:=gtkhboxNew(.f.,0))
-    vboxrig:pack_start( twostatelabel:=gtktwostateimagelabelNew(.t.,"Ready","Think") )
     vboxrig:pack_start( hboxsep1:=gtkhboxNew(.f.,0))
-    vboxrig:pack_start( button_move:=gtkbuttonNew_with_mnemonic_from_stock("_Move","gtk-execute") )
+    vboxrig:pack_start( twostatelabel:=gtktwostateimagelabelNew(.t.,"Ready","Think"),,,10 )
+    vboxrig:pack_start( button_move:=gtkbuttonNew_with_mnemonic_from_stock("_Move","gtk-execute"))
     vboxrig:pack_start( button_back:=gtkbuttonNew_with_mnemonic_from_stock("_Back","gtk-go-back"))
     vboxrig:pack_start( button_forw:=gtkbuttonNew_with_mnemonic_from_stock("_Forward","gtk-go-forward"))
-    vboxrig:pack_start( hboxsep2:=gtkhboxNew(.f.,0))
-    vboxrig:pack_start( button_check:=gtkcheckbuttonNew_with_mnemonic("_Info") )
-    vboxrig:pack_start( button_recalc:=gtkbuttonNew_with_mnemonic_from_stock("_Recalc","gtk-execute") )
+    vboxrig:pack_start( button_check:=gtkcheckbuttonNew_with_mnemonic("_Info"),,,10 )
+    vboxrig:pack_start( button_recalc:=gtkbuttonNew_with_mnemonic_from_stock("_Recalc","gtk-execute"))
     vboxrig:pack_start( combo:=gtkcomboboxNew_text() )
-    vboxrig:pack_start( hboxsep3:=gtkhboxNew(.f.,0))
+    vboxrig:pack_start( hboxsep2:=gtkhboxNew(.f.,0))
     vboxrig:pack_start( button_new:=gtkbuttonNew_with_mnemonic_from_stock("_New","gtk-new"))
     vboxrig:pack_start( button_load:=gtkbuttonNew_with_mnemonic_from_stock("_Load","gtk-open"))
     vboxrig:pack_start( button_save:=gtkbuttonNew_with_mnemonic_from_stock("_Save","gtk-save"))
-    vboxrig:pack_start( hboxfill:=gtkhboxNew(.f.,0))
+    vboxrig:pack_start( hboxsep3:=gtkhboxNew(.f.,0))
 
     button_move:signal_connect("clicked",{|*|cb_move(*)})
     button_back:signal_connect("clicked",{|*|cb_back(*)})
@@ -169,7 +165,7 @@ local box,lab
     button_check:set_active(.t.)
 
     combo:signal_connect("changed",{|*|cb_power(*)})
-    combo:set_size_request(160,-1) // az osszes (!) button szelessege
+    combo:set_size_request(CELLSIZE*3,-1) // az osszes (!) button szelessege
     combo:append_text(POW0)
     combo:append_text(POW1)
     combo:append_text(POW2)
@@ -185,11 +181,9 @@ local box,lab
     button_load:signal_connect("clicked",{|*|cb_load(*)})
     button_save:signal_connect("clicked",{|*|cb_save(*)})
 
-    hboxsep0:set_size_request(-1,40)
-    hboxsep1:set_size_request(-1,10)
-    hboxsep2:set_size_request(-1,10)
-    hboxsep3:set_size_request(-1,10)
-    hboxfill:set_size_request(-1,100)
+    hboxsep1:set_size_request(-1,0)
+    hboxsep2:set_size_request(-1,0)
+    hboxsep3:set_size_request(-1,100)
 
     mainwindow(window)
     window:show_all
@@ -466,7 +460,7 @@ local v
             x:=""
         end
     end
-    if( CELLSIZE>100 )
+    if( CELLSIZE>9999 )
         //sosem
         label_bestline:set_markup("<b>"+x+"</b>")
     elseif( CELLSIZE<40 )
@@ -508,8 +502,8 @@ local mc:=movecount()
         //gtk.gobject.ref(black) // increase ref number
         //gtk.gobject.ref(white) // increase ref number
 
-        black:=circle_image(CELLSIZE,0,0,0,0xb8/256,0xb8/256,0xb8/256)
-        white:=circle_image(CELLSIZE,1,1,1,0xb8/256,0xb8/256,0xb8/256)
+        black:=circle_image(CELLSIZE*0.8,0,0,0,0xb8/256,0xb8/256,0xb8/256)
+        white:=circle_image(CELLSIZE*0.8,1,1,1,0xb8/256,0xb8/256,0xb8/256)
     end
 
     if( image!=NIL )

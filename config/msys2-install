@@ -1,10 +1,7 @@
 
-pacman -Syu $MINGW_PACKAGE_PREFIX-gettext
-
-exit 0
 
 
-pacman -Syu  \
+pacman -Syu --needed  \
     $MINGW_PACKAGE_PREFIX-clang\
     $MINGW_PACKAGE_PREFIX-gtk2\
     $MINGW_PACKAGE_PREFIX-gtk3\

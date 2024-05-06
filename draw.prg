@@ -186,10 +186,11 @@ static function numlayout(n) // n=0...99
 static label:=array(100)
 local  x:=n+1
     if( label[x]==NIL )
-        if( CELLSIZE>100 )
-            // sosem
-            label[x]:=gtklabelNew("<b>"+n::str::alltrim+"</b>")
-        elseif( CELLSIZE<40 )
+        if( CELLSIZE>=80 )
+            label[x]:=gtklabelNew("<span size='200%'>"+n::str::alltrim+"</span>")
+        elseif( CELLSIZE>=64 )
+            label[x]:=gtklabelNew("<span size='160%'>"+n::str::alltrim+"</span>")
+        elseif( CELLSIZE<=40 )
             label[x]:=gtklabelNew("<small>"+n::str::alltrim+"</small>")
         else
             label[x]:=gtklabelNew(n::str::alltrim)
@@ -205,13 +206,16 @@ static label:=array(100)
 static a:=asc("a")
 local  x:=n+1
     if( label[x]==NIL )
-        if( CELLSIZE>100 )
-            // sosem
-            label[x]:=gtklabelNew( "<b>"+chr(a+n)+"</b>" )
-            label[x]:set_use_markup(.t.)
+        if( CELLSIZE>=80 )
+            label[x]:=gtklabelNew( "<span size='200%'>"+chr(a+n)+"</span>" )
+        elseif( CELLSIZE>=64 )
+            label[x]:=gtklabelNew( "<span size='160%'>"+chr(a+n)+"</span>" )
+        elseif( CELLSIZE<=40 )
+            label[x]:=gtklabelNew( "<small>"+chr(a+n)+"</small>" )
         else
             label[x]:=gtklabelNew(chr(a+n))
         end
+        label[x]:set_use_markup(.t.)
     end 
     return label[x]:get_layout()
 
