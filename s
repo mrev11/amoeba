@@ -12,4 +12,4 @@ export AMOEBA_POWER_WHITE=3+
 # export AMOEBA_CELLSIZE=48
 # export AMOEBA_COLOR=77,66,22
 
-amoeba.exe  -t 12 -p 3
+amoeba.exe  -t 12 -p 3 | tee log-amoeba
