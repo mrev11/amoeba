@@ -91,7 +91,7 @@ local ch,w,pb,pw,mc
 function game_over()
 local result
 
-    if( movecount()<maxmove .and. winner()==32 .and. drawmeter()<maxdraw )
+    if( movecount()<maxmove .and. winner()==32 .and. (continuous_play()<1 .or. drawmeter()<maxdraw) )
         return .f.
     end
     

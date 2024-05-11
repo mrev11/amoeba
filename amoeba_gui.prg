@@ -238,6 +238,7 @@ local x,y,but,cx,fm,n
     end
 
     if( validpos(event,@x,@y,@but) )
+        cx:=y*TABLESIZE+x
 
         if( but==1 )
             //left-button
@@ -246,7 +247,6 @@ local x,y,but,cx,fm,n
                 if( topcell()!=NIL )
                     drawcell(topcell()) // -> normal shape
                 end
-                cx:=y*TABLESIZE+x
                 forw(cx)
                 markmovecount()
                 rating_store() //delete
@@ -270,7 +270,6 @@ local x,y,but,cx,fm,n
                     drawnum(fm[n],n)
                     print_cell_pattern(fm[n])
                 next
-                cx:=y*TABLESIZE+x
                 print_cell_pattern(cx)
                 print_posvalue()
                 drawclean(.t.)
