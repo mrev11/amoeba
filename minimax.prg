@@ -21,12 +21,18 @@
 #include "amoeba.ch"
 #include "pvalue.h"
 
-static node                         // ennyi állást értékelt ki
-static xbest                        // minimax futása után a legjobb lépés
-static treshold:=len(width())*0.5   // ha megközelíti a nyerést, nem keres mégjobbat
-static movestack:=array(ROWCOL)     // csak debug
+static node         // ennyi állást értékelt ki
+static xbest        // minimax futása után a legjobb lépés
+static width        // elemzofa szelessege
+static turn         // ki gondolkodik
+static treshold
+static ilevel
+static maxenf
+
+static movestack:=array(ROWCOL)
 static ascx:=asc("X")
 static asco:=asc("O")
+
 
 ******************************************************************************************
 function node()
@@ -38,19 +44,28 @@ function xbest()
 
 
 ******************************************************************************************
+function init_minimax(swflg)
+local curlev
+
+    curlev:=setwidth(movecount(),swflg)
+
+    node:=0
+    xbest:=NIL
+    width:=width()
+    turn:=if(0==movecount()%2,ascx,asco)
+    treshold:=int(len(width)/2)
+    maxenf:=maxenf()
+    ilevel:=infolevel()
+
+    return curlev
+
+
+******************************************************************************************
 function minimax(depth,alfa,beta,bestline,forced_count)
 
-local width:=width()
-local maxenf:=maxenf()
-local ilevel:=infolevel()
 local candidate_move,n,x,xopt,vopt
 local bestline1:={}
 local winner
-
-    if( depth==0 )
-        node:=0
-        xbest:=NIL
-    end
 
     node++
     depth++
@@ -62,7 +77,7 @@ local winner
         return vopt
     end
 
-    candidate_move:=movegen(width[depth-forced_count])
+    candidate_move:=movegen(width[depth-forced_count],turn)
 
     if( len(candidate_move)==0 )
         winner:=winner()

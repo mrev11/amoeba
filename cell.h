@@ -119,7 +119,7 @@ struct cell
     static void randomize(int);         // randomizálás cellaindexre
     static void randomize(int,int);     // randomizálás koordinátákra
     static cell *unset();               // leveszi az utolsó figurát a tábláról
-    static int  movegen(int);           // megkeresi a fontos lépéseket
+    static int  movegen(int,int);       // megkeresi a fontos lépéseket
     static int  posvalue();             // statikus állás kiértékelés
 
     static void save();

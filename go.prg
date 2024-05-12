@@ -34,7 +34,7 @@ local rts,pws
         drawcell(topcell())
     end
 
-    ? "-------------------------------------------------------------------------------------"
+    ? "-----------------------------------------------------------------------------------"
 
     if( continuous_play()>1 )
         ?  "Game="+(1+gamecount())::str::alltrim+"/"+continuous_play()::str::alltrim
@@ -43,7 +43,7 @@ local rts,pws
     end
     ?
 
-    curlev:=setwidth(movecount())
+    curlev:=init_minimax()
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@bestline,0)
     x:=xbest()
 
@@ -94,12 +94,12 @@ local rts,pws
         return NIL
     end
 
-    ? "=====================================================================================";?
+    ? "===================================================================================";?
 
     drawcell(cx)
     label_turn()
 
-    curlev:=setwidth(movecount(),.t.)
+    curlev:=init_minimax(.t.)
     v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@bestline,0)
     x:=xbest()
 
