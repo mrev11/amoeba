@@ -1,0 +1,16 @@
+#!/bin/bash
+
+TOTAL=$(ls -l amoeba??-* | wc -l)
+XWIN=$(grep X amoeba??-* | wc -l)
+OWIN=$(grep O amoeba??-* | wc -l)
+DRAW=$(($TOTAL-$XWIN-$OWIN))
+
+echo
+echo TOTAL=$TOTAL  $(( ($XWIN+$XWIN+$DRAW)*50/$TOTAL ))%
+echo XWIN=$XWIN    $(( $XWIN*100/$TOTAL ))%
+echo OWIN=$OWIN    $(( $OWIN*100/$TOTAL ))%
+echo DRAW=$DRAW    $(( $DRAW*100/$TOTAL ))%
+echo
+
+
+sleep 3
