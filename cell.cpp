@@ -221,10 +221,12 @@ int cell::poplayer()
 //--------------------------------------------------------------------------
 cell *cell::unset()  // leveszi az utolsó figurát a tábláról (OSZTALY FUGGVENY)
 {
+
     if( cell::movecount>0 )
     {
         cell::movecount--;
         cell *c=cell::cells[cell::movestack[cell::movecount]];
+
         c->figure=' ';
         cell::winner=' ';
 
@@ -243,24 +245,21 @@ cell *cell::unset()  // leveszi az utolsó figurát a tábláról (OSZTALY FUGGV
             // ellenorzes
             for( int cx=0; cx<cell::tablesize*cell::tablesize; cx++ )
             {
-                c=cell::cells[cx];
-                if( c->layer )
+                cell *cc=cell::cells[cx];
+                if( cc->layer )
                 {
                     printf("LAYER ERROR %d[%d:%d]\n", c->layer,c->row,c->col);
                 }
-                else if( c->fieldval[0].white!=0 )
+                else if( cc->fieldval[0].white!=0 )
                 {
                     printf("FIELDVAL ERROR (white) %d[%d:%d]\n", c->fieldval[0].white,c->row,c->col);
                 }
-                else if( c->fieldval[0].black!=0 )
+                else if( cc->fieldval[0].black!=0 )
                 {
                     printf("FIELDVAL ERROR (black) %d[%d:%d]\n", c->fieldval[0].black,c->row,c->col);
                 }
             }
         }
-        
-        
-        
         return c;
     }
     return 0;
