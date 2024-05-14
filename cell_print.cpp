@@ -156,12 +156,9 @@ void cell::print()
 }
 
 //----------------------------------------------------------------------------------------
-void _clp_print_cell_pattern(int argno)
+void cell::print_pattern(int cx)
 {
-    CCC_PROLOG("print_cell_pattern",1);
-    int x=_parni(1);
-
-    cell *c=cell::cells[x];
+    cell *c=cell::cells[cx];
 
     if( c->figure==' ' )
     {
@@ -184,28 +181,9 @@ void _clp_print_cell_pattern(int argno)
         }
 
         printf(" %4s %4s [%3s]%c",vo,vx,vs,force);
-        printf("\n");
         fflush(0);
     }
-    _ret();
-    CCC_EPILOG();
-}
-
-//----------------------------------------------------------------------------------------
-void _clp_print_posvalue(int argno)
-{
-    CCC_PROLOG("print_posvalue",0);
-
-    printf( "turn:%c ",cell::movecount&1?'O':'X');
-    printf( "posvalue=%d\n",cell::posvalue() );
-    fflush(0);
-    _ret();
-    CCC_EPILOG();
 }
 
 
 //----------------------------------------------------------------------------------------
-
-
-
-

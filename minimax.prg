@@ -113,7 +113,7 @@ local winner
             forw(x)
             if( ilevel>=depth )
                 drawalt()
-                sleep(100)
+                sleep(200)
             end
             vopt:=max(vopt,minimax(depth,alfa,beta,@bestline1,forced_count))
             back()
@@ -153,7 +153,7 @@ local winner
             forw(x)
             if( ilevel>=depth )
                 drawalt()
-                sleep(100)
+                sleep(200)
             end
             vopt:=min(vopt,minimax(depth,alfa,beta,@bestline1,forced_count))
             back()
@@ -207,7 +207,8 @@ static function info(depth,x,v)
 #else
     if( depth==1 )
         ?? turn(),"["+v::int::str(5)+"]"
-        print_cell_pattern(x)
+        print_pattern(x)
+        ?
     end
 #endif
 

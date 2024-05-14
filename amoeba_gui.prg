@@ -268,9 +268,11 @@ local x,y,but,cx,fm,n
                 ?
                 for n:=1 to len(fm)
                     drawnum(fm[n],n)
-                    print_cell_pattern(fm[n])
+                    print_pattern(fm[n])
+                    ?
                 next
-                print_cell_pattern(cx)
+                print_pattern(cx)
+                ?
                 print_posvalue()
                 drawclean(.t.)
             end
@@ -414,6 +416,7 @@ static function cb_new(button)
     end
 
     c_cb_new()
+    drawmeter(0)
     drawall(.t.) // törli topcell/topfig-et
     label_bestline()
     label_move()

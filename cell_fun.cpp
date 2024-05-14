@@ -324,5 +324,28 @@ void _clp_spiral(int argno)
     CCC_EPILOG();
 }
 
+//---------------------------------------------------------------------------
+void _clp_print_posvalue(int argno)
+{
+    CCC_PROLOG("print_posvalue",0);
+
+    printf( "turn:%c ",cell::movecount&1?'O':'X');
+    printf( "posvalue=%d\n",cell::posvalue() );
+    fflush(0);
+    _ret();
+    CCC_EPILOG();
+}
+
+//----------------------------------------------------------------------------------------
+void _clp_print_pattern(int argno)
+{
+    CCC_PROLOG("print_pattern",1);
+    int cx=_parni(1);
+    cell::print_pattern(cx);
+    _ret();
+    CCC_EPILOG();
+}
+
+
 
 //--------------------------------------------------------------------------

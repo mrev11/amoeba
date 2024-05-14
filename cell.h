@@ -121,6 +121,7 @@ struct cell
     static cell *unset();               // leveszi az utolsó figurát a tábláról
     static int  movegen(int,int);       // megkeresi a fontos lépéseket
     static int  posvalue();             // statikus állás kiértékelés
+    static void print_pattern(int);     // debug info
 
     static void save();
     static void restore();

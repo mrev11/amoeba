@@ -72,9 +72,9 @@ local rts,pws
 
         for n:=1 to 3
             drawcell(x)
-            sleep(80)
+            sleep(100)
             drawtop()
-            sleep(80)
+            sleep(100)
         next
     end
 

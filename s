@@ -5,14 +5,14 @@
 # AMOEBA_CONTINUOUS_PLAY=1  : onmaga ellen jatszik (1 partit)
 # AMOEBA_CONTINUOUS_PLAY=n  : onmaga ellen jatszik  n darab partit
 
-export AMOEBA_CONTINUOUS_PLAY=10
-export AMOEBA_POWER_BLACK=2+
-export AMOEBA_POWER_WHITE=3
+export AMOEBA_CONTINUOUS_PLAY=-1
+export AMOEBA_POWER_BLACK=3+
+export AMOEBA_POWER_WHITE=3+
 
 # export AMOEBA_TABLESIZE=12
 # export AMOEBA_CELLSIZE=48
 # export AMOEBA_COLOR=77,66,22
 
 
-amoeba.exe | tee  log-amoeba
+amoeba.exe "$@" | tee  log-amoeba
 

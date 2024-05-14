@@ -273,7 +273,7 @@ cell *cell::unset()  // leveszi az utolsó figurát a tábláról (OSZTALY FUGGV
 //--------------------------------------------------------------------------
 cell *cell::set() // felteszi magát a táblára (OBJEKTUM FUGGVENY)
 {
-    if( (cell::winner==' ') && (cell::movecount<(cell::tablesize*cell::tablesize)) )
+    if( (cell::winner==' ') && (cell::movecount<(cell::tablesize*cell::tablesize)) && (this->figure==' ')  )
     {
         movestack[cell::movecount++]=count;
 

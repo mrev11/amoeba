@@ -77,6 +77,7 @@ local content,spiral,line,n,p
     end
 
     c_cb_new()
+    drawmeter(0)
 
     spiral:=content[2]::split
     for n:=1 to len(spiral)
