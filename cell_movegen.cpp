@@ -56,6 +56,8 @@ int cell::movegen(int total, int think) //kikeresi a megadott szamu "legfontosab
     int MOVEGEN=1000;
     if( think=='O' ) MOVEGEN=cell::movegen_white;
     if( think=='X' ) MOVEGEN=cell::movegen_black;
+    if( think== 1  ) MOVEGEN=cell::movegen_white;
+    if( think== 2  ) MOVEGEN=cell::movegen_black;
     #endif
 
     int cnt=0;
@@ -213,6 +215,10 @@ int cell::movegen(int total, int think) //kikeresi a megadott szamu "legfontosab
 //--------------------------------------------------------------------------
 static void print_movegen(int turn, int cnt)
 {
+    if( turn==0 ) turn=' ';
+    if( turn==1 ) turn='O';
+    if( turn==2 ) turn='X';
+
     printf("%c %d ",turn,cnt);
     for(int i=0; i<cnt; i++)
     {
