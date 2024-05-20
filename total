@@ -12,5 +12,10 @@ echo OWIN=$OWIN    $(( $OWIN*100/$TOTAL ))%
 echo DRAW=$DRAW    $(( $DRAW*100/$TOTAL ))%
 echo
 
+grep Nodes log-amoeba  | sort -t = -k 2 -n | tail
+echo
 
+grep TOTAL log-amoeba  | tail
+echo
+    
 sleep 3

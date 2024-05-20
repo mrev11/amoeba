@@ -22,6 +22,9 @@
 #include "pvalue.h"
 
 
+static blink:=init_blink()
+
+
 ******************************************************************************************
 function go_move()
 
@@ -30,9 +33,6 @@ local curlev
 local bestline:={}
 local rts,pws
 
-    if( topcell()!=NIL )
-        drawcell(topcell())
-    end
 
     ? "-----------------------------------------------------------------------------------"
 
@@ -70,12 +70,14 @@ local rts,pws
         bestline_store(bestline)
         label_rate()
 
-        for n:=1 to 3
-            drawcell(x)
-            sleep(100)
+        for n:=1 to blink
             drawtop()
             sleep(100)
+            drawcell(x)
+            sleep(100)
         next
+        drawtop()
+        sleep(10)
     end
 
 
@@ -186,6 +188,18 @@ static function calcstr(v,curlev,move)  // forw() elott kell hivni
 local str:=ratestr(v,curlev)
     str+=":"+pos2rc(move)
     return str
+
+
+******************************************************************************************
+static function init_blink()
+local env:=getenv("AMOEBA_BLINK")
+    if( !empty(env) )
+        env::=val
+        env::=max(0)
+        env::=min(10)
+        return env
+    end
+    return 3
 
 
 ******************************************************************************************
