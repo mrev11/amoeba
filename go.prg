@@ -23,6 +23,7 @@
 
 
 static blink:=init_blink()
+static wtime:=200 //msec
 
 
 ******************************************************************************************
@@ -72,11 +73,15 @@ local rts,pws
 
         for n:=1 to blink
             drawtop()
-            sleep(100)
+            stabilize()
+            sleep(wtime)
+
             drawcell(x)
-            sleep(100)
+            stabilize()
+            sleep(wtime)
         next
         drawtop()
+        stabilize()
         sleep(10)
     end
 
@@ -119,18 +124,24 @@ local rts,pws
         bestline_store(bestline)
         label_rate()
 
-        for n:=1 to 5
-            drawcell(x)
-            sleep(300)
+        for n:=1 to blink+3
             drawtop()
-            sleep(300)
+            stabilize()
+            sleep(wtime)
+
+            drawcell(x)
+            stabilize()
+            sleep(wtime)
         next
+
         back()
         drawcell(x)
     end
 
     forw(cx)
     drawtop()
+    stabilize()
+
     label_turn()
     cell_restore()
 

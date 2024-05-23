@@ -117,15 +117,13 @@ local winner
             forw(x)
             if( ilevel>=depth )
                 drawalt()
+                stabilize()
                 sleep(200)
             end
             vopt:=max(vopt,minimax(depth,alfa,beta,@bestline1,forced_count))
             back()
             if( ilevel>=depth )
                 drawcell(x)
-                if( depth>1 )
-                    drawalt()
-                end
             end
             info(depth,x,vopt)
 
@@ -157,15 +155,13 @@ local winner
             forw(x)
             if( ilevel>=depth )
                 drawalt()
+                stabilize()
                 sleep(200)
             end
             vopt:=min(vopt,minimax(depth,alfa,beta,@bestline1,forced_count))
             back()
             if( ilevel>=depth )
                 drawcell(x)
-                if( depth>1 )
-                    drawalt()
-                end
             end
             info(depth,x,vopt)
 

@@ -1,3 +1,15 @@
+2024-05-23 2.1 verzio
+  A PyGTK (GTK3) tapasztalatok alapjan a rajzolas atszervezve:
+  Minden cairo rajzolas a cb_expose() -> drawall() alol tortenik.
+  A drawalt(), drawtop() es drawcell() csak nyilvantartast vezenek, 
+  a nyilvantartas alapjan a drawall() egyszerre mindent kirajzol.
+  cb_expose() ketfele modon hivodhat meg:
+  1) Meghivhatja a gtk, pl. workspace valtas utan.
+  2) A stabilize() fuggvennyel indirekten kivalthato cb_expose meghivasa.
+  A drawall() direkt meghivasa hatastalan es ertelmetlen.
+  A jobboldali gombok meretezese es pozicionalasa csinositva.
+
+
 2024-05-20 szabalyozhato pislogas;
 
 2024-05-12 Egysegesites:

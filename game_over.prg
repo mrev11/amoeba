@@ -111,7 +111,7 @@ local result
     if( gamecount()+1<continuous_play()  )
         sleep(3000)
         c_cb_new()
-        drawall(.t.) // törli topcell/topfig-et
+        stabilize()
         label_bestline()
         label_move()
         label_rate()

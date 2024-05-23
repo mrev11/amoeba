@@ -132,7 +132,7 @@ local box,lab
 
     hboxsep:set_size_request(0,10)
 
-    label_move:set_size_request(CELLSIZE*TABLESIZE/3,-1)
+    label_move:set_size_request(CELLSIZE*TABLESIZE/4,-1)
     label_rate:set_size_request(CELLSIZE*TABLESIZE/3,-1)
 
     label_move()
@@ -143,17 +143,17 @@ local box,lab
     //=============================
 
     vboxrig:pack_start( hboxsep1:=gtkhboxNew(.f.,0))
-    vboxrig:pack_start( twostatelabel:=gtktwostateimagelabelNew(.t.,"Ready","Think"),,,10 )
-    vboxrig:pack_start( button_move:=gtkbuttonNew_with_mnemonic_from_stock("_Move","gtk-execute"))
-    vboxrig:pack_start( button_back:=gtkbuttonNew_with_mnemonic_from_stock("_Back","gtk-go-back"))
-    vboxrig:pack_start( button_forw:=gtkbuttonNew_with_mnemonic_from_stock("_Forward","gtk-go-forward"))
-    vboxrig:pack_start( button_check:=gtkcheckbuttonNew_with_mnemonic("_Info"),,,10 )
-    vboxrig:pack_start( button_recalc:=gtkbuttonNew_with_mnemonic_from_stock("_Recalc","gtk-execute"))
-    vboxrig:pack_start( combo:=gtkcomboboxNew_text() )
-    vboxrig:pack_start( hboxsep2:=gtkhboxNew(.f.,0))
-    vboxrig:pack_start( button_new:=gtkbuttonNew_with_mnemonic_from_stock("_New","gtk-new"))
-    vboxrig:pack_start( button_load:=gtkbuttonNew_with_mnemonic_from_stock("_Load","gtk-open"))
-    vboxrig:pack_start( button_save:=gtkbuttonNew_with_mnemonic_from_stock("_Save","gtk-save"))
+    vboxrig:pack_start( twostatelabel:=gtktwostateimagelabelNew(.t.,"Ready","Think"),.f.,,20)
+    vboxrig:pack_start( button_move:=gtkbuttonNew_with_mnemonic_from_stock("_Move","gtk-execute"),.f.)
+    vboxrig:pack_start( button_back:=gtkbuttonNew_with_mnemonic_from_stock("_Back","gtk-go-back"),.f.)
+    vboxrig:pack_start( button_forw:=gtkbuttonNew_with_mnemonic_from_stock("_Forward","gtk-go-forward"),.f.)
+    vboxrig:pack_start( button_check:=gtkcheckbuttonNew_with_mnemonic("_Info"),.f.,,10 )
+    vboxrig:pack_start( button_recalc:=gtkbuttonNew_with_mnemonic_from_stock("_Recalc","gtk-execute"),.f.)
+    vboxrig:pack_start( combo:=gtkcomboboxNew_text(),.f.)
+    vboxrig:pack_start( hboxsep2:=gtkhboxNew(.f.,0),.f.,,5)
+    vboxrig:pack_start( button_new:=gtkbuttonNew_with_mnemonic_from_stock("_New","gtk-new"),.f.)
+    vboxrig:pack_start( button_load:=gtkbuttonNew_with_mnemonic_from_stock("_Load","gtk-open"),.f.)
+    vboxrig:pack_start( button_save:=gtkbuttonNew_with_mnemonic_from_stock("_Save","gtk-save"),.f.)
     vboxrig:pack_start( hboxsep3:=gtkhboxNew(.f.,0))
 
     button_move:signal_connect("clicked",{|*|cb_move(*)})
@@ -244,14 +244,12 @@ local x,y,but,cx,fm,n
             //left-button
 
             if( !game_over() )
-                if( topcell()!=NIL )
-                    drawcell(topcell()) // -> normal shape
-                end
                 forw(cx)
                 markmovecount()
                 rating_store() //delete
                 recalc_store() //delete
                 drawtop()
+                stabilize()
                 label_move()
                 label_turn()
                 label_rate()
@@ -274,7 +272,6 @@ local x,y,but,cx,fm,n
                 print_pattern(cx)
                 ?
                 print_posvalue()
-                drawclean(.t.)
             end
         end
     end
@@ -324,8 +321,8 @@ static function cb_end()
     end
     while( c_cb_forward() )
     end
-    drawall(.t.)
     drawtop()
+    stabilize()
     label_move()
     label_turn()
     label_rate()
@@ -339,7 +336,7 @@ static function cb_home()
     end
     while( back()!=NIL )
     end
-    drawall(.t.)
+    stabilize()
     label_move()
     label_turn()
     label_rate()
@@ -356,11 +353,10 @@ local cx:=topcell()
         return NIL
     end
 
-    drawclean()
     if( cx!=NIL )
         c_cb_back()
-        drawcell(cx)
         drawtop()
+        stabilize()
     end
     label_move()
     label_rate()
@@ -377,12 +373,9 @@ local cx:=topcell()
         return NIL
     end
 
-    drawclean()
     c_cb_forward()
-    if( cx!=NIL )
-        drawcell(cx)
-    end
     drawtop()
+    stabilize()
     label_move()
     label_rate()
     label_bestline()
@@ -398,7 +391,6 @@ static function cb_recalc()
     end
     semaphor_busy:=.t.
 
-    drawclean()
     twostatelabel:set_state(.f.)
     area:set_sensitive(.f.)
     go_recalc()
@@ -416,8 +408,8 @@ static function cb_new(button)
     end
 
     c_cb_new()
+    stabilize()
     drawmeter(0)
-    drawall(.t.) // törli topcell/topfig-et
     label_bestline()
     label_move()
     label_rate()
@@ -496,8 +488,8 @@ static white
 local mc:=movecount()
 
     if( label==NIL )
-        label:=gtklabelNew("Turn:")
-        label_turn:pack_start(label)
+        label:=gtklabelNew("Turn: ")
+        label_turn:pack_start(label,.f.)
 
         //black:=gtk.image.new_from_file("black.png")
         //white:=gtk.image.new_from_file("white.png")
@@ -516,7 +508,7 @@ local mc:=movecount()
     else
         image:=white
     end
-    label_turn:pack_end(image)
+    label_turn:pack_start(image,.f.)
     label_turn:show_all
 
 

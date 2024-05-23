@@ -106,8 +106,8 @@ local content,spiral,line,n,p
 
     markmovecount()
 
-    drawall(.t.) // törli topcell/topfig-et
     drawtop()
+    stabilize()
 
     label_bestline()
     label_move()

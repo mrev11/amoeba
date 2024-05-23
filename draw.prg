@@ -36,8 +36,8 @@ static area
 static ascx:=asc("X")
 static asco:=asc("O")
 
-static topcell:=NIL
-static topfig:=NIL
+static topidx:=NIL
+static altidx:=NIL
 
 
 ******************************************************************************
@@ -49,9 +49,20 @@ function drawingarea(a)
 
 
 ******************************************************************************
+function stabilize()
+    area:queue_draw()
+    sleep(10)
+    gtk.main_stabilize()
+    
+
+
+******************************************************************************
 function drawcell(cx,fig)
-local x:=cx%TABLESIZE
-local y:=int(cx/TABLESIZE)
+
+    if( cx==NIL )
+        return NIL
+    end
+
     if( fig==NIL )
         fig:=figure(cx)
         if( fig==ascx )
@@ -61,98 +72,102 @@ local y:=int(cx/TABLESIZE)
         else
             fig:=FIG_EMPTY
         end
-        topcell:=NIL
-        topfig:=NIL
+
+        if( cx==topidx )
+            topidx:=NIL
+        end
+        if( cx==altidx )
+            altidx:=NIL
+        end
+
+    elseif( fig==FIG_OA  .or.  fig==FIG_XA )
+        altidx:=cx
+
+    elseif( fig==FIG_OT  .or.  fig==FIG_XT )
+        topidx:=cx
     end
-    cairo_drawcell(area:gobject,x,y,fig)
-    gtk.main_stabilize()
 
 
 ******************************************************************************
 function drawalt()
 local top,fig
+
     top:=topcell()
     if( top==NIL )
         return NIL
     end
+
     fig:=figure(top)
+
     if( fig==ascx )
         fig:=FIG_XA
-        topcell:=top
-        topfig:=fig
     elseif( fig==asco )
         fig:=FIG_OA
-        topcell:=top
-        topfig:=fig
     else
         fig:=FIG_EMPTY
-        topcell:=NIL
-        topfig:=NIL
     end
+
     drawcell(top,fig)
 
 
 ******************************************************************************
 function drawtop()
 local top,fig 
+
     top:=topcell()
     if( top==NIL )
         return NIL
     end
+
     fig:=figure(top)
+
     if( fig==ascx )
         fig:=FIG_XT
-        topcell:=top
-        topfig:=fig
     elseif( fig==asco )
         fig:=FIG_OT
-        topcell:=top
-        topfig:=fig
     else
         fig:=FIG_EMPTY
-        topcell:=NIL
-        topfig:=NIL
     end
+
     drawcell(top,fig)
         
 
 ******************************************************************************
-function drawall( deltop:=.f. )
-local cx,tc,tf
-
-    if( deltop )
-        topcell:=NIL
-        topfig :=NIL
-    end
+function drawall()
+local cx,fig,x,y
 
     cairo_drawgrid(area:gobject)
     scale()
 
-    tc:=topcell
-    tf:=topfig 
     for cx:=0 to ROWCOL-1
-        if( cx==tc )
-            drawcell(tc,tf)
+
+        fig:=figure(cx)
+        if( fig==ascx )
+            if( cx==topidx )
+                fig:=FIG_XT
+            elseif( cx==altidx )
+                fig:=FIG_XA
+            else
+                fig:=FIG_X
+            end
+
+        elseif( fig==asco )
+            if( cx==topidx )
+                fig:=FIG_OT
+            elseif( cx==altidx )
+                fig:=FIG_OA
+            else
+                fig:=FIG_O
+            end
         else
-            drawcell(cx)
+            fig:=FIG_EMPTY
         end
+
+        x:=cx%TABLESIZE
+        y:=int(cx/TABLESIZE)
+        cairo_drawcell(area:gobject,x,y,fig)
     next
 
-    //a ciklusban
-    //törlőd(het)nek
-    topcell := tc
-    topfig  := tf
-
-
-******************************************************************************
-function drawclean(flag)
-static f:=.f.
-    if( flag!=NIL )
-        f:=flag
-    elseif( f )
-        drawall()
-        f:=.f.
-    end
 
 
 ******************************************************************************
