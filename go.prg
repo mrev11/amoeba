@@ -58,6 +58,7 @@ local rts,pws
 
     if( NIL!=x )
 
+        drawcell(topcell())
         rts:=ratestr(v,curlev) // forw elott
         pws:=powstr(curlev)    // forw elott
 

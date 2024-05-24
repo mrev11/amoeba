@@ -1,4 +1,6 @@
 2024-05-23 2.1 verzio
+
+2024-05-23 2.1 verzio
   A PyGTK (GTK3) tapasztalatok alapjan a rajzolas atszervezve:
   Minden cairo rajzolas a cb_expose() -> drawall() alol tortenik.
   A drawalt(), drawtop() es drawcell() csak nyilvantartast vezenek, 

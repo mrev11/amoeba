@@ -3,7 +3,6 @@
 </head>
 
 
-
 ---------------------------------------------------------------------------------
 ## Amőba élmény beszámoló
 
@@ -20,16 +19,16 @@ nyelven lehet grafikus programokat írni Linuxra és Windowsra.
 [http://comfirm.hu/ccc3/cccgtk.html ](http://comfirm.hu/ccc3/cccgtk.html).) 
 Ez a könyvtár aztán a kezdeti állapotában maradt, nem fejlődött tovább.
 
-A GTK projekt kellemetlenül változékony. Ha írok egy alkalmazást GTK-ra,
-és két hónap múlva újra akarom fordítani, kapom a hibaüzeneteket:
-Ez vagy az az API megszűnt, vagy deprecated lett, valamelyik struktúra megváltozott.
-Nem volt energiám követni az örökös változásokat. Évekig abban merült ki
-a CCC-GTK csatoló karbantartása, hogy töröltem belőle azokat az API-kat,
-amik a GTK2-ben megváltoztak. Így tartottam lefordítható állapotban.
-Azóta lett GTK3 és GTK4 is, de ezekkel nem foglalkoztam. 
-Szerencsére a GTK2 mostanra olyan réginek számít, hogy nem piszkálják többé.
-Így nyugtom van, a csatoló maradékán már nem kell változtatni, 
-úgy jó, ahogy van.
+>   A GTK projekt kellemetlenül változékony. Ha írok egy alkalmazást GTK-ra,
+    és két hónap múlva újra akarom fordítani, kapom a hibaüzeneteket:
+    Ez vagy az az API megszűnt, vagy deprecated lett, valamelyik struktúra megváltozott.
+     Nem volt energiám követni az örökös változásokat. Évekig abban merült ki
+    a CCC-GTK csatoló karbantartása, hogy töröltem belőle azokat az API-kat,
+    amik a GTK2-ben megváltoztak, így tartottam lefordítható állapotban.
+    Azóta már van GTK3 és GTK4 is, de ezekkel nem foglalkoztam. 
+    Szerencsére a GTK2 mostanra olyan réginek számít, hogy nem piszkálják többé.
+    Így nyugtom van, a csatoló maradékán már nem kell változtatni, 
+    úgy jó, ahogy van.
 
 Mindenesetre 2005-ben úgy gondoltam, kellene egy értelmes demó a GTK-hoz.
 Emlékezetből újraírtam az amőbát. Húsz év után a részletek már elhalványultak,
@@ -90,7 +89,8 @@ megnézhetjük például itt: [https://en.wikipedia.org/wiki/Minimax](https://en
 Nincs szükség az elemzőfa minden pontjának kiértékelésére.
 Egy ügyes trükk segítségével, az _alfa-béta vágással_, kb. felére lehet csökkenteni
 a számítások mennyiségét. Az alfa-béta vágásról olvashatunk itt:
-[https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning).
+[https://en.wikipedia.org/wiki/Alpha-beta_pruning](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning).
+
 
 
 #### 2) Pozíciók statikus értékelése
@@ -338,8 +338,17 @@ elfogadhatóan működik.
 ---------------------------------------------------------------------------------
 ## Online játék
 
-Böngészőben is lehet amőbázni a következő linken:
-[Amoeba for the WEB](http://comfirm.hu:45678/webapp).
+Böngészőben is lehet amőbázni az [Amoeba for the WEB](http://comfirm.hu:45678/webapp) linken,
+vagy akár a jelen dokumentumban:
+
+<div style=" width:750; height:680; margin:auto; border:0px solid">
+    <iframe src="http://comfirm.hu:45678/webapp"
+            style="width:1100; height:1000; 
+            transform:scale(0.66); 
+            transform-origin:0px 0px; 
+            border:2px solid"></iframe>
+</div>
+
 
 A webes változat a szerveren játszik, a böngésző csak a megjelenítést végzi.
 E sorok írásakor a szerver egy Intel Celeron J1900 (4) @ 2.415GHz processzoron futó 
@@ -347,6 +356,4 @@ Arch Linux. A szerény teljesítményű CPU-tól ne várjunk nagy sebességet.
 
 
 ---------------------------------------------------------------------------------
-
-
 
