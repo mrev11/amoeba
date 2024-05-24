@@ -57,6 +57,8 @@ local hboxsep1
 local button_move
 local button_back
 local button_forw
+local button_demo
+local label_demo
 local button_check
 local button_recalc
 local combo
@@ -67,7 +69,6 @@ local button_save
 local hboxsep3
 
 local box,lab
-
 
     gtk.init()
 
@@ -147,6 +148,7 @@ local box,lab
     vboxrig:pack_start( button_move:=gtkbuttonNew_with_mnemonic_from_stock("_Move","gtk-execute"),.f.)
     vboxrig:pack_start( button_back:=gtkbuttonNew_with_mnemonic_from_stock("_Back","gtk-go-back"),.f.)
     vboxrig:pack_start( button_forw:=gtkbuttonNew_with_mnemonic_from_stock("_Forward","gtk-go-forward"),.f.)
+    vboxrig:pack_start( button_demo:=gtkbuttonNew_with_mnemonic_from_stock("_Demo","gtk-execute",@label_demo),.f.)
     vboxrig:pack_start( button_check:=gtkcheckbuttonNew_with_mnemonic("_Info"),.f.,,10 )
     vboxrig:pack_start( button_recalc:=gtkbuttonNew_with_mnemonic_from_stock("_Recalc","gtk-execute"),.f.)
     vboxrig:pack_start( combo:=gtkcomboboxNew_text(),.f.)
@@ -159,6 +161,7 @@ local box,lab
     button_move:signal_connect("clicked",{|*|cb_move(*)})
     button_back:signal_connect("clicked",{|*|cb_back(*)})
     button_forw:signal_connect("clicked",{|*|cb_forward(*)})
+    button_demo:signal_connect("clicked",{||cb_demo(button_demo,label_demo)})
     button_recalc:signal_connect("clicked",{|*|cb_recalc(*)})
 
     button_check:signal_connect("clicked",{|*|cb_info(*)})
@@ -312,6 +315,42 @@ local cp
         cp:=(0<continuous_play())
     end
     semaphor_busy:=.f.
+
+
+******************************************************************************
+static function cb_demo(button,label)
+
+static demo:=.f.
+
+    if( game_over() )
+        return NIL
+    end
+
+    demo:=!demo
+    if( demo )
+        label:set_text("_Stop")
+        label:set_use_underline(.t.)
+    end
+
+    while( demo .and. !game_over() )
+        if( movecount()==0 )
+            cell_randomize()
+        elseif( movecount()==1 )
+            cell_randomize(topcell())
+        end
+
+        twostatelabel:set_state(.f.)
+        area:set_sensitive(.f.)
+        go_move()
+        area:set_sensitive(.t.)
+        twostatelabel:set_state(.t.)
+        markmovecount()
+        label_move()
+    end
+
+    demo:=.f.    
+    label:set_text("_Demo")
+    label:set_use_underline(.t.)
 
 
 ******************************************************************************

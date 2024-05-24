@@ -26,8 +26,8 @@
 
 
 ******************************************************************************
-function gtkbuttonNew_with_mnemonic_from_stock(label_text,stock_id)
-local button,box,label,image
+function gtkbuttonNew_with_mnemonic_from_stock(label_text,stock_id,label)
+local button,box,image
     box:=gtkhboxNew(.f.,0)
     box:set_border_width(2)
     image:=gtkimageNew_from_stock(stock_id,1)

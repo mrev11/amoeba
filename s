@@ -10,10 +10,10 @@ export AMOEBA_CONTINUOUS_PLAY=0
 # export AMOEBA_POWER_WHITE=5
 # export AMOEBA_POWER=0
 
-export AMOEBA_TABLESIZE=16
+export AMOEBA_TABLESIZE=19
 # export AMOEBA_CELLSIZE=48
 # export AMOEBA_COLOR=77,66,22
-export AMOEBA_BLINK=2
+export AMOEBA_BLINK=1
 
 
 amoeba "$@" | tee  log-amoeba
