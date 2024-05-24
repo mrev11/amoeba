@@ -1,8 +1,5 @@
 #!/bin/bash
-
 INPUT=amoeba.md
 OUTPUT=${INPUT}.html
 
-markdown_py -f /tmp/amoeba ${INPUT}
-sed  's!</head>!</head><div style="margin:auto;width:900">!'  /tmp/amoeba >${OUTPUT}
-echo '</div>' >>${OUTPUT}
+markdown_py -f ${OUTPUT} ${INPUT}

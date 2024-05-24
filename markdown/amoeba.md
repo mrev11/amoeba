@@ -1,7 +1,7 @@
 <head>
 <META charset="UTF-8">
+<style>body {width:850px; margin:50px}</style>
 </head>
-
 
 ---------------------------------------------------------------------------------
 ## Amőba élmény beszámoló
@@ -19,6 +19,7 @@ nyelven lehet grafikus programokat írni Linuxra és Windowsra.
 [http://comfirm.hu/ccc3/cccgtk.html ](http://comfirm.hu/ccc3/cccgtk.html).) 
 Ez a könyvtár aztán a kezdeti állapotában maradt, nem fejlődött tovább.
 
+<small>
 >   A GTK projekt kellemetlenül változékony. Ha írok egy alkalmazást GTK-ra,
     és két hónap múlva újra akarom fordítani, kapom a hibaüzeneteket:
     Ez vagy az az API megszűnt, vagy deprecated lett, valamelyik struktúra megváltozott.
@@ -29,6 +30,7 @@ Ez a könyvtár aztán a kezdeti állapotában maradt, nem fejlődött tovább.
     Szerencsére a GTK2 mostanra olyan réginek számít, hogy nem piszkálják többé.
     Így nyugtom van, a csatoló maradékán már nem kell változtatni, 
     úgy jó, ahogy van.
+</small>
 
 Mindenesetre 2005-ben úgy gondoltam, kellene egy értelmes demó a GTK-hoz.
 Emlékezetből újraírtam az amőbát. Húsz év után a részletek már elhalványultak,
@@ -55,8 +57,9 @@ Tűrhetetlen állapot, ha meggondoljuk.
 
 #### 1) Kombinatorikus optimalizálás minimax algoritmussal
 
-Az Amoeba váza ugyanaz, mint a sakkprogramoké, persze ezerszer 
-egyszerűbb, minthogy a sakkhoz képest az amőba játék meglehetősen primitív.
+Egyszerűsége folytán az amőba játék kiváló alany a minimax 
+algoritmus szemléltetésére. A program elvi váza ugyanaz, mint a minimax
+algoritmussal játszó &mdash; sokkal bonyolultabb &mdash; sakkprogramoké.
 
 Ketten játszanak:
 
@@ -87,9 +90,23 @@ A hasonló fákban való optimum keresés kombinatorikus optimalizálási felada
 amit a minimax néven ismert algoritmussal oldunk meg. A minimax algoritmus leírását 
 megnézhetjük például itt: [https://en.wikipedia.org/wiki/Minimax](https://en.wikipedia.org/wiki/Minimax).
 Nincs szükség az elemzőfa minden pontjának kiértékelésére.
-Egy ügyes trükk segítségével, az _alfa-béta vágással_, kb. felére lehet csökkenteni
+Egy ügyes módszer segítségével &mdash; az ún. _alfa-béta vágással_ &mdash; nagy mértékben lehet csökkenteni
 a számítások mennyiségét. Az alfa-béta vágásról olvashatunk itt:
 [https://en.wikipedia.org/wiki/Alpha-beta_pruning](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning).
+
+<small>
+>   A alfa-béta vágás a következőképp magyarázható: Tegyük fel, hogy az elemzőfa 
+    egy részének bejárása után tudjuk, hogy fekete fel tudja tornászni a rating értékét
+    &alpha;-ig, bárhogy is játszik az ellenfél. Egyúttal azt is tudjuk, hogy fehér
+    le tudja nyomni a ratinget &beta;-ig, bármit is tenne ez ellen a fekete.
+    Nyilván &alpha;<=&beta;, vagyis a rating végső értékének &alpha; alsó, &beta; pedig
+    felső korlátja. Ahogy az elemzőfa egyre nagyobb részét feldolgozzuk, az
+    [&alpha;,&beta;] intervallum egyre szűkül, végül egy pontra zsugorodik.
+    Ezt a tudást arra használjuk, hogy nem foglalkozunk az elemzőfa olyan
+    részeinek vizsgálatával, amely részekből adódó lokális rating kívül esne a 
+    korábbról ismert [&alpha;,&beta;] intervalumon. Vagyis a fa ilyen részeit levágjuk.
+</small>
+
 
 
 
@@ -356,4 +373,5 @@ Arch Linux. A szerény teljesítményű CPU-tól ne várjunk nagy sebességet.
 
 
 ---------------------------------------------------------------------------------
+
 

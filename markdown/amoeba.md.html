@@ -1,6 +1,7 @@
 <p><head>
-<META charset="UTF-8">
-</head><div style="margin:auto;width:900"></p>
+<META charset="UTF-8"></p>
+<style>body {width:850px; margin:50px}</style>
+<p></head></p>
 <hr />
 <h2>Amőba élmény beszámoló</h2>
 <p>Eredetileg 1984-ben írtam az amőba programot C64-re.
@@ -14,6 +15,7 @@ nyelven lehet grafikus programokat írni Linuxra és Windowsra.
 (Itt lehet olvasni a leírását:
 <a href="http://comfirm.hu/ccc3/cccgtk.html">http://comfirm.hu/ccc3/cccgtk.html </a>.) 
 Ez a könyvtár aztán a kezdeti állapotában maradt, nem fejlődött tovább.</p>
+<p><small></p>
 <blockquote>
 <p>A GTK projekt kellemetlenül változékony. Ha írok egy alkalmazást GTK-ra,
     és két hónap múlva újra akarom fordítani, kapom a hibaüzeneteket:
@@ -24,7 +26,8 @@ Ez a könyvtár aztán a kezdeti állapotában maradt, nem fejlődött tovább.<
     Azóta már van GTK3 és GTK4 is, de ezekkel nem foglalkoztam. 
     Szerencsére a GTK2 mostanra olyan réginek számít, hogy nem piszkálják többé.
     Így nyugtom van, a csatoló maradékán már nem kell változtatni, 
-    úgy jó, ahogy van.</p>
+    úgy jó, ahogy van.
+</small></p>
 </blockquote>
 <p>Mindenesetre 2005-ben úgy gondoltam, kellene egy értelmes demó a GTK-hoz.
 Emlékezetből újraírtam az amőbát. Húsz év után a részletek már elhalványultak,
@@ -45,8 +48,9 @@ Tűrhetetlen állapot, ha meggondoljuk.</p>
 <hr />
 <h2>Hogyan játszik az Amoeba?</h2>
 <h4>1) Kombinatorikus optimalizálás minimax algoritmussal</h4>
-<p>Az Amoeba váza ugyanaz, mint a sakkprogramoké, persze ezerszer 
-egyszerűbb, minthogy a sakkhoz képest az amőba játék meglehetősen primitív.</p>
+<p>Egyszerűsége folytán az amőba játék kiváló alany a minimax 
+algoritmus szemléltetésére. A program elvi váza ugyanaz, mint a minimax
+algoritmussal játszó &mdash; sokkal bonyolultabb &mdash; sakkprogramoké.</p>
 <p>Ketten játszanak:</p>
 <ul>
 <li>a fekete (vagy X) játékos</li>
@@ -72,9 +76,23 @@ Fehér ezzel szemben a minimális rating felé vezető útra terel.</p>
 amit a minimax néven ismert algoritmussal oldunk meg. A minimax algoritmus leírását 
 megnézhetjük például itt: <a href="https://en.wikipedia.org/wiki/Minimax">https://en.wikipedia.org/wiki/Minimax</a>.
 Nincs szükség az elemzőfa minden pontjának kiértékelésére.
-Egy ügyes trükk segítségével, az <em>alfa-béta vágással</em>, kb. felére lehet csökkenteni
+Egy ügyes módszer segítségével &mdash; az ún. <em>alfa-béta vágással</em> &mdash; nagy mértékben lehet csökkenteni
 a számítások mennyiségét. Az alfa-béta vágásról olvashatunk itt:
 <a href="https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning">https://en.wikipedia.org/wiki/Alpha-beta_pruning</a>.</p>
+<p><small></p>
+<blockquote>
+<p>A alfa-béta vágás a következőképp magyarázható: Tegyük fel, hogy az elemzőfa 
+    egy részének bejárása után tudjuk, hogy fekete fel tudja tornászni a rating értékét
+    &alpha;-ig, bárhogy is játszik az ellenfél. Egyúttal azt is tudjuk, hogy fehér
+    le tudja nyomni a ratinget &beta;-ig, bármit is tenne ez ellen a fekete.
+    Nyilván &alpha;&lt;=&beta;, vagyis a rating végső értékének &alpha; alsó, &beta; pedig
+    felső korlátja. Ahogy az elemzőfa egyre nagyobb részét feldolgozzuk, az
+    [&alpha;,&beta;] intervallum egyre szűkül, végül egy pontra zsugorodik.
+    Ezt a tudást arra használjuk, hogy nem foglalkozunk az elemzőfa olyan
+    részeinek vizsgálatával, amely részekből adódó lokális rating kívül esne a 
+    korábbról ismert [&alpha;,&beta;] intervalumon. Vagyis a fa ilyen részeit levágjuk.
+</small></p>
+</blockquote>
 <h4>2) Pozíciók statikus értékelése</h4>
 <p>Gondolhatnánk, hogy készen is vagyunk. Bejárjuk a teljes elemzőfát.
 A fa levelein ismerjük a rating értékét: Egyik vagy másik fél nyert, esetleg
@@ -306,4 +324,4 @@ vagy akár a jelen dokumentumban:</p>
 <p>A webes változat a szerveren játszik, a böngésző csak a megjelenítést végzi.
 E sorok írásakor a szerver egy Intel Celeron J1900 (4) @ 2.415GHz processzoron futó 
 Arch Linux. A szerény teljesítményű CPU-tól ne várjunk nagy sebességet. </p>
-<hr /></div>
+<hr />
