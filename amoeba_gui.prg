@@ -26,14 +26,13 @@
 #include "amoeba.ch"
 #include "pvalue.h"
 
-static hbox_bestline
-static label_bestline
+static hbox_best
+static hbox_move
+static hbox_turn
+static hbox_rate
 
 static area
-static twostatelabel
-static label_move
-static label_turn
-static label_rate
+static thinklabel
 
 static semaphor_busy:=.f.
 
@@ -44,37 +43,27 @@ function amoeba_gui(amoebafile)
 local window
 local wcolor
 local vboxwin
-local hboxwin
-local vboxlef,vboxsep,vboxrig
+local hbox_head
+local hbox_body, vboxlef,vboxsep,vboxrig
+local hbox_foot, vbox_move,vbox_turn,vbox_rate
 
-// vboxlef
-local mask
-local hboxsep
-local hboxlab
-
-// vboxrig
-local hboxsep1
 local button_move
 local button_back
 local button_forw
-local button_demo
-local label_demo
+local button_demo, label_demo
 local button_check
 local button_recalc
 local combo
-local hboxsep2
 local button_new
 local button_load
 local button_save
-local hboxsep3
 
-local box,lab
+local box,xlab,sep,mask,w
 
     gtk.init()
 
     window:=gtkwindowNew()
     window:set_title(VERSION)
-    //window:set_icon_from_file("amoeba.png")
     window:set_icon(amoeba_pixbuf())
     window:signal_connect("destroy",{||quit()})
     window:signal_connect("key-press-event",{|*|cb_key_press(*)})
@@ -83,42 +72,35 @@ local box,lab
     window:set_position(1)
     wcolor:=gdk.color.new()
     gdk.color.parse("#b8b8b8",wcolor)
-    //gdk.color.parse("#ffffff",wcolor) //debug
+#ifdef DEBUG
+    gdk.color.parse("#ffffff",wcolor) //debug
+#endif
     window:modify_bg(GTK_STATE_NORMAL,wcolor)
 
-    vboxwin:=gtkvboxNew(.f.,0)
+    vboxwin:=gtkvboxNew()
     window:add(vboxwin)
-    vboxwin:pack_start(hbox_bestline:=gtkhboxNew(.f.,0))
-    vboxwin:pack_start(hboxwin:=gtkhboxNew(.f.,0))
+    hbox_head:=hbox(vboxwin)    // fenn  : bestline
+    hbox_body:=hbox(vboxwin)    // kozep : area buttons
+    hbox_foot:=hbox(vboxwin)    // lenn  : move turn rate 
 
-    hboxwin:pack_start( vboxlef:=gtkvboxNew(.f.,0) )
-    hboxwin:pack_start( vboxsep:=gtkvboxNew(.f.,0) )
-    hboxwin:pack_start( vboxrig:=gtkvboxNew(.f.,4) )
+    vboxlef:=vbox(hbox_body)
+    (vboxsep:=vbox(hbox_body)):set_size_request(10,-1)
+    vboxrig:=vbox(hbox_body,,,5)
 
-    vboxsep:set_size_request(10,-1)
+    vbox_move:=vbox(hbox_foot)
+    vbox_turn:=vbox(hbox_foot)
+    vbox_rate:=vbox(hbox_foot)
 
 
-    //=============================
-    // vboxlef
-    //=============================
+    // head (best line)
 
-    //pack_start(widget,flag_expand,flag_fill,padding)
+    hbox_head:set_size_request(-1,32)
+    hbox_head:pack_start(gtklabelNew("Best line: "),.f.)
+    hbox_best:=hbox(hbox_head,.f.)
 
-    //vboxlef:pack_start(hbox_bestline:=gtkhboxNew())
-    hbox_bestline:pack_start( lab:=gtklabelNew(),.f. ); lab:set_text("Best line:"); lab:set_use_markup(.t.)
-    hbox_bestline:pack_start( lab:=gtklabelNew(),.f. ); label_bestline:=lab; lab:set_use_markup(.t.)
-    hbox_bestline:pack_start( lab:=gtklabelNew(),.t. )  // expand
+    // body-left
 
     vboxlef:pack_start( drawingarea(area:=gtkdrawingareaNew()) )
-    vboxlef:pack_start( hboxsep:=gtkhboxNew(.f.,0) )
-    vboxlef:pack_start( hboxlab:=gtkhboxNew(.f.,0) )
-
-
-    hboxlab:pack_start( label_move:=gtklabelNew() ); label_move:set_alignment(0,0.5)
-    hboxlab:pack_start( label_turn:=gtkhboxNew() )
-    hboxlab:pack_start( box:=gtkhboxNew() )
-    hboxlab:pack_start( label_rate:=gtklabelNew() ); label_rate:set_alignment(0,0.5)
-
 
     area:set_size_request(CELLSIZE*(TABLESIZE+1)+1,CELLSIZE*(TABLESIZE+1)+1)
     area:signal_connect("expose_event",{|*|cb_expose(*)})
@@ -131,20 +113,11 @@ local box,lab
     mask:=numor(mask,GDK_POINTER_MOTION_MASK)
     area:set_events(mask)
 
-    hboxsep:set_size_request(0,10)
 
-    label_move:set_size_request(CELLSIZE*TABLESIZE/4,-1)
-    label_rate:set_size_request(CELLSIZE*TABLESIZE/3,-1)
+    // body-right
 
-    label_move()
-    label_rate()
-
-    //=============================
-    // vboxrig
-    //=============================
-
-    vboxrig:pack_start( hboxsep1:=gtkhboxNew(.f.,0))
-    vboxrig:pack_start( twostatelabel:=gtktwostateimagelabelNew(.t.,"Ready","Think"),.f.,,20)
+    hbox(vboxrig,.t.,.t.) // expand, fill
+    vboxrig:pack_start( thinklabel:=gtktwostateimagelabelNew(.t.,"Ready","Think"),.f.,,20)
     vboxrig:pack_start( button_move:=gtkbuttonNew_with_mnemonic_from_stock("_Move","gtk-execute"),.f.)
     vboxrig:pack_start( button_back:=gtkbuttonNew_with_mnemonic_from_stock("_Back","gtk-go-back"),.f.)
     vboxrig:pack_start( button_forw:=gtkbuttonNew_with_mnemonic_from_stock("_Forward","gtk-go-forward"),.f.)
@@ -152,11 +125,15 @@ local box,lab
     vboxrig:pack_start( button_check:=gtkcheckbuttonNew_with_mnemonic("_Info"),.f.,,10 )
     vboxrig:pack_start( button_recalc:=gtkbuttonNew_with_mnemonic_from_stock("_Recalc","gtk-execute"),.f.)
     vboxrig:pack_start( combo:=gtkcomboboxNew_text(),.f.)
-    vboxrig:pack_start( hboxsep2:=gtkhboxNew(.f.,0),.f.,,5)
+
+    vboxrig:pack_start( sep:=gtkhboxNew(.f.,0),.f.,,5); sep:set_size_request(-1,0)
+
     vboxrig:pack_start( button_new:=gtkbuttonNew_with_mnemonic_from_stock("_New","gtk-new"),.f.)
     vboxrig:pack_start( button_load:=gtkbuttonNew_with_mnemonic_from_stock("_Load","gtk-open"),.f.)
     vboxrig:pack_start( button_save:=gtkbuttonNew_with_mnemonic_from_stock("_Save","gtk-save"),.f.)
-    vboxrig:pack_start( hboxsep3:=gtkhboxNew(.f.,0))
+    hbox(vboxrig,.t.,.t.) // expand, fill
+    hbox(vboxrig,.t.,.t.) // expand, fill
+
 
     button_move:signal_connect("clicked",{|*|cb_move(*)})
     button_back:signal_connect("clicked",{|*|cb_back(*)})
@@ -184,9 +161,29 @@ local box,lab
     button_load:signal_connect("clicked",{|*|cb_load(*)})
     button_save:signal_connect("clicked",{|*|cb_save(*)})
 
-    hboxsep1:set_size_request(-1,0)
-    hboxsep2:set_size_request(-1,0)
-    hboxsep3:set_size_request(-1,100)
+
+    // foot
+
+    hbox_foot:set_size_request(-1,48)
+
+    hbox_move:=hbox(vbox_move)
+    hbox_move:set_size_request(CELLSIZE*TABLESIZE*0.3,-1)
+    hbox_move:pack_start( gtkLabelNew("Last move: "),.f. ) // no expand
+
+    hbox_turn:=hbox(vbox_turn)
+    hbox_turn:set_size_request(CELLSIZE*TABLESIZE*0.3,-1)
+    hbox_turn:pack_start( gtkLabelNew("Turn: "),.f. ) // no expand
+
+    hbox_rate:=hbox(vbox_rate)
+    hbox_rate:set_size_request(-1,-1)
+    hbox_rate:pack_start( gtkLabelNew("Rate: "),.f. ) // no expand
+
+    label_move()
+    label_turn()
+    label_rate()
+
+
+    // start
 
     mainwindow(window)
     window:show_all
@@ -304,13 +301,14 @@ local cp
             cell_randomize(topcell())
         end
 
-        twostatelabel:set_state(.f.)
+        thinklabel:set_state(.f.)
         area:set_sensitive(.f.)
         go_move()
         area:set_sensitive(.t.)
-        twostatelabel:set_state(.t.)
+        thinklabel:set_state(.t.)
         markmovecount()
         label_move()
+        label_turn()
 
         cp:=(0<continuous_play())
     end
@@ -339,13 +337,14 @@ static demo:=.f.
             cell_randomize(topcell())
         end
 
-        twostatelabel:set_state(.f.)
+        thinklabel:set_state(.f.)
         area:set_sensitive(.f.)
         go_move()
         area:set_sensitive(.t.)
-        twostatelabel:set_state(.t.)
+        thinklabel:set_state(.t.)
         markmovecount()
         label_move()
+        label_turn()
     end
 
     demo:=.f.    
@@ -398,6 +397,7 @@ local cx:=topcell()
         stabilize()
     end
     label_move()
+    label_turn()
     label_rate()
     label_bestline()
 
@@ -416,6 +416,7 @@ local cx:=topcell()
     drawtop()
     stabilize()
     label_move()
+    label_turn()
     label_rate()
     label_bestline()
 
@@ -430,11 +431,11 @@ static function cb_recalc()
     end
     semaphor_busy:=.t.
 
-    twostatelabel:set_state(.f.)
+    thinklabel:set_state(.f.)
     area:set_sensitive(.f.)
     go_recalc()
     area:set_sensitive(.t.)
-    twostatelabel:set_state(.t.)
+    thinklabel:set_state(.t.)
 
     semaphor_busy:=.f.
 
@@ -451,6 +452,7 @@ static function cb_new(button)
     drawmeter(0)
     label_bestline()
     label_move()
+    label_turn()
     label_rate()
 
 
@@ -460,9 +462,9 @@ static function cb_info(check)
     //engedni kell a rekurziót
     infolevel(check:get_active)
     if( check:get_active )
-        label_bestline:show
+        hbox_best:show_all
     else
-        label_bestline:hide
+        hbox_best:hide
     end
 
 
@@ -478,7 +480,13 @@ static function cb_motion_notify(area,event)
 
 ******************************************************************************
 function label_bestline(x)
+static label
 local v
+    if( label==NIL )
+        label:=gtklabelNew()
+        hbox_best:pack_start(label,.f.)
+        hbox_best:show_all
+    end
     if( x==NIL )
         if( !empty(v:=recalc_string()) )
             v::=val
@@ -493,68 +501,68 @@ local v
             x:=""
         end
     end
-    if( CELLSIZE>9999 )
-        //sosem
-        label_bestline:set_markup("<b>"+x+"</b>")
-    elseif( CELLSIZE<40 )
-        label_bestline:set_markup("<small>"+x+"</small>")
+    if( CELLSIZE<40 )
+        label:set_markup("<small>"+x+"</small>")
     else
-        label_bestline:set_markup(x)
+        label:set_markup(x)
     end
 
 
 ******************************************************************************
 function label_move()
+static label
 local m:=movecount()
 local x:=topcell()
+
+    if( label==NIL )
+        label:=gtklabelNew()
+        hbox_move:pack_start(label,.f.)
+    end
     if( x!=NIL )
         x:=pos2rc(x)
-        label_move:set_markup( "Last move: <b>"+m::str::alltrim+":"+x+"</b>" )
+        label:set_markup( " <b>"+m::str::alltrim+":"+x+"</b>" )
     else
-        label_move:set_markup( "Last move: <b>"+m::str::alltrim+"</b>" )
+        label:set_markup( "" )
     end
-    label_turn()
 
 
 ******************************************************************************
 function label_turn()
 
-static label
 static image
 static black
 static white
 
 local mc:=movecount()
 
-    if( label==NIL )
-        label:=gtklabelNew("Turn: ")
-        label_turn:pack_start(label,.f.)
-
-        //black:=gtk.image.new_from_file("black.png")
-        //white:=gtk.image.new_from_file("white.png")
-        //gtk.gobject.ref(black) // increase ref number
-        //gtk.gobject.ref(white) // increase ref number
-
+    if( image!=NIL )
+        hbox_turn:remove(image) // destroy object
+    else    
         black:=circle_image(CELLSIZE*0.8,0,0,0,0xb8/256,0xb8/256,0xb8/256)
         white:=circle_image(CELLSIZE*0.8,1,1,1,0xb8/256,0xb8/256,0xb8/256)
     end
 
-    if( image!=NIL )
-        label_turn:remove(image) // destroy object
-    end
     if( (mc%2)==0 )
         image:=black
     else
         image:=white
     end
-    label_turn:pack_start(image,.f.)
-    label_turn:show_all
+    hbox_turn:pack_start(image,.f.)
+    hbox_turn:show_all
 
 
 ******************************************************************************
 function label_rate()
+
+static label
 local rating:=rating_string()
 local recalc:=recalc_string()
+
+    if( label==NIL )
+        label:=gtklabelNew()
+        hbox_rate:pack_start(label,.f.) 
+    end
+
     if( !empty(recalc) )
         if( abs(val(recalc))>PVALUE_INFIN-100 )
             recalc:="<span color='red'>"+recalc+"</span>"
@@ -563,7 +571,7 @@ local recalc:=recalc_string()
         end
         recalc:="<span color='#b8b8b8'>!</span>"+recalc // invisible !
     end
-    label_rate:set_markup( "Rating: <b>"+rating+recalc+"</b>" )
+    label:set_markup( " <b>"+rating+recalc+"</b>" )
 
 
 ******************************************************************************

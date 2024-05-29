@@ -114,6 +114,7 @@ local result
         stabilize()
         label_bestline()
         label_move()
+        label_turn()
         label_rate()
         gamecount(gamecount()+1)
         drawmeter(0)

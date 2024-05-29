@@ -4,8 +4,7 @@
 // ideiglenesen bordert kap
 // fejleszteskor latszodjon, hol van
 
-
-#define DEBUG
+#include "amoeba.ch"
 
 #ifdef DEBUG
 ******************************************************************************************
