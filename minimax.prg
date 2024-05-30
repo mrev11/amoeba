@@ -53,7 +53,7 @@ local mc,curlev
     xbest:=NIL
     width:=width()
     turn:=if(0==movecount()%2,ascx,asco)
-    treshold:=int(len(width)/2)
+    treshold:=3
     maxenf:=maxenf()
     ilevel:=infolevel()
 

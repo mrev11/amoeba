@@ -83,20 +83,18 @@ local box,xlab,sep,mask,w
     hbox_body:=hbox(vboxwin)    // kozep : area buttons
     hbox_foot:=hbox(vboxwin)    // lenn  : move turn rate 
 
-    vboxlef:=vbox(hbox_body)
-    (vboxsep:=vbox(hbox_body)):set_size_request(10,-1)
-    vboxrig:=vbox(hbox_body,,,5)
-
-    vbox_move:=vbox(hbox_foot)
-    vbox_turn:=vbox(hbox_foot)
-    vbox_rate:=vbox(hbox_foot)
-
-
-    // head (best line)
+    // head
 
     hbox_head:set_size_request(-1,32)
     hbox_head:pack_start(gtklabelNew("Best line: "),.f.)
     hbox_best:=hbox(hbox_head,.f.)
+
+
+    // body
+
+    vboxlef:=vbox(hbox_body)
+    (vboxsep:=vbox(hbox_body)):set_size_request(10,-1)
+    vboxrig:=vbox(hbox_body,,,5)
 
     // body-left
 
@@ -112,7 +110,6 @@ local box,xlab,sep,mask,w
     mask:=numor(mask,GDK_BUTTON_RELEASE_MASK)
     mask:=numor(mask,GDK_POINTER_MOTION_MASK)
     area:set_events(mask)
-
 
     // body-right
 
@@ -165,6 +162,10 @@ local box,xlab,sep,mask,w
     // foot
 
     hbox_foot:set_size_request(-1,48)
+
+    vbox_move:=vbox(hbox_foot)
+    vbox_turn:=vbox(hbox_foot)
+    vbox_rate:=vbox(hbox_foot)
 
     hbox_move:=hbox(vbox_move)
     hbox_move:set_size_request(CELLSIZE*TABLESIZE*0.3,-1)

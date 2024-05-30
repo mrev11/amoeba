@@ -211,7 +211,7 @@ local env:=getenv("AMOEBA_BLINK")
         env::=min(10)
         return env
     end
-    return 3
+    return 1
 
 
 ******************************************************************************************
