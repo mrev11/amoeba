@@ -44,7 +44,7 @@ local window
 local wcolor
 local vboxwin
 local hbox_head
-local hbox_body, vboxlef,vboxsep,vboxrig
+local hbox_body, vboxlef,vboxrig
 local hbox_foot, vbox_move,vbox_turn,vbox_rate
 
 local button_move
@@ -58,7 +58,7 @@ local button_new
 local button_load
 local button_save
 
-local box,xlab,sep,mask,w
+local mask
 
     gtk.init()
 
@@ -71,36 +71,34 @@ local box,xlab,sep,mask,w
     window:set_resizable(.f.)
     window:set_position(1)
     wcolor:=gdk.color.new()
+#ifndef DEBUG
     gdk.color.parse("#b8b8b8",wcolor)
-#ifdef DEBUG
-    gdk.color.parse("#ffffff",wcolor) //debug
-#endif
     window:modify_bg(GTK_STATE_NORMAL,wcolor)
+#endif
 
     vboxwin:=gtkvboxNew()
     window:add(vboxwin)
-    hbox_head:=hbox(vboxwin)    // fenn  : bestline
-    hbox_body:=hbox(vboxwin)    // kozep : area buttons
-    hbox_foot:=hbox(vboxwin)    // lenn  : move turn rate 
+    hbox_head:=hbox(vboxwin)    // head : bestline
+    hbox_body:=hbox(vboxwin)    // body : area buttons
+    hbox_foot:=hbox(vboxwin)    // foot : move turn rate 
 
     // head
 
     hbox_head:set_size_request(-1,32)
-    hbox_head:pack_start(gtklabelNew("Best line: "),.f.)
-    hbox_best:=hbox(hbox_head,.f.)
+    hbox_head:pack_start(gtklabelNew(" Best line: "),.f.)
+    hbox_best:=hbox(hbox_head)
 
 
     // body
 
     vboxlef:=vbox(hbox_body)
-    (vboxsep:=vbox(hbox_body)):set_size_request(10,-1)
     vboxrig:=vbox(hbox_body,,,5)
 
     // body-left
 
-    vboxlef:pack_start( drawingarea(area:=gtkdrawingareaNew()) )
-
-    area:set_size_request(CELLSIZE*(TABLESIZE+1)+1,CELLSIZE*(TABLESIZE+1)+1)
+    drawingarea(area:=gtkdrawingareaNew())
+    vboxlef:pack_start(area,.f.)
+    area:set_size_request(CELLSIZE*(TABLESIZE+1)+10,CELLSIZE*(TABLESIZE+1)+10)
     area:signal_connect("expose_event",{|*|cb_expose(*)})
     area:signal_connect("button_press_event",{|*|cb_button_press(*)})
     area:signal_connect("button_release_event",{|*|cb_button_release(*)})
@@ -114,20 +112,20 @@ local box,xlab,sep,mask,w
     // body-right
 
     hbox(vboxrig,.t.,.t.) // expand, fill
-    vboxrig:pack_start( thinklabel:=gtktwostateimagelabelNew(.t.,"Ready","Think"),.f.,,20)
-    vboxrig:pack_start( button_move:=gtkbuttonNew_with_mnemonic_from_stock("_Move","gtk-execute"),.f.)
-    vboxrig:pack_start( button_back:=gtkbuttonNew_with_mnemonic_from_stock("_Back","gtk-go-back"),.f.)
-    vboxrig:pack_start( button_forw:=gtkbuttonNew_with_mnemonic_from_stock("_Forward","gtk-go-forward"),.f.)
-    vboxrig:pack_start( button_demo:=gtkbuttonNew_with_mnemonic_from_stock("_Demo","gtk-execute",@label_demo),.f.)
+    vboxrig:pack_start( thinklabel:=gtktwostateimagelabelNew(.t.,"Ready","Think"),.f.,,10)
+    vboxrig:pack_start( button_move:=gtkbuttonNew_with_mnemonic_from_stock("_Move","gtk-execute"),.f.,,3)
+    vboxrig:pack_start( button_back:=gtkbuttonNew_with_mnemonic_from_stock("_Back","gtk-go-back"),.f.,,3)
+    vboxrig:pack_start( button_forw:=gtkbuttonNew_with_mnemonic_from_stock("_Forward","gtk-go-forward"),.f.,,3)
+    vboxrig:pack_start( button_demo:=gtkbuttonNew_with_mnemonic_from_stock("_Demo","gtk-execute",@label_demo),.f.,,3)
     vboxrig:pack_start( button_check:=gtkcheckbuttonNew_with_mnemonic("_Info"),.f.,,10 )
-    vboxrig:pack_start( button_recalc:=gtkbuttonNew_with_mnemonic_from_stock("_Recalc","gtk-execute"),.f.)
-    vboxrig:pack_start( combo:=gtkcomboboxNew_text(),.f.)
+    vboxrig:pack_start( button_recalc:=gtkbuttonNew_with_mnemonic_from_stock("_Recalc","gtk-execute"),.f.,,3)
+    vboxrig:pack_start( combo:=gtkcomboboxNew_text(),.f.,,3)
 
-    vboxrig:pack_start( sep:=gtkhboxNew(.f.,0),.f.,,5); sep:set_size_request(-1,0)
+    vboxrig:pack_start( gtkhboxNew(.f.,0),.f.,,10)
 
-    vboxrig:pack_start( button_new:=gtkbuttonNew_with_mnemonic_from_stock("_New","gtk-new"),.f.)
-    vboxrig:pack_start( button_load:=gtkbuttonNew_with_mnemonic_from_stock("_Load","gtk-open"),.f.)
-    vboxrig:pack_start( button_save:=gtkbuttonNew_with_mnemonic_from_stock("_Save","gtk-save"),.f.)
+    vboxrig:pack_start( button_new:=gtkbuttonNew_with_mnemonic_from_stock("_New","gtk-new"),.f.,,3)
+    vboxrig:pack_start( button_load:=gtkbuttonNew_with_mnemonic_from_stock("_Load","gtk-open"),.f.,,3)
+    vboxrig:pack_start( button_save:=gtkbuttonNew_with_mnemonic_from_stock("_Save","gtk-save"),.f.,,3)
     hbox(vboxrig,.t.,.t.) // expand, fill
     hbox(vboxrig,.t.,.t.) // expand, fill
 
@@ -161,24 +159,25 @@ local box,xlab,sep,mask,w
 
     // foot
 
-    hbox_foot:set_size_request(-1,48)
+    hbox_foot:set_size_request(-1,56)
 
-    vbox_move:=vbox(hbox_foot)
-    vbox_turn:=vbox(hbox_foot)
-    vbox_rate:=vbox(hbox_foot)
+    vbox_move:=vbox(hbox_foot,.f.) // do not expand horizontally
+    vbox_turn:=vbox(hbox_foot,.f.) // do not expand horizontally
+    vbox_rate:=vbox(hbox_foot)     // expand horizontally
 
     hbox_move:=hbox(vbox_move)
-    hbox_move:set_size_request(CELLSIZE*TABLESIZE*0.3,-1)
-    hbox_move:pack_start( gtkLabelNew("Last move: "),.f. ) // no expand
+    hbox_move:set_size_request(CELLSIZE*TABLESIZE*0.4,-1)
+    hbox_move:pack_start( gtkLabelNew(" Last move: "),.f. ) // no expand
 
     hbox_turn:=hbox(vbox_turn)
     hbox_turn:set_size_request(CELLSIZE*TABLESIZE*0.3,-1)
-    hbox_turn:pack_start( gtkLabelNew("Turn: "),.f. ) // no expand
+    hbox_turn:pack_start( gtkLabelNew(" Turn: "),.f. ) // no expand
 
     hbox_rate:=hbox(vbox_rate)
     hbox_rate:set_size_request(-1,-1)
-    hbox_rate:pack_start( gtkLabelNew("Rate: "),.f. ) // no expand
+    hbox_rate:pack_start( gtkLabelNew(" Rate: "),.f. ) // no expand
 
+    label_bestline()
     label_move()
     label_turn()
     label_rate()
@@ -486,7 +485,6 @@ local v
     if( label==NIL )
         label:=gtklabelNew()
         hbox_best:pack_start(label,.f.)
-        hbox_best:show_all
     end
     if( x==NIL )
         if( !empty(v:=recalc_string()) )

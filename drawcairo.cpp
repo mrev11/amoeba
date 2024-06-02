@@ -93,13 +93,15 @@ void _clp_cairo_drawgrid(int argno)
     double bc=0xb8/256.0;
     cairo_set_source_rgb(cr,bc,bc,bc);
     cairo_rectangle(cr,0,0,
-                       100+draw_tablesize()*draw_cellsize(),
-                       100+draw_tablesize()*draw_cellsize());
+                       200+draw_tablesize()*draw_cellsize(),
+                       200+draw_tablesize()*draw_cellsize());
     cairo_fill(cr);
 
 
     DRAW_EMPTY(cr);
-    cairo_rectangle(cr,draw_origo_x(),draw_origo_y(),draw_tablesize()*draw_cellsize(),draw_tablesize()*draw_cellsize());
+    cairo_rectangle(cr, draw_origo_x(),
+                        draw_origo_y(), draw_tablesize()*draw_cellsize(),
+                                        draw_tablesize()*draw_cellsize());
     cairo_fill(cr);
 
     DRAW_BLACK(cr);
