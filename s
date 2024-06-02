@@ -7,8 +7,8 @@
 # AMOEBA_CONTINUOUS_PLAY=n  : onmaga ellen jatszik  n darab partit
 
 # export AMOEBA_CONTINUOUS_PLAY=1
- export AMOEBA_POWER_BLACK=5+
- export AMOEBA_POWER_WHITE=5+
+ export AMOEBA_POWER_BLACK=3+
+ export AMOEBA_POWER_WHITE=3
 
 export AMOEBA_TABLESIZE=16
 # export AMOEBA_CELLSIZE=48

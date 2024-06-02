@@ -22,7 +22,7 @@
 #define PVALUE_EGY       200
 #define PVALUE_KET2       40
 #define PVALUE_KET1       20
-#define PVALUE_HAR2       15
-#define PVALUE_HAR1        3
-#define PVALUE_NEGY2       2
-#define PVALUE_NEGY1       1
+#define PVALUE_HAR2       16
+#define PVALUE_HAR1        6
+#define PVALUE_NEGY2       4
+#define PVALUE_NEGY1       2

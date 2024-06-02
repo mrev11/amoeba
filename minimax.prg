@@ -25,7 +25,6 @@ static node         // ennyi állást értékelt ki
 static xbest        // minimax futása után a legjobb lépés
 static width        // elemzofa szelessege
 static turn         // ki gondolkodik
-static treshold
 static ilevel
 static maxenf
 
@@ -53,7 +52,6 @@ local mc,curlev
     xbest:=NIL
     width:=width()
     turn:=if(0==movecount()%2,ascx,asco)
-    treshold:=3
     maxenf:=maxenf()
     ilevel:=infolevel()
 
@@ -136,7 +134,13 @@ local winner
                 end
             end
 
-            if( vopt>PVALUE_INFIN-treshold )
+            if( PVALUE_INFIN-vopt-depth<2 )
+                // 2 lepes tavolsagra vagyunk a fa leveletol 
+                // 0 lepes tavolsag -> fekete nyerolepes, mar breakelt (alfa==beta)
+                // 1 lepes tavolsag -> feher nyerolepes, masik program ag kezeli
+                // 2 lepes tavolsag -> akkor jon ide
+                // 3 vagy tobb      -> folytatja a ciklust
+                // showpos(x,vopt,depth)
                 exit
             end
         next
@@ -174,7 +178,9 @@ local winner
                 end
             end
 
-            if( vopt<-PVALUE_INFIN+treshold )
+            if( PVALUE_INFIN+vopt-depth<2 )
+                // 2 lepes tavolsagra vagyunk a fa leveletol 
+                // showpos(x,vopt,depth)
                 exit
             end
         next
@@ -252,11 +258,48 @@ local labtxt
 ******************************************************************************************
 static function enforced(cx,depth)
 local enforced
-    enforced := turn_x().and.fieldval_o(cx)>=PVALUE_EGY .or.;
-                turn_o().and.fieldval_x(cx)>=PVALUE_EGY
-
+    enforced := turn_x() .and. fieldval_o(cx)>=PVALUE_EGY .or.;
+                turn_o() .and. fieldval_x(cx)>=PVALUE_EGY 
     return enforced
 
+
+******************************************************************************************
+static function enforce(cx,depth)
+local enforced
+    enforced := turn_o() .and. 0!=numand(fieldval_o(cx),1) .or.;
+                turn_x() .and. 0!=numand(fieldval_x(cx),1)
+    return enforced
+
+
+******************************************************************************************
+function showpos(x,vopt,depth)
+
+local dist
+
+    // ha mar korabban elertuk az elemzofa levelet, akkor:
+
+    // ilyen melyen vagyunk a faban (depth)  : depth                      
+    // ilyen tavol vagyunk a leveltol (dist) : PVALUE_INFIN-vopt+1-depth  
+    // INVARIANS                             : depth+dist+vopt=PVALUE+1
+
+    dist:=PVALUE_INFIN-abs(vopt)+1-depth
+
+    forw(x)
+    drawalt()
+    stabilize()
+
+    ?? movecount()::str::alltrim+":"+pos2rc(x)
+    ?? " vopt="+vopt::str::alltrim 
+    ?? " depth="+depth::str::alltrim 
+    ?? " dist="+dist::str::alltrim 
+    ?? " press any key ..." 
+    ?
+
+    inkey(0)
+
+    back()
+    drawcell(x)
+    stabilize()
 
 ******************************************************************************************
 

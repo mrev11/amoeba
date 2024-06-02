@@ -38,15 +38,17 @@ static maxenf_white:=init_maxenf_white()
 function parse_power(p:=getenv("AMOEBA_POWER"))
 local pw:=p::val::max(0)::min(8)
 
+    opt_power(pw)
+
     if( "+"$p )
-        movegen_white(0)    // movegen erosebb modja
-        movegen_black(0)    // movegen erosebb modja
+        movegen_white(1)    // movegen erosebb modja
+        movegen_black(1)    // movegen erosebb modja
     elseif( "-"$p )
-        movegen_white(1000) // movegen gyengebb modja
-        movegen_black(1000) // movegen gyengebb modja
+        movegen_white(0)    // movegen gyengebb modja
+        movegen_black(0)    // movegen gyengebb modja
     else
-        movegen_white(1000) // movegen gyengebb modja
-        movegen_black(1000) // movegen gyengebb modja
+        movegen_white(0)    // movegen gyengebb modja
+        movegen_black(0)    // movegen gyengebb modja
     end
 
     // explicit inicializalas!
@@ -84,9 +86,9 @@ static function init_width_black()
 local p
     if( !power_black()::empty )
         if( "+"$power_black() )
-            movegen_black(0)
+            movegen_black(1)
         else
-            movegen_black(1000)
+            movegen_black(0)
         end
         p:=power_black()::val
         p::=max(1)
@@ -101,9 +103,9 @@ static function init_width_white()
 local p
     if( !power_white()::empty )
         if( "+"$power_white() )
-            movegen_white(0)
+            movegen_white(1)
         else
-            movegen_white(1000)
+            movegen_white(0)
         end
         p:=power_white()::val
         p::=max(1)
@@ -180,13 +182,13 @@ local w
 
     setmaxenf()
     
-    if( turn_x() .and. movegen_black()==0 )
+    if( turn_x() .and. 0!=numand(movegen_black(),1) )
         width_current:=aclone(width_current)
         width_current::aadd(0)
         width_current::aadd(0)
     end
 
-    if( turn_o() .and. movegen_white()==0 )
+    if( turn_o() .and. 0!=numand(movegen_white(),1) )
         width_current:=aclone(width_current)
         width_current::aadd(0)
         width_current::aadd(0)

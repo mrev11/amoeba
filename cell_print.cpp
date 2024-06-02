@@ -171,11 +171,11 @@ void cell::print_pattern(int cx)
         const char *vs=numformat("%3d",c->fieldval[c->layer].black+c->fieldval[c->layer].white);
 
         int force=' ';
-        if( (cell::movecount&1)==1 && cell::movegen_white==0 && c->fieldval[c->layer].white>=PVALUE_KET1)
+        if( (cell::movecount&1)==1 && (cell::movegen_white & c->fieldval[c->layer].white) )
         {
             force='+';
         }
-        if( (cell::movecount&1)==0 && cell::movegen_black==0 && c->fieldval[c->layer].black>=PVALUE_KET1)
+        if( (cell::movecount&1)==0 && (cell::movegen_black & c->fieldval[c->layer].black) )
         {
             force='+';
         }

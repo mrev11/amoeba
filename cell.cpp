@@ -338,11 +338,20 @@ void cell::calcval() // kiszámítja a cella értékét
     char *po=p->white;
     char *px=p->black;
     char *pw=this->wall;
-
+    FLDVAL *fv=fieldval+layer;
+    int v;
     for( int dir=0; dir<4; dir++ )
     {
-        fieldval[layer].white+=ponttab(po[dir],px[dir]|pw[dir]);
-        fieldval[layer].black+=ponttab(px[dir],po[dir]|pw[dir]);
+        fv->white+=(v=ponttab(po[dir],px[dir]|pw[dir]));
+        if( v>=PVALUE_KET1 )
+        {
+            fv->white|=1;  // enforce bit
+        }
+        fv->black+=(v=ponttab(px[dir],po[dir]|pw[dir]));
+        if( v>=PVALUE_KET1 )
+        {
+            fv->black|=1;  // enforce bit
+        }
     }
 }
 

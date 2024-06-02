@@ -121,7 +121,7 @@ local rts,pws
 
         forw(x)
 
-        recalc_store(rts) 
+        recalc_store(rts)
         bestline_store(bestline)
         label_rate()
 
@@ -176,10 +176,10 @@ static function nodestr(n)
 ******************************************************************************************
 static function powstr(x) // forw() elott kell hivni
     x::=str::alltrim
-    if( turn_x() .and. movegen_black()==0 )
+    if( turn_x() .and. movegen_black()==1 )
         x+="+"
     end
-    if( turn_o() .and. movegen_white()==0 )
+    if( turn_o() .and. movegen_white()==1 )
         x+="+"
     end
     return x
@@ -216,4 +216,3 @@ local env:=getenv("AMOEBA_BLINK")
 
 ******************************************************************************************
 
-    

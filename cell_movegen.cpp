@@ -32,12 +32,6 @@
 
 
 //#define MOVEGEN 0
-// ha MOVEGEN definialva van
-//  - es erteke 0, akkor total-t boviti a PVALUE_KET1 mezokkel
-//  - es erteke egy nagy szam, akkor a total-t nem boviti
-// ha MOVEGEN nincs definialva
-//  - akkor parameterekbol veszi az erteket
-
 
 static void print_movegen(int turn, int cnt);
 
@@ -53,7 +47,7 @@ int cell::movegen(int total, int think) //kikeresi a megadott szamu "legfontosab
     //printf("MOVEGEN> %d %c\n",total,think?think:'.');
 
     #ifndef MOVEGEN
-    int MOVEGEN=1000;
+    int MOVEGEN=0;
     if( think=='O' ) MOVEGEN=cell::movegen_white;
     if( think=='X' ) MOVEGEN=cell::movegen_black;
     if( think== 1  ) MOVEGEN=cell::movegen_white;
@@ -129,12 +123,12 @@ int cell::movegen(int total, int think) //kikeresi a megadott szamu "legfontosab
         }
 
 
-        if( vs<=minv && vt<PVALUE_KET1+MOVEGEN )
+        if( vs<=minv && !(vt&MOVEGEN) )
         {
             continue;
         }
 
-        if( vt>=PVALUE_KET1+MOVEGEN )
+        if( vt&MOVEGEN )
         {
             // kozbeiktathato lepes
             // eredmeny halmaz bovitve
