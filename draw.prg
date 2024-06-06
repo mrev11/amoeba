@@ -39,6 +39,13 @@ static asco:=asc("O")
 static topidx:=NIL
 static altidx:=NIL
 
+static circle_normal:=-1
+
+
+******************************************************************************
+function circle_normal(move)
+    circle_normal:=move
+
 
 ******************************************************************************
 function drawingarea(a)
@@ -134,13 +141,18 @@ local top,fig
 
 ******************************************************************************
 function drawall()
-local cx,fig,x,y
+local mc,cx,fig,x,y
 
     cairo_drawgrid(area:gobject)
     scale()
 
-    for cx:=0 to ROWCOL-1
-
+    mc:=0    
+    while( (cx:=cell(mc))!=NIL )
+    
+        if( 0<=circle_normal<=mc )
+            cairo_circle_small()
+        end
+    
         fig:=figure(cx)
         if( fig==ascx )
             if( cx==topidx )
@@ -166,8 +178,10 @@ local cx,fig,x,y
         x:=cx%TABLESIZE
         y:=int(cx/TABLESIZE)
         cairo_drawcell(area:gobject,x,y,fig)
-    next
-
+        
+        mc++
+    end
+    cairo_circle_normal()
 
 
 ******************************************************************************

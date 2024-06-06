@@ -31,6 +31,8 @@
 
 #define CELLSIZE        cellsize()
 
+#define CIRCLE_NORMAL   0
+#define CIRCLE_SMALL    1
 
 
 #define POW0  "auto"

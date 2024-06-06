@@ -36,6 +36,13 @@ static thinklabel
 
 static semaphor_busy:=.f.
 
+static bestnavig:=.f.
+static beststack:={}
+static bestline:=NIL
+static bestvalue:=NIL
+static bestturn:=NIL
+static besttop:=NIL
+
 
 ******************************************************************************
 function amoeba_gui(amoebafile)
@@ -67,6 +74,7 @@ local mask
     window:set_icon(amoeba_pixbuf())
     window:signal_connect("destroy",{||quit()})
     window:signal_connect("key-press-event",{|*|cb_key_press(*)})
+    window:signal_connect("key-release-event",{|*|cb_key_release(*)})
     window:set_border_width(24)
     window:set_resizable(.f.)
     window:set_position(1)
@@ -206,23 +214,109 @@ function cb_expose(area,event)
 
 ******************************************************************************
 static function cb_key_press(window,keyevent)
+
 local keyval:=gdk.event_key.get_keyval(keyevent)
+local xb,xp
 
     //? "CB_KEY_PRESS",{*},keyval::l2hex
     if( semaphor_busy )
         return NIL
     end
+   
+    if( !bestnavig )
+        // navigáció a teljes játszmában
+    
+        if( keyval==GDK_KEY_Escape )
+            quit()
+        elseif( keyval==GDK_KEY_Left )
+            cb_back()
+        elseif( keyval==GDK_KEY_Right )
+            cb_forward()
+        elseif( keyval==GDK_KEY_Home )
+            cb_home()
+        elseif( keyval==GDK_KEY_End )
+            cb_end()
+    
+        elseif( keyval==GDK_KEY_Shift_L .or. keyval==GDK_KEY_Shift_R )
+            bestnavig:=.t.
+            if( !empty(bestline:=bestline_array()[..]) )
+                cell_save()
+                bestvalue:=recalc_value()|rating_value()
+                bestturn:=if(turn_x(),1,0)
+                besttop:=topcell()
+                xb:=back()
+                drawcell(xb)
+                circle_normal(movecount())
+                forw(bestline[1])
+                drawtop()
+                beststack::apush(bestline[1])
+                label_bestline( bestline_format(bestline,bestvalue,bestturn,1) )
+                stabilize()
+            end
+        end
+    else
+        // navigació a bestline-ban
 
-    if( keyval==GDK_KEY_Escape )
-        quit()
-    elseif( keyval==GDK_KEY_Left )
-        cb_back()
-    elseif( keyval==GDK_KEY_Right )
-        cb_forward()
-    elseif( keyval==GDK_KEY_Home )
-        cb_home()
-    elseif( keyval==GDK_KEY_End )
-        cb_end()
+        if( keyval==GDK_KEY_Right )
+            if( len(beststack)+1<=len(bestline) )
+                drawcell(topcell())
+                if( !forw(bestline[len(beststack)+1]) )
+                    break("bestline push error")
+                end
+                drawtop()
+                beststack::apush( bestline[len(beststack)+1] )
+                label_bestline( bestline_format(bestline,bestvalue,bestturn,len(beststack)) )
+                stabilize()
+            end
+
+        elseif( keyval==GDK_KEY_Left )
+            if( len(beststack)>1 )
+                xb:=back()
+                xp:=apop(beststack)
+                if( xb!=xp )
+                    break("bestline pop error")
+                end
+                drawcell(xb)
+                drawtop()
+                label_bestline( bestline_format(bestline,bestvalue,bestturn,len(beststack)) )
+                stabilize()
+            end
+        end
+    end
+
+
+******************************************************************************
+static function cb_key_release(window,keyevent)
+local keyval:=gdk.event_key.get_keyval(keyevent)
+local xp,xb
+
+    //? "CB_KEY_RELEASE",{*},keyval::l2hex
+    if( semaphor_busy )
+        return NIL
+    end
+
+    if( keyval==GDK_KEY_Shift_L .or. keyval==GDK_KEY_Shift_R )
+        bestnavig:=.f.
+        if( !empty(bestline) )
+            circle_normal(-1)
+            while( len(beststack)>0  )
+                xb:=back()
+                xp:=apop(beststack)
+                if( xp!=xb )
+                    break( "bestline pop all error" )
+                end
+                drawcell(xb)
+            end
+            forw(besttop)
+            drawtop()
+            label_bestline( bestline_format(bestline,bestvalue,bestturn,NIL) )
+            bestline:=NIL
+            bestvalue:=NIL
+            bestturn:=NIL
+            besttop:=NIL
+            stabilize()
+            cell_restore()
+        end
     end
 
 
@@ -253,6 +347,7 @@ local x,y,but,cx,fm,n
                 label_move()
                 label_turn()
                 label_rate()
+                bestline_store({})
                 if( winner()==32 )
                     cb_move()
                 end

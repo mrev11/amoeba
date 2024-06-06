@@ -43,6 +43,21 @@ local rp
     return rp|""
 
 
+function rating_value(mc:=movecount())
+local value,v
+    if( 1<=mc<=movecount() )
+        v:=rating[mc]
+        if( v!=NIL )
+            v::=split("/")
+            if( !empty(v) )
+                v:=val(v[1])
+                value:=v
+            end
+        end
+    end
+    return value
+
+
 ******************************************************************************************
 function recalc_store( rpm )
 local mc:=movecount()
@@ -50,12 +65,28 @@ local mc:=movecount()
         recalc[mc]:=rpm
     end
 
+
 function recalc_string( mc:=movecount() )
 local rpm
     if( 1 <= mc <= movecount() )
         rpm:=recalc[mc]
     end
     return rpm|""
+
+
+function recalc_value(mc:=movecount())
+local value,v
+    if( 1<=mc<=movecount() )
+        v:=recalc[mc]
+        if( v!=NIL )
+            v::=split("/")
+            if( !empty(v) )
+                v:=val(v[1])
+                value:=v
+            end
+        end
+    end
+    return value
 
 
 ******************************************************************************************
@@ -88,28 +119,33 @@ local line,n,x
     return x|""
 
 
-function bestline_format(bestline, val, cx)
+function bestline_format(bestline, val, cx, big)
 
 local labtxt,sp,rc,n
 
-    sp:="<span color='#b8b8b8'>.</span>"
-    labtxt:=sp+"<span color='green'>("+val::str::alltrim+")</span>"+sp
-
-    for n:=1 to len(bestline)
-        rc:=pos2rc(bestline[n])
-        labtxt+=" <span color="+color[cx+1]+">"+rc+"</span> "
-        cx:=(cx+1)%2
-    next
-
-    if( abs(val)>9000 )
-        labtxt::=strtran("green","red")
-        if( val>0 )
-            labtxt+="<span color='black'>#</span>"
-        else
-            labtxt+="<span color='white'>#</span>"
+    if( !empty(bestline) .and. val!=NIL )
+        sp:="<span color='#b8b8b8'>.</span>"
+        labtxt:=sp+"<span color='green'>("+val::str::alltrim+")</span>"+sp
+    
+        for n:=1 to len(bestline)
+            rc:=pos2rc(bestline[n])
+            if( big==n )
+                rc:='<big><big><b>'+rc+'</b></big></big>'
+            end
+            labtxt+=" <span color="+color[cx+1]+">"+rc+"</span> "
+            cx:=(cx+1)%2
+        next
+    
+        if( abs(val)>9000 )
+            labtxt::=strtran("green","red")
+            if( val>0 )
+                labtxt+="<span color='black'>#</span>"
+            else
+                labtxt+="<span color='white'>#</span>"
+            end
         end
     end
-
+    
     return labtxt
 
 

@@ -29,6 +29,8 @@
 
 extern double tabcolor(int);
 
+static int circle_size=CIRCLE_NORMAL;
+
 
 //----------------------------------------------------------------------------------------
 static int init_tablesize()
@@ -78,10 +80,26 @@ static int draw_origo_y()
 
 static int draw_radius()   
 {
-    static int size=(int)(draw_cellsize()*14.0/48.0);
-    return size;
+    static int size_normal=(int)(draw_cellsize()*15.0/48.0);
+    static int size_small=(int)(size_normal*0.75);
+    return (circle_size==CIRCLE_NORMAL) ? size_normal:size_small;
 }
 
+
+//----------------------------------------------------------------------------------------
+void _clp_cairo_circle_normal(int argno)
+{
+    stack-=argno;
+    PUSHNIL();
+    circle_size=CIRCLE_NORMAL;
+    
+}
+void _clp_cairo_circle_small(int argno)
+{
+    stack-=argno;
+    PUSHNIL();
+    circle_size=CIRCLE_SMALL;
+}
 
 //----------------------------------------------------------------------------------------
 void _clp_cairo_drawgrid(int argno)
