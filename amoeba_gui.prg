@@ -256,32 +256,41 @@ local xb,xp
         end
     else
         // navigació a bestline-ban
-
         if( keyval==GDK_KEY_Right )
-            if( len(beststack)+1<=len(bestline) )
-                drawcell(topcell())
-                if( !forw(bestline[len(beststack)+1]) )
-                    break("bestline push error")
-                end
-                drawtop()
-                beststack::apush( bestline[len(beststack)+1] )
-                label_bestline( bestline_format(bestline,bestvalue,bestturn,len(beststack)) )
-                stabilize()
-            end
-
+            cb_bestright()
         elseif( keyval==GDK_KEY_Left )
-            if( len(beststack)>1 )
-                xb:=back()
-                xp:=apop(beststack)
-                if( xb!=xp )
-                    break("bestline pop error")
-                end
-                drawcell(xb)
-                drawtop()
-                label_bestline( bestline_format(bestline,bestvalue,bestturn,len(beststack)) )
-                stabilize()
-            end
+            cb_bestleft()
         end
+    end
+
+
+******************************************************************************
+static function cb_bestright()
+    if( len(beststack)+1<=len(bestline) )
+        drawcell(topcell())
+        if( !forw(bestline[len(beststack)+1]) )
+            break("bestline push error")
+        end
+        drawtop()
+        beststack::apush( bestline[len(beststack)+1] )
+        label_bestline( bestline_format(bestline,bestvalue,bestturn,len(beststack)) )
+        stabilize()
+    end
+
+
+******************************************************************************
+static function  cb_bestleft()
+local xb,xp
+    if( len(beststack)>1 )
+        xb:=back()
+        xp:=apop(beststack)
+        if( xb!=xp )
+            break("bestline pop error")
+        end
+        drawcell(xb)
+        drawtop()
+        label_bestline( bestline_format(bestline,bestvalue,bestturn,len(beststack)) )
+        stabilize()
     end
 
 
@@ -325,6 +334,9 @@ static function cb_button_press(area,event)
 local x,y,but,cx,fm,n
 
     if(gtk.main_depth()>1)
+        return NIL
+    end
+    if( bestnavig )
         return NIL
     end
     if( semaphor_busy )
@@ -382,10 +394,14 @@ local cp
     if(gtk.main_depth()>1)
         return NIL
     end
+    if( bestnavig )
+        return NIL
+    end
     if( semaphor_busy )
         return NIL
     end
     semaphor_busy:=.t.
+
 
     cp:=(0<=continuous_play() .or. button!=NIL)
     while( cp .and. !game_over() )
@@ -414,6 +430,10 @@ local cp
 static function cb_demo(button,label)
 
 static demo:=.f.
+
+    if( bestnavig )
+        return NIL
+    end
 
     if( game_over() )
         return NIL
@@ -485,6 +505,10 @@ local cx:=topcell()
     if( semaphor_busy )
         return NIL
     end
+    if( bestnavig )
+        cb_bestleft()
+        return NIL
+    end
 
     if( cx!=NIL )
         c_cb_back()
@@ -506,6 +530,10 @@ local cx:=topcell()
     if( semaphor_busy )
         return NIL
     end
+    if( bestnavig )
+        cb_bestright()
+        return NIL
+    end
 
     c_cb_forward()
     drawtop()
@@ -519,6 +547,9 @@ local cx:=topcell()
 ******************************************************************************
 static function cb_recalc()
     if(gtk.main_depth()>1)
+        return NIL
+    end
+    if( bestnavig )
         return NIL
     end
     if( semaphor_busy )
@@ -541,6 +572,9 @@ static function cb_new(button)
     if(gtk.main_depth()>1)
         return NIL
     end
+    if( bestnavig )
+        return NIL
+    end
 
     c_cb_new()
     stabilize()
@@ -555,6 +589,7 @@ static function cb_new(button)
 static function cb_info(check)
     //? "CB_INFO",{*}
     //engedni kell a rekurziót
+
     infolevel(check:get_active)
     if( check:get_active )
         hbox_best:show_all

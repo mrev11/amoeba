@@ -1,0 +1,44 @@
+
+
+Három Amoeba implementáció van:
+
+C) CCC (CCC+GTK)
+
+W) WEB (CCC+WEB)
+
+P) Python (Python+GTK)
+
+
+Mindegyik implementációban három komponenst lehet elkülöníteni:
+
+1) Az állás alakzatainak nyilvántartása és az alakzatokkal való számítások.
+   Ez a komponens kétféleképpen van megírva: 
+
+    - C-ben, 
+    - Pythonban.
+    
+   Az alakzatok C modullal történő kezelése változtatás nélkül
+   működik mindhárom (C, W, P) implementációban.
+   Arra az esetre, amikor a Python C-vel való bővítése mégsem lehetséges, 
+   elkészült a komponens tiszta Python változata is, ez azonban nagyságrendekkel 
+   lassabb a C-nél.
+     
+   
+2) A minimax algoritmus. Ez a komponens is kétféleképpen van megírva: 
+
+    - CCC-ben,
+    - Pythonban.
+    
+   A C és W implementációkban ez a komponens azonos.
+   A Python változat értelemszerűen különbözik, bár a logikája ugyanaz.
+
+
+3) Grafikus frontend. Ez a komponens háromféle változatban létezik:
+
+    - CCC és GTK2
+    - CCC és böngésző
+    - Python és GTK3
+    
+  Ez nyilván nem lehet egyforma a három implementációban, 
+  bár a logikája mindegyik esetben ugyanaz.
+  

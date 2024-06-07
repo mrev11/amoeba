@@ -6,7 +6,7 @@
 # AMOEBA_CONTINUOUS_PLAY=1  : onmaga ellen jatszik (1 partit)
 # AMOEBA_CONTINUOUS_PLAY=n  : onmaga ellen jatszik n darab partit
 
-export AMOEBA_CONTINUOUS_PLAY=20
+export AMOEBA_CONTINUOUS_PLAY=10
 export AMOEBA_POWER_BLACK=5
 export AMOEBA_POWER_WHITE=5
 
