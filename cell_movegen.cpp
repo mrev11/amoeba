@@ -31,28 +31,18 @@
 #include <cell.h>
 
 
-//#define MOVEGEN 0
-
-static void print_movegen(int turn, int cnt);
+static void print_movegen(int cnt);
 
 
 //--------------------------------------------------------------------------
-int cell::movegen(int total, int think) //kikeresi a megadott szamu "legfontosabb" mezot
+int cell::movegen(int total, int movflg) //kikeresi a megadott szamu "legfontosabb" mezot
 {
     if( cell::winner!=' ' )
     {
         return cell::bestcnt=0;
     }
 
-    //printf("MOVEGEN> %d %c\n",total,think?think:'.');
-
-    #ifndef MOVEGEN
-    int MOVEGEN=0;
-    if( think=='O' ) MOVEGEN=cell::movegen_white;
-    if( think=='X' ) MOVEGEN=cell::movegen_black;
-    if( think== 1  ) MOVEGEN=cell::movegen_white;
-    if( think== 2  ) MOVEGEN=cell::movegen_black;
-    #endif
+    int FORCE=(movflg||total==0)?1:0;
 
     int cnt=0;
     int minx=-1;
@@ -123,12 +113,12 @@ int cell::movegen(int total, int think) //kikeresi a megadott szamu "legfontosab
         }
 
 
-        if( vs<=minv && !(vt&MOVEGEN) )
+        if( vs<=minv && !(vt&FORCE) )
         {
             continue;
         }
 
-        if( vt&MOVEGEN )
+        if( vt&FORCE )
         {
             // kozbeiktathato lepes
             // eredmeny halmaz bovitve
@@ -155,7 +145,7 @@ int cell::movegen(int total, int think) //kikeresi a megadott szamu "legfontosab
             minv=PVALUE_INFIN;
             for( int n=0; n<cnt; n++ )
             {
-                if( cell::best[n].vs<minv )
+                if( cell::best[n].vs<minv  &&  (cell::best[n].vt&FORCE)==0 )
                 {
                     minx=n;
                     minv=cell::best[n].vs;
@@ -176,56 +166,30 @@ int cell::movegen(int total, int think) //kikeresi a megadott szamu "legfontosab
 
     if( cnt>1 )
     {
-        #ifdef HIBAS_OPTIMALIZACIO
-            kihagyhat eletkepes mezoket
-            a tanulsag kedveert nem torlom ki
-
-            if( maxoppo>=PVALUE_KET2 )
-            {
-                int i=0;
-                while(i<cnt)
-                {
-                    if( cell::best[i].vo<PVALUE_KET2 && cell::best[i].vt<PVALUE_KET1 )
-                    {
-                        memmove(&cell::best[i],&cell::best[i+1],(cnt-i)*sizeof(BEST)); //delete
-                        --cnt;
-                    }
-                    else
-                    {
-                        ++i; // keep
-                    }
-                }
-            }
-        #endif
-
         qsort(cell::best,cnt,sizeof(BEST),cell::cmp_best);
     }
 
-    //print_movegen(think,cnt);
+    //print_movegen(cnt);
     return cell::bestcnt=cnt;
 }
 
 
 //--------------------------------------------------------------------------
-static void print_movegen(int turn, int cnt)
+static void print_movegen(int cnt)
 {
-    if( turn==0 ) turn=' ';
-    if( turn==1 ) turn='O';
-    if( turn==2 ) turn='X';
+    printf("MOVEGEN %c %d ", cell::movecount&1?'X':'O', cnt);
 
-    printf("%c %d ",turn,cnt);
     for(int i=0; i<cnt; i++)
     {
-        printf(" (%d,%d)",cell::best[i].cx,cell::best[i].vs);
+        int cx=cell::best[i].cx;
+        int vs=cell::best[i].vs;
+        int col=cx%cell::tablesize;
+        int row=cx/cell::tablesize;
+        printf(" (%c%d,%d)",'a'+row,1+col,vs);
     }
     printf("\n");
 }
 
 
 //--------------------------------------------------------------------------
-
-
-
-
-
 

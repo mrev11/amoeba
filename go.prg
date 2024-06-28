@@ -31,7 +31,7 @@ function go_move()
 
 local x,v,n
 local curlev
-local bestline:={}
+local bestline
 local rts,pws
 
 
@@ -44,8 +44,8 @@ local rts,pws
     end
     ?
 
-    curlev:=init_minimax()
-    v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@bestline,0)
+    curlev:=minimax_init()
+    v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,0,@bestline)
     x:=xbest()
 
     if( v==0 )
@@ -54,7 +54,7 @@ local rts,pws
         drawmeter(0)
     end
 
-    total_nodes(node())
+    total_nodes(node(),cache_hit(),fallback_count())
 
     if( NIL!=x )
 
@@ -63,7 +63,9 @@ local rts,pws
         pws:=powstr(curlev)    // forw elott
 
         ? turn(), "["+valstr(v)+"]", pos2rc(x)::padr(3),;
-            " Nodes="+nodestr(node())," Power="+pws, bestline::line2str(v)
+            " Move="+(1+movecount())::str(3),;
+            " Nodes="+nodestr(),;
+            " Power="+pws, bestline::line2str(v)
 
         forw(x)
 
@@ -92,7 +94,7 @@ function go_recalc()
 
 local cx,x,v,n
 local curlev
-local bestline:={}
+local bestline
 local rts,pws
 
     cell_save()
@@ -107,8 +109,9 @@ local rts,pws
     drawcell(cx)
     label_turn()
 
-    curlev:=init_minimax(.t.)
-    v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,@bestline,0)
+    cache_clean()
+    curlev:=minimax_init(.t.)
+    v:=minimax(0,-PVALUE_INFIN,PVALUE_INFIN,0,@bestline)
     x:=xbest()
 
     if( NIL!=x )
@@ -117,7 +120,9 @@ local rts,pws
         pws:=powstr(curlev)      // forw elott
 
         ? turn(), "["+valstr(v)+"]", pos2rc(x)::padr(3),;
-            " Nodes="+nodestr(node()), " Power="+pws, bestline::line2str(v)
+            " Move="+(1+movecount())::str(3),;
+            " Nodes="+nodestr(),;
+            " Power="+pws, bestline::line2str(v)
 
         forw(x)
 
@@ -169,17 +174,24 @@ static function valstr(v)
 
 
 ******************************************************************************************
-static function nodestr(n)
-    return n::transform("999,999,999,999",n)::alltrim
+static function nodestr()
+local n:=node()
+local c:=cache_hit()
+    n::=transform("999,999,999,999")::alltrim
+    if( c>0 )
+        c::=transform("999,999,999,999")::alltrim
+        n+="["+c+"]"
+    end
+    return n
 
 
 ******************************************************************************************
 static function powstr(x) // forw() elott kell hivni
     x::=str::alltrim
-    if( turn_x() .and. movegen_black()==1 )
-        x+="+"
+    if( !empty(maxenf()) )
+        x+="."+maxenf()::str::alltrim
     end
-    if( turn_o() .and. movegen_white()==1 )
+    if(  movflg() )
         x+="+"
     end
     return x

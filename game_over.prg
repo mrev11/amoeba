@@ -23,7 +23,7 @@
 
 #include "amoeba.ch"
 
-static maxmove:=ROWCOL
+static maxmove:=int(ROWCOL*0.8)
 static maxdraw:=8
 
 
@@ -102,6 +102,7 @@ local result
     elseif( winner()==asc("O") )
         ? "White won."
     end
+    hit_depth_histogram()
     total_nodes()
 
     if( 1<continuous_play() )

@@ -190,26 +190,26 @@ static char* bin(int x) // byte bitenkenti kiirasa debugolashoz
 
  
 //--------------------------------------------------------------------------
-static void ponttab_feltolt( char const *XPATTERN[], int value )
+static void ponttab_feltolt( char const *xpattern[], int value )
 {
-    for(int n=0; XPATTERN[n]!=0; n++ )
+    for(int n=0; xpattern[n]!=0; n++ )
     {
         int x=0;
         int w=0;
         
         for( int i=0; i<8; i++ )
         {
-            if( XPATTERN[n][i]=='X' )
+            if( xpattern[n][i]=='X' )
             {
                 x=x<<1; x|=1;
                 w=w<<1; w|=1;
             }
-            else if( XPATTERN[n][i]=='_' )
+            else if( xpattern[n][i]=='_' )
             {
                 x=x<<1; x|=0;
                 w=w<<1; w|=1;
             }
-            else //if( XPATTERN[n][i]==' ' )
+            else //if( xpattern[n][i]==' ' )
             {
                 x=x<<1;
                 w=w<<1;

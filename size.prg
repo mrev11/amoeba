@@ -49,7 +49,7 @@ static size:=init_tablesize()
 static function init_tablesize()
 local x:=val(getenv("AMOEBA_TABLESIZE"))
     if( x==0 )
-        x:=12
+        x:=16
     else
         x:=max(x,10)
         x:=min(x,24)

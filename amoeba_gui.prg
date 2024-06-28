@@ -197,6 +197,8 @@ local mask
     window:show_all
     loadfile(amoebafile)
     ?
+
+    install_cb_timeout()
     gtk.main()
     ?
 
@@ -269,7 +271,10 @@ static function cb_bestright()
     if( len(beststack)+1<=len(bestline) )
         drawcell(topcell())
         if( !forw(bestline[len(beststack)+1]) )
-            break("bestline push error")
+            //break("bestline push error") // ez hogy
+            ? "bestline push error"
+            drawtop()
+            return NIL
         end
         drawtop()
         beststack::apush( bestline[len(beststack)+1] )
@@ -367,6 +372,7 @@ local x,y,but,cx,fm,n
 
         elseif( but==3 .and. infolevel()>0 )
             //right-button
+            print_table()
             if( winner()==32 )
                 fm:=movegen(9)
                 ? "###"
@@ -391,6 +397,11 @@ static function cb_button_release(area,event)
 ******************************************************************************
 static function cb_move(button)
 local cp
+
+    if( cb_timeout(.t.) )
+        return NIL
+    end
+
     if(gtk.main_depth()>1)
         return NIL
     end
@@ -401,7 +412,6 @@ local cp
         return NIL
     end
     semaphor_busy:=.t.
-
 
     cp:=(0<=continuous_play() .or. button!=NIL)
     while( cp .and. !game_over() )
@@ -460,6 +470,8 @@ static demo:=.f.
         markmovecount()
         label_move()
         label_turn()
+
+        //print_map();??cache_search()[1];?
     end
 
     demo:=.f.    
@@ -543,6 +555,9 @@ local cx:=topcell()
     label_rate()
     label_bestline()
 
+    //print_table()
+    //print_map()
+    //??cache_search()[1];?
 
 ******************************************************************************
 static function cb_recalc()
@@ -606,6 +621,16 @@ static function cb_power(combo)
 
 ******************************************************************************
 static function cb_motion_notify(area,event)
+
+
+******************************************************************************
+function area()
+    return area
+
+
+******************************************************************************
+function thinklabel()
+    return thinklabel
 
 
 ******************************************************************************

@@ -18,19 +18,52 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
+#ifdef EROSITESEK
+  (a normál 'negamax with transposition tables'-hoz képest)
+
+  elemzőfa ága hosszabbodik,
+    - ha az ág végére kényszerítő vagy kényszeritett lépés esne
+    - a kényszeritett lépések után bármely mélységnél
+
+  precalc_movegen()-nel generált lépések
+     egy nagyobb választékból sekély mélységű kiértékelés sorrendjében
+
+  movegen() pluszban beveheti az összes kényszerítő lépést
+     mikor hasznos ez, kis vagy nagy mélységeknél?
+
+  depth==1 esetén a kikényszerített lépés utáni állást nem értékeli (azonnal lép)
+
+  a nyerőállást 2 lépésre megközelítve azonnal lép
+#endif
+
+
 #include "amoeba.ch"
 #include "pvalue.h"
 
-static node         // ennyi állást értékelt ki
-static xbest        // minimax futása után a legjobb lépés
-static width        // elemzofa szelessege
-static turn         // ki gondolkodik
-static ilevel
-static maxenf
+#define PRINT(x)    ? #x, any2str(x)
+#define INDENT      space(4*(depth-1))
 
-static movestack:=array(ROWCOL)
+static node         // ennyi állást értékelt ki
+static hit          // cache találatok száma
+static fallback     // negascout visszalépés normál keresésre
+static xbest        // minimax futása után a legjobb lépés
+static ilevel       // info level
+static maxenf       // ágak hosszabbításának maximuma
+static movflg       // movegen paramétere (bevegye-e a kényszerítő lépéseket)
+static width        // elemzőfa szélessége depth függvényében
+
+static xresp
+static vresp
+static maxdepth
+
 static ascx:=asc("X")
 static asco:=asc("O")
+
+
+#define EXACT           0
+#define UPPERBOUND      1
+#define LOWERBOUND      2
 
 
 ******************************************************************************************
@@ -38,249 +71,336 @@ function node()
     return node
 
 ******************************************************************************************
+function cache_hit()
+    return hit
+
+******************************************************************************************
+function fallback_count()
+    return fallback
+
+******************************************************************************************
 function xbest()
     return xbest
 
 
 ******************************************************************************************
-function init_minimax(swflg)
+function minimax_config()
+
+#ifdef NEGASCOUT
+    ? "NEGASCOUT"
+#else
+    ? "NEGAMAX"
+#endif
+
+#ifdef CACHE
+    ?? " cache"
+#else
+    ?? " without cache"
+#endif
+    ?
+
+******************************************************************************************
+function minimax_init(swflg)
+
 local mc,curlev
 
     curlev:=setwidth(mc:=movecount(),swflg)
 
+
     node:=0
+    hit:=0
+    fallback:=0
     xbest:=NIL
-    width:=width()
-    turn:=if(0==movecount()%2,ascx,asco)
-    maxenf:=maxenf()
     ilevel:=infolevel()
+    maxenf:=maxenf()
+    movflg:=movflg()
 
     if( mc<5 )
-        width:={6,5,4,3,2,1}
+        width:={6,5,4,3,2}
+    else
+        width:=width()
     end
+
+#ifdef PRINT_PARAMS
+    PRINT(curlev)
+    PRINT(node)
+    PRINT(hit)
+    PRINT(xbest)
+    PRINT(ilevel)
+    PRINT(maxenf)
+    PRINT(movflg)
+    PRINT(width)
+    ?
+#endif
 
     return curlev
 
 
 ******************************************************************************************
-function minimax(depth,alfa,beta,bestline,forced_count)
+function minimax(depth,alfa,beta,forced_count,bestline)
 
-local candidate_move,n,x,xopt,vopt
-local bestline1:={}
-local winner
+local color 
+local candidates,n,x
+local xopt,vopt,lineopt
+
+local value
+local alfa_orig
+local beta_orig
+local cache
+local cache_dep
+local cache_val
+local cache_flg
+local bestline1
 
     node++
     depth++
+    if( depth<=2 .or. maxdepth<depth )
+        maxdepth:=depth
+    end
+    alfa_orig:=alfa
+    beta_orig:=beta
+    color:=if(turn_x(),1,-1)
+    bestline:={}
+
+    //? INDENT+">>MINIMAX ",depth, "", topcell()::pos2rc, " >> "
+
+
+#ifdef CACHE // transposition table
+    cache:=cache_search()
+
+    if( cache==NIL )
+        // nincs találat
+
+    elseif( depth<cache[1]   )
+        // kisebb fával számolt találat
+
+    else
+        // használható találat
+
+        hit++
+
+        cache_dep:=cache[1] // depth
+        cache_val:=cache[2] // value
+        cache_flg:=cache[3] // flag
+
+        hit_depth_histogram(cache_dep)
+
+        if( cache_flg==EXACT )
+            return cache_val
+
+        elseif( cache_flg==LOWERBOUND )
+            alfa::=max(cache_val)
+
+        elseif( cache_flg==UPPERBOUND )
+            beta::=min(cache_val)
+        end
+
+        if( alfa>=beta )
+            return cache_val
+        end
+    end
+#endif
 
     if( depth-forced_count>len(width) )
-        vopt:=posvalue(10)
-        bestline:={}
-        //leaf(depth,vopt,alfa,beta)
-        return vopt
+        //elfogyott az elemzőfa
+        if(hot_move())
+            // utolsó lépés 
+            // kényszerítő vagy kényszerített (esetleg nyerő)
+            // itt semmiképp sem állunk le, hanem hosszabbítunk
+            // print_map(); ?? "FORCE"+if(enforced_move(),"?","!"), movecount(), depth, topcell()::figure::chr, topcell()::pos2rc; ?; inkey(0)
+            forced_count++
+        else
+            // leállunk, heurisztikus érték
+            vopt:=posvalue(POSVALUE)
+            //? INDENT+">>RETURN-h", depth, vopt
+            return color*vopt
+        end
+
+    elseif( enforced_move() .and. forced_count<maxenf )
+        forced_count++
     end
 
-    candidate_move:=movegen(width[depth-forced_count],turn)
+    if( depth<=2 .and. 10<=width[1] )
+        // kétszer nagyobb halmazból
+        // sekély mélységű elemzéssel választ
+        candidates:=precalc_movegen(width[depth])
+    else
+        // movflg: beveszi a kényszerítő lépéseket
+        candidates:=movegen(width[depth-forced_count], movflg.and.depth<5)
+    end
+    //show_candidates(depth, candidates)
 
-    if( len(candidate_move)==0 )
-        winner:=winner()
-        if( winner==32  )
-            vopt:=posvalue(10)
-        elseif( winner==asco )
-            vopt:=-PVALUE_INFIN
-        elseif( winner==ascx )
+
+    if( len(candidates)==0 )
+        if( winner()==32  )
+            //width=0+ eset
+            vopt:=posvalue(POSVALUE)
+        elseif( winner()==ascx )
             vopt:=PVALUE_INFIN
-        end         
-        return vopt
+        elseif( winner()==asco )
+            vopt:=-PVALUE_INFIN
+        end
+        //? INDENT+">>RETURN-w", depth, vopt
+        return color*vopt
     end
 
-    if( enforced(candidate_move[1]) )
+
+    if( depth<=1 .and. enforcing_candidate(candidates[1]) )
         // kényszerhelyzet
-        if( depth<=1 )
-            // azonnal válaszol
-            xbest:=candidate_move[1]
-            return NIL
-        elseif( forced_count<maxenf )
-            // hosszabbítja az elemzőfát
-            // (be nem vált kísérlet)
-            ++forced_count
-        end
+        // nem értékeli az állást
+        // azonnal válaszol
+        xbest:=candidates[1]
+        bestline:={xbest}
+        //? INDENT+">>RETURN-f", depth, bestline::line2rc, vopt
+        return NIL
     end
 
-    if( turn_x() )
-        vopt:=-PVALUE_INFIN
+    //negamax/negascout
+    vopt:=-PVALUE_INFIN
+    for n:=1 to len(candidates)
+        x:=candidates[n]
+        forw(x)
+        if( depth<=ilevel ) 
+            // ezen gondolkodik (GUI)
+            drawalt()
+            stabilize()
+            sleep(200)
+        end
 
-        for n:=1 to len(candidate_move)
-            x:=candidate_move[n]
-            movestack[depth]:=x
-            forw(x)
-            if( ilevel>=depth )
-                drawalt()
-                stabilize()
-                sleep(200)
+#ifdef NEGASCOUT
+        if( n<=1 )
+            value:=-minimax(depth,-beta,-alfa,forced_count,@bestline1)
+        else
+            value:=-minimax(depth,-alfa-1,-alfa,forced_count,@bestline1) // null window search
+            if( alfa<value<beta )
+                ++fallback
+                value:=-minimax(depth,-beta,-alfa,forced_count,@bestline1) // mormal search
             end
-            vopt:=max(vopt,minimax(depth,alfa,beta,@bestline1,forced_count))
-            back()
-            if( ilevel>=depth )
-                drawcell(x)
-            end
-            info(depth,x,vopt)
+        end
+        vopt::=max(value)
 
-            if( vopt>alfa )
-                alfa:=vopt
-                xopt:=x
-                bestline:=update_bestline(depth,x,vopt,bestline1)
-                if( vopt>=beta )
-                    exit
-                end
-            end
+#else //NEGAMAX
+        vopt::=max(-minimax(depth,-beta,-alfa,forced_count,@bestline1))
+#endif
 
-            if( PVALUE_INFIN-vopt-depth<2 )
-                // 2 lepes tavolsagra vagyunk a fa leveletol 
-                // 0 lepes tavolsag -> fekete nyerolepes, mar breakelt (alfa==beta)
-                // 1 lepes tavolsag -> feher nyerolepes, masik program ag kezeli
-                // 2 lepes tavolsag -> akkor jon ide
-                // 3 vagy tobb      -> folytatja a ciklust
-                // showpos(x,vopt,depth)
+        back()
+        if( depth<=ilevel )
+            // ezen gondolkodott (GUI)
+            drawcell(x)
+        end
+
+        if( depth==1 )
+            print_info(x,color*vopt)
+            xresp:=NIL
+            vresp:=NIL
+        end
+
+        if( alfa<vopt )
+            alfa:=vopt
+            xopt:=x
+            lineopt:=bestline1
+            if( depth==1 )
+                // frissíti a bestline labelt (GUI)
+                update_bestline(xopt,color*vopt,lineopt)
+            end
+            if( beta<=alfa )
                 exit
             end
-        next
-
-        if( vopt==PVALUE_INFIN )
-            vopt-=(depth-1)
         end
+
+        if( PVALUE_INFIN-vopt-depth<2 )
+            // 2 lepes tavolsag a nyerestol
+            // 1 lepes tavolsag -> ellenfel nyerolepese
+            // 0 lepes tavolsag -> sajat nyerolepes
+            // show_position(x,vopt,depth)
+            exit
+        end
+    next
+
+
+    if( vopt==PVALUE_INFIN )
+        vopt-=(depth-1)
     end
 
-    if( turn_o() )
-        vopt:=+PVALUE_INFIN
-
-        for n:=1 to len(candidate_move)
-            x:=candidate_move[n]
-            movestack[depth]:=x
-            forw(x)
-            if( ilevel>=depth )
-                drawalt()
-                stabilize()
-                sleep(200)
-            end
-            vopt:=min(vopt,minimax(depth,alfa,beta,@bestline1,forced_count))
-            back()
-            if( ilevel>=depth )
-                drawcell(x)
-            end
-            info(depth,x,vopt)
-
-            if( vopt<beta )
-                beta:=vopt
-                xopt:=x
-                bestline:=update_bestline(depth,x,vopt,bestline1)
-                if( vopt<=alfa )
-                    exit
-                end
-            end
-
-            if( PVALUE_INFIN+vopt-depth<2 )
-                // 2 lepes tavolsagra vagyunk a fa leveletol 
-                // showpos(x,vopt,depth)
-                exit
-            end
-        next
-
-        if( vopt==-PVALUE_INFIN )
-            vopt+=(depth-1)
-        end
+    if( xopt==NIL )
+        // pass
+    elseif( lineopt==NIL )
+        // pass
+    else
+        bestline:=lineopt
+        bestline::aadd(xopt)
     end
 
     if( depth==1 )
+        //? INDENT+">>RETURN-R", depth, bestline::line2rc, color*vopt
+        arev(bestline)
         xbest:=xopt
+        return color*vopt
+    elseif( depth==2 )
+        xresp:=xopt
+        vresp:=color*vopt
     end
+
+
+#ifdef CACHE // transposition table
+    if( 2<depth )
+        if( vopt<=alfa_orig )
+            cache_flg:=UPPERBOUND
+        elseif( beta_orig<=vopt )
+            cache_flg:=LOWERBOUND
+        else
+            cache_flg:=EXACT
+        end
+        cache_insert(depth,vopt,cache_flg)
+    end
+#endif
+
+    //? INDENT+">>RETURN-r", depth,  bestline::line2rc, color*vopt
     return vopt
 
 
 ******************************************************************************************
-static function info(depth,x,v)
-
-//#define NOTDEF
-#ifdef NOTDEF
-    // ezzel + a tree.exe programmal
-    // vizsgálni (browse-olni) lehet az elemzőfát
-    // a log-amoeba-ban maradó infó alapján
-    local level:=1
-    if( depth<=level )
-        ?? space((depth-1)*4)
-        ?? turn(), "["+v::int::str(5)+"]", pos2rc(x)::padr(3), node
-        ?
+// debug/infó függvények
+******************************************************************************************
+static function print_info(x,v)
+    ?? turn(),"["+v::int::str(5)+"]"
+    print_pattern(x)
+    if( vresp!=NIL )
+        ??  vresp, pos2rc(xresp)::padr(3), maxdepth
     end
-#else
-    if( depth==1 )
-        ?? turn(),"["+v::int::str(5)+"]"
-        print_pattern(x)
-        ?
-    end
-#endif
+    ?
 
 
 ******************************************************************************************
-static function leaf(depth,v,alfa,beta)
-
-static log
-local line,n
-
-    line:=pos2rc(movestack[1])
-    for n:=2 to depth-1
-        line+=","+pos2rc(movestack[n])
-    next
-
-    if( log==NIL )
-        log:=channelNew("log-leaf")
-        log:open
-    end
-    log:on
-    ? turn(), depth,v,alfa,beta,line
-    log:off
-
-
-******************************************************************************************
-static function update_bestline(depth,pos,val,bestline)
-
+static function update_bestline(xopt,vopt,lineopt)
+local line:={xopt},n
 local labtxt
-
-    bestline::aiins(1,pos)
-
-    if( depth==1 )
-        labtxt:=bestline_format(bestline,val,if(turn_x(),0,1))
-        label_bestline(labtxt)
-    end
-
-    return bestline
-
+    for n:=len(lineopt) to 1 step -1
+        line::aadd(lineopt[n])
+    next
+    labtxt:=bestline_format(line,vopt,if(turn_x(),0,1))
+    label_bestline(labtxt)
 
 
 ******************************************************************************************
-static function enforced(cx,depth)
-local enforced
-    enforced := turn_x() .and. fieldval_o(cx)>=PVALUE_EGY .or.;
-                turn_o() .and. fieldval_x(cx)>=PVALUE_EGY 
-    return enforced
+static function line2rc(line)
+local x:={},n
+    for n:=1 to len(line)
+        x::aadd(line[n]::pos2rc)
+    next
+    return x
 
 
 ******************************************************************************************
-static function enforce(cx,depth)
-local enforced
-    enforced := turn_o() .and. 0!=numand(fieldval_o(cx),1) .or.;
-                turn_x() .and. 0!=numand(fieldval_x(cx),1)
-    return enforced
-
-
-******************************************************************************************
-function showpos(x,vopt,depth)
+static function show_position(x,vopt,depth)
 
 local dist
 
     // ha mar korabban elertuk az elemzofa levelet, akkor:
 
-    // ilyen melyen vagyunk a faban (depth)  : depth                      
-    // ilyen tavol vagyunk a leveltol (dist) : PVALUE_INFIN-vopt+1-depth  
-    // INVARIANS                             : depth+dist+vopt=PVALUE+1
+    // ilyen melyen vagyunk a faban (depth)  : depth
+    // ilyen tavol vagyunk a leveltol (dist) : PVALUE_INFIN-vopt+1-depth
+    // INVARIANS                             : depth+dist+vopt=PVALUE_INFIN+1
 
     dist:=PVALUE_INFIN-abs(vopt)+1-depth
 
@@ -289,10 +409,10 @@ local dist
     stabilize()
 
     ?? movecount()::str::alltrim+":"+pos2rc(x)
-    ?? " vopt="+vopt::str::alltrim 
-    ?? " depth="+depth::str::alltrim 
-    ?? " dist="+dist::str::alltrim 
-    ?? " press any key ..." 
+    ?? " vopt="+vopt::str::alltrim
+    ?? " depth="+depth::str::alltrim
+    ?? " dist="+dist::str::alltrim
+    ?? " press any key ..."
     ?
 
     inkey(0)
@@ -300,6 +420,22 @@ local dist
     back()
     drawcell(x)
     stabilize()
+
+
+******************************************************************************************
+static function show_candidates(depth, candidates)
+local n
+    ?? turn(), "dep="+depth::str(1), "len="+candidates::len::str(2)+":"
+    for n:=1 to len(candidates)
+        ??  "",candidates[n]::pos2rc
+        if( turn_x() .and. fieldval_x(candidates[n])::numand(1)==1 )
+            ?? "+"
+        end
+        if( turn_o() .and. fieldval_o(candidates[n])::numand(1)==1 )
+            ?? "+"
+        end
+    next
+    ?
 
 ******************************************************************************************
 

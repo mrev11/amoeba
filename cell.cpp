@@ -218,17 +218,34 @@ int cell::poplayer()
     return layer;
 }
 
+
+//--------------------------------------------------------------------------
+static void setmap(int x,char fig)
+{
+    int mx=x>>2;
+    int shift=(x&3)<<1;     // 0,           2,           4,           6
+    char mask=~(3<<shift);  // fc=11111100, f3=11110011, cf=11001111, 3f=00111111
+    cell::map[mx]=(cell::map[mx]&mask)|(fig<<shift);
+
+    //test
+    //extern unsigned int crc32(void *data, int size);
+    //unsigned int crc=crc32(cell::map, cell::tablesize*cell::tablesize);
+    //printf("CRC %08x x=%d fig=%d mx=%d, mask=%02x\n",crc, x,fig,mx,mask);
+}
+
 //--------------------------------------------------------------------------
 cell *cell::unset()  // leveszi az utolsó figurát a tábláról (OSZTALY FUGGVENY)
 {
 
     if( cell::movecount>0 )
     {
+        cell::zobrist_update();
         cell::movecount--;
         cell *c=cell::cells[cell::movestack[cell::movecount]];
 
         c->figure=' ';
         cell::winner=' ';
+        setmap(c->count,0);
 
         for( int sibx=0; c->siblings[sibx].mask; sibx++ )
         {
@@ -276,6 +293,7 @@ cell *cell::set() // felteszi magát a táblára (OBJEKTUM FUGGVENY)
     if( (cell::winner==' ') && (cell::movecount<(cell::tablesize*cell::tablesize)) && (this->figure==' ')  )
     {
         movestack[cell::movecount++]=count;
+        cell::zobrist_update();
 
         if( (cell::movecount&1)==0 )
         {
@@ -284,6 +302,7 @@ cell *cell::set() // felteszi magát a táblára (OBJEKTUM FUGGVENY)
             {
                 cell::winner=figure;
             }
+            setmap(count,1);
         }
         else
         {
@@ -292,6 +311,7 @@ cell *cell::set() // felteszi magát a táblára (OBJEKTUM FUGGVENY)
             {
                 cell::winner=figure;
             }
+            setmap(count,2);
         }
         updatesiblings();
         return this;
@@ -334,7 +354,7 @@ void cell::calcval() // kiszámítja a cella értékét
     fieldval[layer].white=0;
     fieldval[layer].black=0;
 
-    xPATTERN *p=pattern+layer;
+    PATTERN *p=pattern+layer;
     char *po=p->white;
     char *px=p->black;
     char *pw=this->wall;

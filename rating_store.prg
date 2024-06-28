@@ -125,7 +125,7 @@ local labtxt,sp,rc,n
 
     if( !empty(bestline) .and. val!=NIL )
         sp:="<span color='#b8b8b8'>.</span>"
-        labtxt:=sp+"<span color='green'>("+val::str::alltrim+")</span>"+sp
+        labtxt:=sp+"<b><span color='green'>("+val::str::alltrim+")</span></b>"+sp
     
         for n:=1 to len(bestline)
             rc:=pos2rc(bestline[n])

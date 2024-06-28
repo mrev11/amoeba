@@ -20,7 +20,7 @@
 
 #include "draw.ch"
 
-#define VERSION         "Amoeba 3.0 for GTK2"
+#define VERSION         "Amoeba 3.0 for GTK2 scout"
 #define VERSION_WEB     "Amoeba 3.0 for the WEB"
 
 
@@ -46,8 +46,7 @@
 #define POW8  "18,9,8,7,6,5,5,5,4,4,4,3,3,3"     // interaktívan beállítható
 
 
-
 #define CACHE
-//#define NEGASCOUT
+#define NEGASCOUT
 
 #define POSVALUE   10

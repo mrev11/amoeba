@@ -1,3 +1,10 @@
+2024-06-28 verzio 3.0
+  negamax
+  negascout
+  transposition table (zobrist cache)
+  "hot move"-oknal hosszabbodo elemzofa
+  jatek halozaton at
+
 2024-06-07
     Shift+Forward (button) -> Shift+Right (key)
     Shift+Back    (button) -> Shift+Left  (key)

@@ -19,41 +19,72 @@
  */
 
 
-
 #include "amoeba.ch"
 
+#define PRINT(x)    ? #x, any2str(x)
+
+static width  // {{w11,...},{w21,...},...,{w81,...}}
+
 static power_current
+
 static width_current
+static width_black:=NIL
+static width_white:=NIL
 
-static width:=init_width()
-static width_black //:=init_width_black()
-static width_white //:=init_width_white()
+static maxenf_current
+static maxenf_black:=0
+static maxenf_white:=0
 
-static maxenf:=0
-static maxenf_black:=init_maxenf_black()
-static maxenf_white:=init_maxenf_white()
+static movflg_current
+static movflg_black:=.f.
+static movflg_white:=.f.
 
 
 ******************************************************************************
 function parse_power(p:=getenv("AMOEBA_POWER"))
-local pw:=p::val::max(0)::min(8)
+local pw:=p::strtran(".","!")::val::max(0)::min(8)  // tizedespont!
 
     opt_power(pw)
 
     if( "+"$p )
-        movegen_white(1)    // movegen erosebb modja
-        movegen_black(1)    // movegen erosebb modja
-    elseif( "-"$p )
-        movegen_white(0)    // movegen gyengebb modja
-        movegen_black(0)    // movegen gyengebb modja
-    else
-        movegen_white(0)    // movegen gyengebb modja
-        movegen_black(0)    // movegen gyengebb modja
+        movflg_black:=.t.
+        movflg_white:=.t.
     end
 
-    // explicit inicializalas!
+    if( "-"$p )
+        movflg_black:=.f.
+        movflg_white:=.f.
+    end
+
+    maxenf_white:=val(p::split(".")::asize(2)[2]|"0")::min(10)::max(0)
+    maxenf_black:=val(p::split(".")::asize(2)[2]|"0")::min(10)::max(0)
+
+    width:=init_width()
+
     width_black:=init_width_black()
     width_white:=init_width_white()
+
+    maxenf_black:=init_maxenf_black()
+    maxenf_white:=init_maxenf_white()
+
+    movflg_black:=init_movflg_black()
+    movflg_white:=init_movflg_white()
+    
+
+#ifndef PRINT_POWER
+    //PRINT (width)
+    PRINT (power_current)
+    PRINT (width_current)
+    PRINT (width_black)
+    PRINT (width_white)
+    PRINT (maxenf_current)
+    PRINT (maxenf_black)
+    PRINT (maxenf_white)
+    PRINT (movflg_current)
+    PRINT (movflg_black)
+    PRINT (movflg_white)
+#endif
+
 
     return(pw)
 
@@ -70,11 +101,11 @@ static power:=0
 *****************************************************************************
 static function init_width()
 local w:=array(8)
-    w[1]:=powinit(POW1) 
-    w[2]:=powinit(POW2) 
-    w[3]:=powinit(POW3) 
-    w[4]:=powinit(POW4) 
-    w[5]:=powinit(POW5) 
+    w[1]:=powinit(POW1)
+    w[2]:=powinit(POW2)
+    w[3]:=powinit(POW3)
+    w[4]:=powinit(POW4)
+    w[5]:=powinit(POW5)
     w[6]:=powinit(POW6)
     w[7]:=powinit(POW7)
     w[8]:=powinit(POW8)
@@ -82,59 +113,80 @@ local w:=array(8)
 
 
 *****************************************************************************
+static function powinit(p)
+local n
+    p:=split(p)
+    for n:=1 to len(p)
+        p[n]:=val(p[n])
+    next
+    return p
+
+
+*****************************************************************************
 static function init_width_black()
-local p
-    if( !power_black()::empty )
-        if( "+"$power_black() )
-            movegen_black(1)
-        else
-            movegen_black(0)
-        end
-        p:=power_black()::val
-        p::=max(1)
-        p::=min(8)
-        ?? "Black plays at power", power_black(), width[p]::any2str
-        ?
-        return width[p]
+local pw:=power_black()
+    if( pw::empty )
+        return NIL
     end
+    pw::=val
+    pw::=max(1)
+    pw::=min(8)
+    ?? "Black plays at power", power_black(), width[pw]::any2str
+    ?
+    return width[pw]
 
 
 static function init_width_white()
-local p
-    if( !power_white()::empty )
-        if( "+"$power_white() )
-            movegen_white(1)
-        else
-            movegen_white(0)
-        end
-        p:=power_white()::val
-        p::=max(1)
-        p::=min(8)
-        ?? "White plays at power", power_white(), width[p]::any2str
-        ?
-        return width[p]
+local pw:=power_white()
+    if( pw::empty )
+        return NIL
     end
+    pw::=val
+    pw::=max(1)
+    pw::=min(8)
+    ?? "Black plays at power", power_white(), width[pw]::any2str
+    ?
+    return width[pw]
 
 
 *****************************************************************************
 static function init_maxenf_black()
-local maxenf:=power_black()::split::asize(2)[2]
-    if( maxenf==NIL )
-        maxenf:=0
-    else
-        maxenf::=val
+local pw:=power_black()
+local enf:=pw::split::asize(2)[2]
+    if( enf!=NIL )
+        return enf::val
     end
-    return maxenf
-
-
+    return maxenf_black // nem változik
+    
+    
 static function init_maxenf_white()
-local maxenf:=power_white()::split::asize(2)[2]
-    if( maxenf==NIL )
-        maxenf:=0
-    else
-        maxenf::=val
+local pw:=power_white()
+local enf:=pw::split::asize(2)[2]
+    if( enf!=NIL )
+        return enf::val
     end
-    return maxenf
+    return maxenf_white // nem változik
+
+
+*****************************************************************************
+static function init_movflg_black()
+local pw:=power_black()
+    if( '+'$pw )
+        return .t.
+    elseif( '-'$pw )
+        return .f.
+    end
+    return movflg_black // nem változik
+
+
+static function init_movflg_white()
+local pw:=power_white()
+    if( '+'$pw )
+        return .t.
+    elseif( '-'$pw )
+        return .f.
+    end
+    return movflg_white // nem változik
 
 
 *****************************************************************************
@@ -150,8 +202,8 @@ static power:=getenv("AMOEBA_POWER_WHITE")
 
 
 *****************************************************************************
-function width() // elemzőfa aktuális szélessége
-    return width_current
+function width() // aktuális elemzőfa
+    return aclone(width_current)
 
 
 *****************************************************************************
@@ -162,17 +214,17 @@ local w
 
     elseif( !recalc .and. turn_o() .and. width_white!=NIL )
         width_current:=width_white
-        
+
     elseif( power_current!=NIL )
         width_current:=power_current
 
-    elseif( movecount<4 )
+    elseif( movecount<8 )
         width_current:=width[1]
 
-    elseif( movecount<8 )
+    elseif( movecount<16 )
         width_current:=width[2]
 
-    elseif( movecount<16 )
+    elseif( movecount<32 )
         width_current:=width[3]
 
     else
@@ -181,25 +233,19 @@ local w
     end
 
     setmaxenf()
-    
-    if( turn_x() .and. 0!=numand(movegen_black(),1) )
-        width_current:=aclone(width_current)
-        width_current::aadd(0)
-        width_current::aadd(0)
-    end
+    setmovflg()
 
-    if( turn_o() .and. 0!=numand(movegen_white(),1) )
-        width_current:=aclone(width_current)
-        width_current::aadd(0)
-        width_current::aadd(0)
-    end
-    
     return current_level()
 
 
 *****************************************************************************
+function setmaxenf()
+    maxenf_current:=if(turn_x(),maxenf_black ,maxenf_white)
+
+
+*****************************************************************************
 function maxenf()
-    return maxenf
+    return maxenf_current
 
 // kényszerlépés hosszabbíthatja az elemzőfát
 // a megengedett maximális hosszabbodás: maxenf()
@@ -210,8 +256,15 @@ function maxenf()
 
 
 *****************************************************************************
-function setmaxenf()
-    maxenf:=if(turn_x(),maxenf_black ,maxenf_white)
+function setmovflg()
+    movflg_current:=if(turn_x(),movflg_black ,movflg_white)
+
+
+*****************************************************************************
+function movflg()
+    return movflg_current
+
+// bevegyen-e movegen minden  kényszerítő lépést
 
 
 *****************************************************************************
@@ -229,34 +282,10 @@ function setpower(p)
             power_current:=powinit(p)
         end
     end
+    cache_clean()
+
 
 // power_current==NIL  vagy  power_current=={4,3,2,1...}
-
-
-*****************************************************************************
-static function powinit(p)
-local n
-    p:=split(p)
-    for n:=1 to len(p)
-        p[n]:=val(p[n])
-    next
-    return p
-
-
-*****************************************************************************
-function infolevel(t)
-static level:=.t.
-    if( t!=NIL )
-        level:=t
-    end
-
-    if( !level  )
-        return 0
-    elseif( width_current::len<9999 )
-        return 1
-    else
-        return 2 //sosem (az egyszeruseg jegyeben)
-    end
 
 
 *****************************************************************************
@@ -269,6 +298,7 @@ local cl
             exit
         end
     next
-    return cl // current level: 1..8 
+    return cl // current level: 1..8
 
 *****************************************************************************
+

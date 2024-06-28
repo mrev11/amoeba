@@ -1,3 +1,6 @@
+-d.
+-d..
+
 
 BUILD_CFG=obj$(CCCBIN)/gtk-cflags
 BUILD_LIBX=obj$(CCCBIN)/gtk-libs

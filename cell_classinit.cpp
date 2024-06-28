@@ -19,6 +19,9 @@
  */
 
 
+#include <string.h>
+#include <openssl/rand.h>
+
 #include <cell.h>
 #include <pvalue.h>
 #include <pattern.h>
@@ -34,12 +37,15 @@ char    cell::winner= ' ';                  // ' ' vagy 'O' vagy 'X'
 BEST    cell::best[MAXBEST];                // movegen után a legjobb lépések
 int     cell::bestcnt;                      // lépések száma best-ben
 int     cell::tablesize=0;                  // táblaméret, később kap értéket
-int     cell::movegen_white=0;              // movegen paramétere, amikor white gondolkodik
-int     cell::movegen_black=0;              // movegen paramétere, amikor black gondolkodik
 
 int     cell::save_move[MAXCELLS];          // lépések
 int     cell::save_count=0;                 // lépésszám
 int     cell::save_forw=0;                  // eddig lehet előremenni (hátralépések után)
+char    cell::map[MAXCELLS/4+1];            // az allast tartalmazo bitmap
+
+ZCODE   cell::rnd[MAXCELLS][2] ;            // véletelen számok a zobrist kódhoz
+ZCODE   cell::code;                         // az állás zobrist kódja 
+
 
 //--------------------------------------------------------------------------
 int cell::classinit() // inicializálja az osztály adatokat
@@ -62,7 +68,9 @@ int cell::classinit() // inicializálja az osztály adatokat
         cell::cells[n]->initsiblings();
     }
     cell::randomize();
+    memset(cell::map,0,sizeof(cell::map));
 
+    RAND_bytes((unsigned char*)cell::rnd, sizeof(cell::rnd));
     return 1;
 }
 
@@ -119,6 +127,30 @@ void cell::restore()
     }
     cell::movecount=cell::save_count;
     cell::moveforw=cell::save_forw;
+}
+
+//--------------------------------------------------------------------------
+ZCODE cell::zobrist() // teljes számítás
+{
+    ZCODE code=0;
+    for( int i=0; i<cell::movecount; i++ )
+    {
+        int x=cell::movestack[i];
+        code^=cell::rnd[x][ i&1 ]; // X(i=páros)->0, O(i=páratlan)->1
+    }
+    return code;
+}
+
+//--------------------------------------------------------------------------
+void cell::zobrist_update() // inkerementális számítás
+{
+    // a ko felrakasa utan
+    // vagy a ko levetele elott
+    // X(i=páros)->0, O(i=páratlan)->1
+
+    int i=cell::movecount-1; 
+    int x=cell::movestack[i];
+    cell::code^=cell::rnd[x][ i&1 ]; 
 }
 
 //--------------------------------------------------------------------------

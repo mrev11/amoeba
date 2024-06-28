@@ -19,13 +19,20 @@
  */
 
 
+
 ******************************************************************************
-function mainwindow(w)
-static window
-    if( w!=NIL )
-        window:=w
+function hit_depth_histogram(x)
+static histo:=array(32)::afill(0)
+local a,n
+    if( x==NIL )
+        a:=aclone(histo)
+        for n:=1 to len(a)
+            a[n]::=str::alltrim
+        next
+        ? "hit(depth):",a
+    elseif( x<=len(histo) )
+        histo[x]++    
     end
-    return window
 
 
 ******************************************************************************

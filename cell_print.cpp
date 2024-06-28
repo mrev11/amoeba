@@ -1,4 +1,24 @@
 
+/*
+ *  CCC - The Clipper to C++ Compiler
+ *  Copyright (C) 2005 ComFirm BT.
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+
 #include <stdio.h>
 #include <wchar.h>
 #include <utf8conv.h> // CCC-bol
@@ -46,7 +66,7 @@ static char* ppatdir(cell *c, int dir)
 {
     static char buf[32];
 
-    xPATTERN *p=c->pattern+c->layer;
+    PATTERN *p=c->pattern+c->layer;
 
     int pos=0;
     int mask=1;
@@ -85,7 +105,7 @@ static char* ppatdir(cell *c, int dir)
 char *ppat(cell *c)
 {
     static char buf[256];
-    xPATTERN *p=c->pattern+c->layer;
+    PATTERN *p=c->pattern+c->layer;
 
     int offs=0;
     offs+=sprintf( buf+offs, "%lc(%s) ", arrow(0), ppatdir(c,0));
@@ -101,7 +121,7 @@ char *ppat(cell *c)
 static char *ppatx(cell *c)
 {
     static char buf[256];
-    xPATTERN *p=c->pattern+c->layer;
+    PATTERN *p=c->pattern+c->layer;
 
     int offs=0;
     offs+=sprintf( buf+offs, "%lc(%s) %02x %02x %02x ", arrow(0), ppatdir(c,0), p->white[0], p->black[0], c->wall[0]  );
@@ -122,7 +142,7 @@ void cell::print()
     
     if( figure==' ' )
     {
-        xPATTERN *p=pattern+layer;
+        PATTERN *p=pattern+layer;
         char *po=p->white;
         char *px=p->black;
         char *pw=wall;
@@ -171,11 +191,11 @@ void cell::print_pattern(int cx)
         const char *vs=numformat("%3d",c->fieldval[c->layer].black+c->fieldval[c->layer].white);
 
         int force=' ';
-        if( (cell::movecount&1)==1 && (cell::movegen_white & c->fieldval[c->layer].white) )
+        if( (cell::movecount&1)==1 && (1 & c->fieldval[c->layer].white) )
         {
             force='+';
         }
-        if( (cell::movecount&1)==0 && (cell::movegen_black & c->fieldval[c->layer].black) )
+        if( (cell::movecount&1)==0 && (1 & c->fieldval[c->layer].black) )
         {
             force='+';
         }

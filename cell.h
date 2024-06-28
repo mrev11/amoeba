@@ -22,7 +22,7 @@
 
 #define MAXTABLE    24
 #define MAXCELLS    MAXTABLE*MAXTABLE
-#define MAXBEST     64
+#define MAXBEST     512
 #define MAXLAYER    33      // egy cellalnak max 32 szomszedja lehet
 
 #define KELET       0       // kelet
@@ -31,7 +31,11 @@
 #define DKELET      3       // dél-kelet
 
 
-struct xPATTERN
+typedef unsigned long long ZCODE;  // 64 bit zobrist code 
+
+
+
+struct PATTERN
 {
     char white[4];          // feher alakzatok negy iranyban (1 alakzat==1 byte)
     char black[4];          // fekete alakzatok negy iranyban (1 alakzat==1 byte)
@@ -79,7 +83,7 @@ struct cell
 
     char wall[4];                       // tablarol lelogo resz maszkja negy iranyban
     FLDVAL fieldval[MAXLAYER+1];        // cella érték a két játékosra retegenkent
-    xPATTERN pattern[MAXLAYER+1];       // alakzatok négy irányban: K,Ék,É,Dk, retegenkent
+    PATTERN pattern[MAXLAYER+1];        // alakzatok négy irányban: K,Ék,É,Dk, retegenkent
     SIBLING siblings[MAXLAYER+1];       // szomszed cellak (max 32 lehet, az utolso utan cx=-1, mask==0)
 
 
@@ -104,12 +108,14 @@ struct cell
     static int  moveforw;               // eddig lehet előremenni (hátralépések után)
     static char winner;                 // ' ' vagy 'O' vagy 'X'
     static int  tablesize;              // táblaméret (default=16)
-    static int  movegen_white;          // movegen paramétere, amikor white gondolkodik
-    static int  movegen_black;          // movegen paramétere, amikor black gondolkodik
 
     static int  save_move[MAXCELLS];    // stack a lépéseknek
     static int  save_count;             // lépésszám (stack pointer)
     static int  save_forw;              // eddig lehet előremenni (hátralépések után)
+
+    static char map[MAXCELLS/4+1];      // az állást tartalmazó bitmap
+    static ZCODE rnd[MAXCELLS][2];      // véletlen számok a zobrist kódhoz
+    static ZCODE code;                  // az állás zobrist kódja 
 
 
     //----- osztály függvények -----
@@ -134,6 +140,9 @@ struct cell
 
     static int  cmp_dist
             (void const*,void const*);  // melyik cella van távolabb a középtől
+
+    static ZCODE zobrist();             // kiszámítja a zobrist kódot
+    static void zobrist_update();       // kiszámítja a zobrist kódot
 };
 
 

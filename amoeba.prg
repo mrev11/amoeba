@@ -51,6 +51,7 @@ local file
     parse_power(power)
     tablesize(size)
     cell_classinit()
+    minimax_config()
 
     amoeba_gui(file)
 
