@@ -37,12 +37,23 @@ static void print_movegen(int cnt);
 //--------------------------------------------------------------------------
 int cell::movegen(int total, int movflg) //kikeresi a megadott szamu "legfontosabb" mezot
 {
+    // total      -> ennyi darab lépést keres
+    // (movflg&1) -> total-on felül bevesz minden kényszerítő lépést
+    // (movflg&2) -> nem számítja be fehér alakzatait
+    // (movflg&4) -> nem számítja be fekete alakzatait
+    
+    // 0: minden alakzatot beszámít, a kényszerítőket nem kezeli külön
+    // 1: minden alakzatot beszámít, a kényszerítőket pluszban hozzáveszi
+    // 2: fehér alakzatait nem számítja be (fehér csak védekezik)
+    // 4: fekete alakzatait nem számítja be (fekete csak védekezik)
+  
+
     if( cell::winner!=' ' )
     {
         return cell::bestcnt=0;
     }
 
-    int FORCE=(movflg||total==0)?1:0;
+    int FORCE=((movflg&1)||(total==0))?1:0;
 
     int cnt=0;
     int minx=-1;
@@ -54,7 +65,7 @@ int cell::movegen(int total, int movflg) //kikeresi a megadott szamu "legfontosa
     {
         int  cx=cell::spiral[i]; //kozeprol kifele
         cell *c=cell::cells[cx];
-        int  vo,vt,vs;
+        int  vo=0,vt=0,vs;
 
         if( c->figure!=' ')
         {
@@ -64,14 +75,14 @@ int cell::movegen(int total, int movflg) //kikeresi a megadott szamu "legfontosa
         if( (cell::movecount&1)==0 )
         {
             // fekete lep
-            vo=c->fieldval[c->layer].white; // oppo
-            vt=c->fieldval[c->layer].black; // turn
+            if(!(movflg&2)) vo=c->fieldval[c->layer].white; // oppo
+            if(!(movflg&4)) vt=c->fieldval[c->layer].black; // turn
         }
         else//if( (cell::movecount&1)==1 )
         {
             // feher lep
-            vt=c->fieldval[c->layer].white; // turn
-            vo=c->fieldval[c->layer].black; // oppo
+            if(!(movflg&2)) vt=c->fieldval[c->layer].white; // turn
+            if(!(movflg&4)) vo=c->fieldval[c->layer].black; // oppo
         }
         vs=vo+vt;
 

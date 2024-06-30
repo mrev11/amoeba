@@ -35,7 +35,7 @@ void _clp_movegen(int argno)
     CCC_PROLOG("movegen",2);
     int cnt=_parni(1);
     int flg=ISNIL(2)?0:_parl(2);
-    cnt=cell::movegen(cnt,flg);
+    cnt=cell::movegen(cnt,flg?1:0);
     for(int i=0;i<cnt; i++)
     {
         number( cell::best[i].cx );
@@ -49,12 +49,10 @@ void _clp_movegen(int argno)
 //--------------------------------------------------------------------------
 void _clp_posvalue(int argno)
 {
-    CCC_PROLOG("posvalue",1);
-    if( !ISNIL(1) )
-    {
-        _clp_movegen(1);
-        pop();
-    }
+    CCC_PROLOG("posvalue",2);
+    int total=_parni(1);
+    int movflg=ISNIL(2)?0:_parni(2);
+    cell::movegen(total,movflg);
     _retni(cell::posvalue());
     CCC_EPILOG();
 }
@@ -133,10 +131,22 @@ void _clp_hot_move(int argno)
         cell *c=cell::cells[cx];
         int w=c->fieldval[c->layer].white;
         int b=c->fieldval[c->layer].black;
-
-        //_retl( max(w,b)>=PVALUE_EGY );
-        _retl( max(w,b)>=(PVALUE_KET2<<2) );
+        int f=c->figure;
         
+        if( f=='X' )
+        {
+            _retl( b>=PVALUE_KET1 || w>=PVALUE_EGY );
+        
+        } 
+        else if( f=='O' ) 
+        {
+            _retl( w>=PVALUE_KET1 || b>=PVALUE_EGY );
+        } 
+        else
+        {
+            _retl(0); // ide nem johet
+        }
+
         // a táblára feltett utolsó kő
         // kényszeítő vagy kényszerített lépés volt
         // (esetleg nyerő)

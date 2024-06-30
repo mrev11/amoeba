@@ -48,7 +48,7 @@ local nodes,sec
         ?? "  black="+numstr(nodes_black)
 
         if( nodes>0 )
-            ?? "  cache="+numstr(cache_hit)+"("+numstr(cache_hit/nodes*100)+"%)"
+            ?? "  hit="+numstr(cache_hit)+"("+numstr(cache_hit/nodes*100)+"%)"
         end
 
         if( search_fallback>0 )
@@ -60,6 +60,9 @@ local nodes,sec
             ?? "  time="+timestr(sec)
             ?? "  "+numstr(nodes/sec)+"/s"
         end
+
+        ?? "  winner="+if(winner()==32,"D",chr(winner()))
+
     end
 
     return nodes_white+nodes_black

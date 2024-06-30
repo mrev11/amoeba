@@ -45,12 +45,14 @@
 #define INDENT      space(4*(depth-1))
 
 static node         // ennyi állást értékelt ki
+static usecache     // hasznája-e a transposition table-t
 static hit          // cache találatok száma
 static fallback     // negascout visszalépés normál keresésre
 static xbest        // minimax futása után a legjobb lépés
 static ilevel       // info level
 static maxenf       // ágak hosszabbításának maximuma
 static movflg       // movegen paramétere (bevegye-e a kényszerítő lépéseket)
+static posflg       // posvalue/movegen paramétere (milyen lépéseket vegyen be)
 static width        // elemzőfa szélessége depth függvényében
 
 static xresp
@@ -65,6 +67,7 @@ static asco:=asc("O")
 #define UPPERBOUND      1
 #define LOWERBOUND      2
 
+#define OPENING         8  // első néhány lépés
 
 ******************************************************************************************
 function node()
@@ -100,25 +103,34 @@ function minimax_config()
     ?
 
 ******************************************************************************************
-function minimax_init(swflg)
+function minimax_init(recalcflg:=.f.)
 
 local mc,curlev
 
-    curlev:=setwidth(mc:=movecount(),swflg)
-
+    curlev:=setwidth(mc:=movecount(),recalcflg)
 
     node:=0
+    usecache:=!recalcflg
     hit:=0
     fallback:=0
     xbest:=NIL
-    ilevel:=infolevel()
-    maxenf:=maxenf()
-    movflg:=movflg()
 
-    if( mc<5 )
-        width:={6,5,4,3,2}
+    if( mc<=OPENING )
+        width:={4}
+        ilevel:=0
+        maxenf:=0
+        movflg:=.f.
+        if( numand(mc,1)==0 )
+            posflg:=4 // fekete lép (csak védekezik, nem számítja be a fekete alakzatokat)
+        else                    
+            posflg:=2 // fehér lép  (csak védekezik, nem számítja be a fehér alakzatokat)
+        end
     else
         width:=width()
+        ilevel:=infolevel()
+        maxenf:=maxenf()
+        movflg:=movflg()
+        posflg:=NIL
     end
 
 #ifdef PRINT_PARAMS
@@ -164,59 +176,65 @@ local bestline1
 
     //? INDENT+">>MINIMAX ",depth, "", topcell()::pos2rc, " >> "
 
-
 #ifdef CACHE // transposition table
-    cache:=cache_search()
-
-    if( cache==NIL )
-        // nincs találat
-
-    elseif( depth<cache[1]   )
-        // kisebb fával számolt találat
-
-    else
-        // használható találat
-
-        hit++
-
-        cache_dep:=cache[1] // depth
-        cache_val:=cache[2] // value
-        cache_flg:=cache[3] // flag
-
-        hit_depth_histogram(cache_dep)
-
-        if( cache_flg==EXACT )
-            return cache_val
-
-        elseif( cache_flg==LOWERBOUND )
-            alfa::=max(cache_val)
-
-        elseif( cache_flg==UPPERBOUND )
-            beta::=min(cache_val)
-        end
-
-        if( alfa>=beta )
-            return cache_val
+    if( usecache) 
+        cache:=cache_search()
+    
+        if( cache==NIL )
+            // nincs találat
+    
+        elseif( depth<cache[1]   )
+            // kisebb fával számolt találat
+    
+        else
+            // használható találat
+    
+            hit++
+    
+            cache_dep:=cache[1] // depth
+            cache_val:=cache[2] // value
+            cache_flg:=cache[3] // flag
+    
+            hit_depth_histogram(cache_dep)
+    
+            if( cache_flg==EXACT )
+                return cache_val
+    
+            elseif( cache_flg==LOWERBOUND )
+                alfa::=max(cache_val)
+    
+            elseif( cache_flg==UPPERBOUND )
+                beta::=min(cache_val)
+            end
+    
+            if( alfa>=beta )
+                return cache_val
+            end
         end
     end
 #endif
 
     if( depth-forced_count>len(width) )
         //elfogyott az elemzőfa
-        if(hot_move())
-            // utolsó lépés 
-            // kényszerítő vagy kényszerített (esetleg nyerő)
-            // itt semmiképp sem állunk le, hanem hosszabbítunk
-            // print_map(); ?? "FORCE"+if(enforced_move(),"?","!"), movecount(), depth, topcell()::figure::chr, topcell()::pos2rc; ?; inkey(0)
+
+        if( .t. .and.  hot_move() .and. forced_count<maxenf+32 )
+            // utolsó lépés kényszerítő vagy kényszerített, hosszabbítunk
+            // print_map() 
+            // ?? "FORCE-"+topcell()::figure::chr, topcell()::pos2rc::padr(3), fieldval_o(topcell()), fieldval_x(topcell());?  
+            // inkey(0)
+
             forced_count++
         else
             // leállunk, heurisztikus érték
-            vopt:=posvalue(POSVALUE)
+            vopt:=posvalue(POSVALUE,posflg)
             //? INDENT+">>RETURN-h", depth, vopt
             return color*vopt
         end
 
-    elseif( enforced_move() .and. forced_count<maxenf )
+    elseif( .t. .and. enforced_move() .and. forced_count<maxenf )
+        // print_map() 
+        // ?? "ENFOR", topcell()::figure::chr, topcell()::pos2rc::padr(3), fieldval_o(topcell()), fieldval_x(topcell());?
+        // inkey(0)
         forced_count++
     end
 

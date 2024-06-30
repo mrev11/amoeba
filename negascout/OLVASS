@@ -1,11 +1,1 @@
-
-Itt a program negascout algoritmussal működő változata készül.
-Az egyedüli különbség, hogy az itteni amoeba.ch definiálja az
-alábbi makró szimbólumot:
-
-    NEGASCOUT
-
-A negascout algoritmus gyorsabban játszik, mint a sima negamax,
-de hátránya, hogy kevésbé user friendly, mert hiányosan (rövidebben)
-mutatja a bestline-t.
-    
+Itt lehet másik példányt fordítani.

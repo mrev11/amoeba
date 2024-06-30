@@ -25,7 +25,7 @@
 
 static width  // {{w11,...},{w21,...},...,{w81,...}}
 
-static power_current
+static power_current  // setpower állítja be: (0/auto)->NIL, (1)->{w11,...},...
 
 static width_current
 static width_black:=NIL
@@ -42,9 +42,11 @@ static movflg_white:=.f.
 
 ******************************************************************************
 function parse_power(p:=getenv("AMOEBA_POWER"))
-local pw:=p::strtran(".","!")::val::max(0)::min(8)  // tizedespont!
+local pw
 
-    opt_power(pw)
+    p::=strtran(".","!")        // tizedespont kicserélve!
+    pw:=p::val::max(0)::min(8)  // listbox index (0==auto,1...8)
+    opt_power(pw)               // megjegyzi
 
     if( "+"$p )
         movflg_black:=.t.
@@ -56,8 +58,8 @@ local pw:=p::strtran(".","!")::val::max(0)::min(8)  // tizedespont!
         movflg_white:=.f.
     end
 
-    maxenf_white:=val(p::split(".")::asize(2)[2]|"0")::min(10)::max(0)
-    maxenf_black:=val(p::split(".")::asize(2)[2]|"0")::min(10)::max(0)
+    maxenf_white:=val(p::split("!")::asize(2)[2]|"0")::min(10)::max(0)
+    maxenf_black:=val(p::split("!")::asize(2)[2]|"0")::min(10)::max(0)
 
     width:=init_width()
 
@@ -71,18 +73,30 @@ local pw:=p::strtran(".","!")::val::max(0)::min(8)  // tizedespont!
     movflg_white:=init_movflg_white()
     
 
-#ifndef PRINT_POWER
-    //PRINT (width)
-    PRINT (power_current)
-    PRINT (width_current)
-    PRINT (width_black)
-    PRINT (width_white)
-    PRINT (maxenf_current)
+#ifdef PRINT_POWER
+
+  //PRINT( width )
+    PRINT( opt_power() )    // -p cmdline opt első eleme (N)
+    PRINT( power_black() )  // AMOEBA_POWER_BLACK (C)
+    PRINT( power_white() )  // AMOEBA_POWER_WHITE (C)
+
+    setpower(opt_power())   // beállítja: power_current:={w11,...} 
+    setwidth(1)             // beállítja: width_current-et (movecount függvényében választ power_current/width_black/width_white közül)
+
+    PRINT (power_current)   // listboxban kiválasztott elemzőfa szélességei
+    PRINT (width_current)   // elemzőfa szélességei (attól függően, hogy ki van lépésen)
+    PRINT (width_black)     // black elemzőfájának szélességei (ha külön meg van adva)
+    PRINT (width_white)     // white elemzőfájának szélességei (ha külön meg van adva)
+
+    PRINT (maxenf_current)  // maxenf_black/maxenf_white közűl, amelyik lépésen van
     PRINT (maxenf_black)
     PRINT (maxenf_white)
-    PRINT (movflg_current)
+
+    PRINT (movflg_current)  // movflg_black/movflg_white közűl, amelyik lépésen van
     PRINT (movflg_black)
     PRINT (movflg_white)
+    ?
+    quit
 #endif
 
 
@@ -131,7 +145,7 @@ local pw:=power_black()
     pw::=val
     pw::=max(1)
     pw::=min(8)
-    ?? "Black plays at power", power_black(), width[pw]::any2str
+    ?? "Black plays at power", power_black()::strtran("!","."), width[pw]::any2str
     ?
     return width[pw]
 
@@ -144,7 +158,7 @@ local pw:=power_white()
     pw::=val
     pw::=max(1)
     pw::=min(8)
-    ?? "Black plays at power", power_white(), width[pw]::any2str
+    ?? "Black plays at power", power_white()::strtran("!","."), width[pw]::any2str
     ?
     return width[pw]
 
@@ -152,7 +166,7 @@ local pw:=power_white()
 *****************************************************************************
 static function init_maxenf_black()
 local pw:=power_black()
-local enf:=pw::split::asize(2)[2]
+local enf:=pw::split("!")::asize(2)[2]
     if( enf!=NIL )
         return enf::val
     end
@@ -161,7 +175,7 @@ local enf:=pw::split::asize(2)[2]
     
 static function init_maxenf_white()
 local pw:=power_white()
-local enf:=pw::split::asize(2)[2]
+local enf:=pw::split("!")::asize(2)[2]
     if( enf!=NIL )
         return enf::val
     end
@@ -191,13 +205,13 @@ local pw:=power_white()
 
 *****************************************************************************
 function power_black()
-static power:=getenv("AMOEBA_POWER_BLACK")
+static power:=getenv("AMOEBA_POWER_BLACK")::strtran(".","!")
     return power
 
 
 *****************************************************************************
 function power_white()
-static power:=getenv("AMOEBA_POWER_WHITE")
+static power:=getenv("AMOEBA_POWER_WHITE")::strtran(".","!")
     return power
 
 
@@ -250,7 +264,7 @@ function maxenf()
 // kényszerlépés hosszabbíthatja az elemzőfát
 // a megengedett maximális hosszabbodás: maxenf()
 //
-// Példa: export AMOEBA_POWER_BLACK=3,2
+// Példa: export AMOEBA_POWER_BLACK=3.2
 //  a 3-as erősséggel játszik
 //  plusz az elemzőfa 2-vel szinttel mélyülhet
 

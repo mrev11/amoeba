@@ -1,3 +1,10 @@
+2024-06-30 
+    megvaltozott pontrendszer;
+    hot lepesek kovetese, elemzofa ag hosszabitasa;
+    movegen passziv modja;
+    recalc kikapcsolja cachet, hogy hasznalhato bestline-t kapjunk;
+    stabilizalas;
+
 2024-06-28 verzio 3.0
   negamax
   negascout
