@@ -6,7 +6,7 @@
 # AMOEBA_CONTINUOUS_PLAY=1  : onmaga ellen jatszik (1 partit)
 # AMOEBA_CONTINUOUS_PLAY=n  : onmaga ellen jatszik  n darab partit
 
-# export AMOEBA_CONTINUOUS_PLAY=10
+ export AMOEBA_CONTINUOUS_PLAY=10
 # export AMOEBA_POWER_BLACK=6.3+
 # export AMOEBA_POWER_WHITE=5.2+
 
@@ -18,5 +18,5 @@
 # GAME=amoeba16@
 # GAME=amoeba22@
 
-amoeba $@ -p 1   $GAME   | tee  log-amoeba
+amoeba $@ -p 7.5+  $GAME   | tee -a  log-amoeba
 

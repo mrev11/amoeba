@@ -67,7 +67,7 @@ static asco:=asc("O")
 #define UPPERBOUND      1
 #define LOWERBOUND      2
 
-#define OPENING         8  // első néhány lépés
+#define OPENING         4  // első néhány lépés
 
 ******************************************************************************************
 function node()

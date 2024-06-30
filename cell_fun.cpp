@@ -135,12 +135,12 @@ void _clp_hot_move(int argno)
         
         if( f=='X' )
         {
-            _retl( b>=PVALUE_KET1 || w>=PVALUE_EGY );
+            _retl( b>=PVALUE_KET1 || w>=PVALUE_KET2 );
         
         } 
         else if( f=='O' ) 
         {
-            _retl( w>=PVALUE_KET1 || b>=PVALUE_EGY );
+            _retl( w>=PVALUE_KET1 || b>=PVALUE_KET2 );
         } 
         else
         {
