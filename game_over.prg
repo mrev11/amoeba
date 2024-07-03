@@ -102,7 +102,7 @@ local result
     elseif( winner()==asc("O") )
         ? "White won."
     end
-    hit_depth_histogram()
+    //hit_depth_histogram()
     total_nodes()
 
     if( 1<continuous_play() )
@@ -172,6 +172,7 @@ local text
     dlg:set_size_request(300,100)
     dlg:signal_connect('response',{||dlg:destroy})
     dlg:set_position(GTK_WIN_POS_MOUSE)
+    sleep(200)
     dlg:run
 
     return .t.     

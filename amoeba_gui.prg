@@ -367,6 +367,8 @@ local x,y,but,cx,fm,n
                 bestline_store({})
                 if( winner()==32 )
                     cb_move()
+                else
+                    game_over() //?
                 end
             end
 
@@ -398,10 +400,6 @@ static function cb_button_release(area,event)
 static function cb_move(button)
 local cp
 
-    if( cb_timeout(.t.) )
-        return NIL
-    end
-
     if(gtk.main_depth()>1)
         return NIL
     end
@@ -430,7 +428,9 @@ local cp
         markmovecount()
         label_move()
         label_turn()
-
+        if( game_over() )
+            exit
+        end
         cp:=(0<continuous_play())
     end
     semaphor_busy:=.f.

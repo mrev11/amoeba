@@ -47,7 +47,7 @@ struct CACHE
 
     CACHE()
     {
-        memset(this,0,sizeof(CACHE));
+        memset((void*)this,0,sizeof(CACHE));
     }
 
     NODE *search(ZCODE code)
@@ -129,7 +129,7 @@ void _clp_cache_insert(int argno)
 void _clp_cache_clean(int argno)
 {
     CCC_PROLOG("cache_clean",0);
-    memset(cache,0,sizeof(cache));
+    memset((void*)cache,0,sizeof(cache));
     _ret();
     CCC_EPILOG();
 }

@@ -1,23 +1,26 @@
 #!/bin/bash
 
+export AMOEBA_IP=i3x
 export AMOEBA_PORT=4321
+export AMOEBA_COLOR=b
+export AMOEBA_TIME_LIMIT=20
 
 # AMOEBA_CONTINUOUS_PLAY=10 : magtol nem valaszol
 # AMOEBA_CONTINUOUS_PLAY=0  : automatikusan valaszol (default)
 # AMOEBA_CONTINUOUS_PLAY=1  : onmaga ellen jatszik (1 partit)
 # AMOEBA_CONTINUOUS_PLAY=n  : onmaga ellen jatszik  n darab partit
 
- export AMOEBA_CONTINUOUS_PLAY=20
+export AMOEBA_CONTINUOUS_PLAY=3
 # export AMOEBA_POWER_BLACK=8,3+
 # export AMOEBA_POWER_WHITE=8,3+
 
- export AMOEBA_TABLESIZE=18
- export AMOEBA_CELLSIZE=36
+# export AMOEBA_TABLESIZE=18
+# export AMOEBA_CELLSIZE=36
 # export AMOEBA_COLOR=77,66,22
- export AMOEBA_BLINK=1
+export AMOEBA_BLINK=1
 
 #GAME=amoeba16@
 #GAME=amoeba22@
 
-amoeba $@ -p 5.5+  $GAME   | tee  log-amoeba
+amoeba $@ -p 6.5+  $GAME   | tee  log-amoeba
 

@@ -215,7 +215,7 @@ local str:=ratestr(v,curlev)
 
 
 ******************************************************************************************
-static function init_blink()
+function init_blink()
 local env:=getenv("AMOEBA_BLINK")
     if( !empty(env) )
         env::=val

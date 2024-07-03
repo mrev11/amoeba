@@ -20,12 +20,13 @@
 
 
 
-#define MAXMOVE  100
+#define MAXMOVE  128
 
-
-static socket:=init_socket()
-static first_move:=.f.
-static first_player:=.f.
+static socket
+static blink:=init_blink()
+static wtime:=200 //msec
+static firstmove:=.t.
+static color:=getenv("AMOEBA_COLOR")
 
 
 ******************************************************************************************
@@ -49,107 +50,91 @@ static gboolean itt_az_ido(gpointer data)
 
 ******************************************************************************************
 function install_cb_timeout()
-#clang 
+#clang
     gtk_timeout_add(500,itt_az_ido,0);
 #cend
 
 
 ******************************************************************************************
 static function init_socket()
-local p,s,c,e
-    if( empty(p:=getenv("AMOEBA_PORT")) )
+
+local ip:=getenv("AMOEBA_IP")
+local port:=getenv("AMOEBA_PORT")
+
+local s,c,e
+
+    if( socket!=NIL )
+        socket:close
+    end
+
+    if( empty(ip).or.empty(port) )
         return NIL
     end
-    p::=val
+    port::=val
 
-    begin    
-        c:=socketNew()
-        c:connect("localhost",p)
-        ? "client connection established"
-        //first_move:=.t.
-        return c // client socket
-    recover e
-        ? "connect failed, attempt to be the server..."
-    end
-
-    // nem tudtunk konnektálni
-    // akkor szerver leszünk
-
-    s:=socketNew()
-    s:reuseaddress(.t.)
-    s:bind("localhost",p) // server socket
-    s:listen
-    c:=s:accept
-    s:close
-    //first_move:=.f.
-    ? "server connection established"
-    
-    return c  // client socket
+    c:=socketNew()
+    c:connect(ip,port)
+    ? "connection established"
+    return c // client socket
 
 
 ******************************************************************************************
-function cb_timeout(flag:=.f.)
+function cb_timeout()
+static locked:=.f.
+local cx,buf,n
 
-local cx,buf
+    //? "CB_TIMEOUT"
 
-    //? "CB_TIMEOUT ",flag,first_move
-
-    if( socket==NIL )
-        return .f.
-    end
-
-    if( flag )
-        first_move:=.t.
-        //?? " SET-FIRST-ON"
+    if( locked )
         return .t.
     end
+    locked:=.t.
 
-    if( first_move )
-        first_move:=.f.
-        first_player:=.t.
-        //?? " SET-FIRST-OFF"
-        move()
-        cx:=topcell()
-        socket:send( str(cx) )
-        //?? " send", str(cx), cx::pos2rc 
-    end
+    begin
+        if( movecount()==0 .and. socket==NIL )
+            return game()
+        end
 
-    buf:=socket:recvall
+        buf:=socket:recvall
 
-    if( !empty(buf) )
-        cx:=buf::val
-        //?? " recv",cx::pos2rc
-        forw(cx)
-        markmovecount()
-        rating_store() //delete
-        recalc_store() //delete
-        drawtop()
-        stabilize()
-        label_move()
-        label_turn()
-        label_rate()
-        bestline_store({})
+        if( !empty(buf) )
+            cx:=buf::val
+            ? "recv",cx::pos2rc
+            forw(cx)
+            markmovecount()
+            rating_store() //delete
+            recalc_store() //delete
 
-        if( (movecount()>MAXMOVE .or. winner()!=32) .and. gamecount()+1<continuous_play() )
-            // vesztett
-            total_nodes()
-            start_game()
+            for n:=1 to blink
+                drawtop()
+                stabilize()
+                sleep(wtime)
 
-        elseif( !game_over() )
-            move()
-            cx:=topcell()
-            socket:send( str(cx) )
+                drawcell(cx)
+                stabilize()
+                sleep(wtime)
+            next
+            drawtop()
+            stabilize()
+            sleep(10)
 
-            if( movecount()>MAXMOVE .or. winner()!=32 )
-                // nyert
-                total_nodes()
-                if( gamecount()+1<continuous_play() )
-                    start_game()
+            label_move()
+            label_turn()
+            //label_rate()
+            bestline_store({})
+
+            if( winner()!=32 .or. movecount()>MAXMOVE   )
+                return game() // vesztett vagy döntetlen
+            else
+                move()
+                if( winner()!=32 .or. movecount()>MAXMOVE   )
+                    return game() // nyert vagy döntetlen
                 end
             end
         end
-    else
-        //?? "wait"
+
+    finally
+        locked:=.f.
     end
 
     return .t.
@@ -157,41 +142,72 @@ local cx,buf
 
 ******************************************************************************************
 static function move()
-    if( !game_over() )
-        if( movecount()==0 )
-            cell_randomize()
-        elseif( movecount()==1 )
-            cell_randomize(topcell())
-        end
+local cx
 
-        thinklabel():set_state(.f.)
-        area():set_sensitive(.f.)
-
-        go_move()
-
-        //area():set_sensitive(.t.)
-        thinklabel():set_state(.t.)
-
-        markmovecount()
-        label_move()
-        label_turn()
+    if( movecount()==0 )
+        cell_randomize()
+    elseif( movecount()==1 )
+        cell_randomize(topcell())
     end
+
+    thinklabel():set_state(.f.)
+    area():set_sensitive(.f.)
+
+    go_move()
+
+    //area():set_sensitive(.t.)
+    thinklabel():set_state(.t.)
+
+    markmovecount()
+    label_move()
+    label_turn()
+
+    cx:=topcell()
+    socket:send( str(cx) )
+    ? "send", cx::pos2rc
+
 
 
 ******************************************************************************************
-static function start_game()
-    if( first_player )
-        savegame()
-        first_move:=.t.
+static function game()
+
+local mc:=movecount()
+local gc:=gamecount()
+
+    if( socket!=NIL )
+        socket:close
+        socket:=NIL
     end
-    sleep(5000)
+
+    if( mc>0 )
+        // mc==0 elkezdett káték
+        // mc>=1 befejezett játék
+        gamecount(++gc)
+        total_nodes()
+        sleep(5000)
+    end
+
+    if( gc>=continuous_play()  )
+        return .f.
+    end
+
+    socket:=init_socket()
+    if( socket==NIL )
+        return .f.
+    end
+
     c_cb_new()
     stabilize()
     label_bestline()
     label_move()
     label_turn()
     label_rate()
-    gamecount(gamecount()+1)
+
+    if( color::left(1)=='b' )
+        move()
+    end
+    return .t.
+
 
 
 ******************************************************************************************

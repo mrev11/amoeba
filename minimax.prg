@@ -55,6 +55,11 @@ static movflg       // movegen paramétere (bevegye-e a kényszerítő lépések
 static posflg       // posvalue/movegen paramétere (milyen lépéseket vegyen be)
 static width        // elemzőfa szélessége depth függvényében
 
+
+static start_time
+static time_limit:=120
+static time_reached:=.f.
+
 static xresp
 static vresp
 static maxdepth
@@ -96,10 +101,19 @@ function minimax_config()
 #endif
 
 #ifdef CACHE
-    ?? " cache"
+    ? "with transposition table"
 #else
-    ?? " without cache"
+    ? "without transposition table"
 #endif
+
+
+    if( empty(time_limit:=getenv("AMOEBA_TIME_LIMIT")) )
+        time_limit:=120
+    else
+        time_limit::=val
+    end
+    ? "time_limit="+time_limit::str::alltrim+"sec"
+
     ?
 
 ******************************************************************************************
@@ -144,6 +158,9 @@ local mc,curlev
     PRINT(width)
     ?
 #endif
+
+    start_time:=process_utime()
+    time_reached:=.f.    
 
     return curlev
 
@@ -214,7 +231,20 @@ local bestline1
     end
 #endif
 
-    if( depth-forced_count>len(width) )
+    if( process_utime()-start_time>time_limit )
+        //elfogyott az idő
+        if( depth<=2 )
+            if( time_reached==.f. )
+                time_reached:=.t.
+                ?? "TIME LIMIT ("+time_limit::str::alltrim+"sec) REACHED";?
+            end
+        elseif( color<0 )
+            return alfa
+        elseif( color>0 )
+            return beta
+        end
+
+    elseif( depth-forced_count>len(width) )
         //elfogyott az elemzőfa
 
         if( .t. .and.  hot_move() .and. forced_count<maxenf+32 )
