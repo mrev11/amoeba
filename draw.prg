@@ -40,6 +40,12 @@ static topidx:=NIL
 static altidx:=NIL
 
 static circle_normal:=-1
+static small:=NIL
+
+
+******************************************************************************
+function set_small(x)
+    small:=x
 
 
 ******************************************************************************
@@ -148,10 +154,17 @@ local mc,cx,fig,x,y
 
     mc:=0    
     while( (cx:=cell(mc))!=NIL )
-    
-        if( 0<=circle_normal<=mc )
+
+        if( small!=NIL )
+            if( 0<ascan(small,cx) )
+                cairo_circle_small()
+            else
+                cairo_circle_normal()
+            end    
+        elseif( 0<=circle_normal<=mc )
             cairo_circle_small()
         end
+  
     
         fig:=figure(cx)
         if( fig==ascx )

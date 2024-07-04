@@ -509,3 +509,166 @@ void _clp_print_map(int argno)
 
 
 //--------------------------------------------------------------------------
+static int neighbour(int cx,int i,int d)
+{
+    int sx=cx+i*d;
+    if( sx<0 || cell::tablesize*cell::tablesize<=sx )
+    {
+        return -1;
+    }
+    cell *c=cell::cells[cx];
+    cell *s=cell::cells[sx];
+    if( c->figure!=s->figure )
+    {
+        return -1;
+    }
+    
+    return sx;
+}
+
+//--------------------------------------------------------------------------
+void _clp_winpattern(int argno)
+{
+    // megkeresi a nyerő alakzat köveit
+    // hogy a játék végén lehessen animálni
+
+    CCC_PROLOG("winpattern",0);
+
+    int sib[8],cnt=0,cx,sx;
+
+    while(1)
+    {
+        if( cell::movecount==0 )
+        {
+            break; 
+        }
+
+        cx=cell::movestack[cell::movecount-1]; // topcell
+
+        // KELET
+        cnt=0;
+        sx=cx;
+        sib[cnt]=sx;
+        for( int i=1; i<=4 && cnt<4; i++ )
+        {
+            sx=neighbour(cx,i,1);
+            if( sx>=0 )
+                sib[++cnt]=sx;
+            else
+                break;
+        }
+        for( int i=1; i<=4 && cnt<4; i++ )
+        {
+            sx=neighbour(cx,i,-1);
+            if( sx>=0 )
+                sib[++cnt]=sx;
+            else
+                break;
+        }
+        if( cnt>=4 )
+        {
+            break;
+        }
+
+
+        // ÉKELET
+        cnt=0;
+        sx=cx;
+        sib[cnt]=sx;
+        for( int i=1; i<=4 && cnt<4; i++ )
+        {
+            sx=neighbour(cx,i,cell::tablesize-1);
+            if( sx>=0 )
+                sib[++cnt]=sx;
+            else
+                break;
+        }
+        for( int i=1; i<=4 && cnt<4; i++ )
+        {
+            sx=neighbour(cx,i,-(cell::tablesize-1));
+            if( sx>=0 )
+                sib[++cnt]=sx;
+            else
+                break;
+        }
+        if( cnt>=4 )
+        {
+            break;
+        }
+
+
+        // ÉSZAK
+        cnt=0;
+        sx=cx;
+        sib[cnt]=sx;
+        for( int i=1; i<=4 && cnt<4; i++ )
+        {
+            sx=neighbour(cx,i,cell::tablesize);
+            if( sx>=0 )
+                sib[++cnt]=sx;
+            else
+                break;
+        }
+        for( int i=1; i<=4 && cnt<4; i++ )
+        {
+            sx=neighbour(cx,i,-cell::tablesize);
+            if( sx>=0 )
+                sib[++cnt]=sx;
+            else
+                break;
+        }
+        if( cnt>=4 )
+        {
+            break;
+        }
+
+
+        // DKELET
+        cnt=0;
+        sx=cx;
+        sib[cnt]=sx;
+        for( int i=1; i<=4 && cnt<4; i++ )
+        {
+            sx=neighbour(cx,i,cell::tablesize+1);
+            if( sx>=0 )
+                sib[++cnt]=sx;
+            else
+                break;
+        }
+        for( int i=1; i<=4 && cnt<4; i++ )
+        {
+            sx=neighbour(cx,i,-(cell::tablesize+1));
+            if( sx>=0 )
+                sib[++cnt]=sx;
+            else
+                break;
+        }
+        if( cnt>=4 )
+        {
+            break;
+        }
+
+
+        break; //ha nincs nyerő alakzat
+    }
+
+
+    if( cnt==4 )
+    {
+        for( int i=0; i<=4; i++ )
+        {
+            number(sib[i]);
+        }
+        array(5);
+        _rettop();
+    }
+    else
+    {
+        _ret();
+    }
+
+    CCC_EPILOG();
+}
+
+
+//--------------------------------------------------------------------------

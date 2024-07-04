@@ -73,13 +73,13 @@ local ch,w,pb,pw,mc
 
     w:=chr(winner())
     w::=strtran(" ","=")
-    
+
     pb:="PB:"+power_black()::padr(4)
     pw:="PW:"+power_white()::padr(4)
     mc:=movecount()
 
     SET CHANNEL(ch) to amoeba-stat additive
-    SET CHANNEL(ch) on 
+    SET CHANNEL(ch) on
 
     ?? w, pb , pw , mc, name, chr(10)
 
@@ -94,7 +94,7 @@ local result
     if( movecount()<maxmove .and. winner()==32 .and. (continuous_play()<1 .or. drawmeter()<maxdraw) )
         return .f.
     end
-    
+
     if( winner()==32 )
         ? "Draw - table is near full."
     elseif( winner()==asc("X") )
@@ -120,13 +120,13 @@ local result
         gamecount(gamecount()+1)
         drawmeter(0)
         return .f. // új játékot kezd
-    end 
+    end
 
     result:=game_over_alert()
 
     gamecount(0)
     drawmeter(0)
-    
+
     if( 0<continuous_play() )
         continuous_play(1)
     end
@@ -160,8 +160,10 @@ local text
     elseif( winner()==asc('O') )
         text:="White won!"
     else
-        return .f.     
+        return .f.
     end
+
+    animate()
 
     dlg:=gtkmessagedialogNew(window,;
             GTK_DIALOG_MODAL,;
@@ -175,8 +177,37 @@ local text
     sleep(200)
     dlg:run
 
-    return .t.     
+    return .t.
 
+******************************************************************************
+static function animate()
+local wp,n,i
 
+    wp:=winpattern()
+
+    if( wp!=NIL )
+        asort(wp)
+
+        for n:=1 to 2
+            for i:=1 to 5
+                drawcell( wp[i], if(figure(topcell())==asc("X"),6,5) )
+                stabilize()
+                sleep(100)
+            next
+        next
+        drawtop()
+        stabilize()
+        sleep(200)
+
+        for n:=1 to 3
+            set_small(wp)
+            stabilize()
+            sleep(300)
+            set_small()
+            stabilize()
+            sleep(200)
+        next
+
+    end
 
 ******************************************************************************
