@@ -94,6 +94,10 @@ local cx,buf,n
         if( movecount()==0 .and. socket==NIL )
             return game()
         end
+      
+        if( socket==NIL )
+            return .f.
+        end
 
         buf:=socket:recvall
 

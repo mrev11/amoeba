@@ -195,10 +195,13 @@ local mask
 
     mainwindow(window)
     window:show_all
-    loadfile(amoebafile)
-    ?
+    
+    if( !empty(amoebafile) )
+        loadfile(amoebafile)
+    elseif( !empty(getenv("AMOEBA_PORT")) )
+        install_cb_timeout()
+    end
 
-    install_cb_timeout()
     gtk.main()
     ?
 

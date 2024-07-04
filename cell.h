@@ -79,7 +79,7 @@ struct cell
     int count;                          // cella index a táblában (0->MAXCELLS-1)
     char figure;                        // ' ' vagy 'O' vagy 'X'
     int layer;                          // layer index
-    double dist;                        // középpontól vett távolság (perturbálva)
+    double dist;                        // középponttól vett távolság (perturbálva)
 
     char wall[4];                       // tablarol lelogo resz maszkja negy iranyban
     FLDVAL fieldval[MAXLAYER+1];        // cella érték a két játékosra retegenkent
