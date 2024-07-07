@@ -123,6 +123,11 @@ int cell::movegen(int total, int movflg) //kikeresi a megadott szamu "legfontosa
             continue;
         }
 
+        if( maxoppo>=PVALUE_KET2 && vs<PVALUE_KET1 )
+        {
+            continue;
+        }
+
 
         if( vs<=minv && !(vt&FORCE) )
         {
@@ -177,6 +182,23 @@ int cell::movegen(int total, int movflg) //kikeresi a megadott szamu "legfontosa
 
     if( cnt>1 )
     {
+        if( maxoppo>=PVALUE_KET2 )
+        {
+            int i=0;
+            while(i<cnt)
+            {
+                if( cell::best[i].vs<PVALUE_KET1 )
+                {
+                    memmove(&cell::best[i],&cell::best[i+1],(cnt-i)*sizeof(BEST)); //delete
+                    --cnt;
+                }
+                else
+                {
+                    ++i; // keep
+                }
+            }
+        }
+
         qsort(cell::best,cnt,sizeof(BEST),cell::cmp_best);
     }
 

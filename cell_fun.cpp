@@ -33,9 +33,9 @@
 void _clp_movegen(int argno)
 {
     CCC_PROLOG("movegen",2);
-    int cnt=_parni(1);
-    int flg=ISNIL(2)?0:_parl(2);
-    cnt=cell::movegen(cnt,flg?1:0);
+    int total=_parni(1);
+    int movflg=ISNIL(2)?0:_parl(2);
+    int cnt=cell::movegen(total,movflg?1:0);
     for(int i=0;i<cnt; i++)
     {
         number( cell::best[i].cx );
@@ -118,9 +118,9 @@ void _clp_fieldval(int argno)
 
 
 //--------------------------------------------------------------------------
-void _clp_hot_move(int argno)
+void _clp_hot_leaf(int argno)
 {
-    CCC_PROLOG("force",0);
+    CCC_PROLOG("hot_leaf",0);
     if( cell::movecount==0 )
     {
         _retl(0); 
@@ -155,51 +155,43 @@ void _clp_hot_move(int argno)
     CCC_EPILOG();
 }
 
+
 //--------------------------------------------------------------------------
-void _clp_enforced_move(int argno)
+void _clp_hot_node(int argno)
 {
-    CCC_PROLOG("enforced_move",0);
+    CCC_PROLOG("hot_node",0);
     if( cell::movecount==0 )
     {
         _retl(0); 
     }
     else
     { 
-        int cx=cell::movestack[cell::movecount-1];
+        int cx=cell::movestack[cell::movecount-1]; // topcell
         cell *c=cell::cells[cx];
         int w=c->fieldval[c->layer].white;
         int b=c->fieldval[c->layer].black;
-        int black=cell::movecount&1;
+        int f=c->figure;
+        
+        if( f=='X' )
+        {
+            _retl( b>=PVALUE_KET1 );
+        
+        } 
+        else if( f=='O' ) 
+        {
+            _retl( w>=PVALUE_KET1 );
+        } 
+        else
+        {
+            _retl(0); // ide nem johet
+        }
 
-        _retl( (black?w:b)>=PVALUE_EGY ); // kényszerített lépés
-
-        // ha black==1
-        // akkor fekete lépett utoljára
-        // a mezőn fehérnek PVALUE_EGY-nél erősebb fenyegetése volt
-        // ezért fekete lépése kényszer volt
+        // a táblára feltett utolsó kő kényszeítő
+        
     }
     CCC_EPILOG();
 }
 
-//--------------------------------------------------------------------------
-void _clp_enforcing_candidate(int argno)
-{
-    CCC_PROLOG("enforcing_candidate",1);
-    int cx=_parni(1);
-    cell *c=cell::cells[cx];
-    int w=c->fieldval[c->layer].white;
-    int b=c->fieldval[c->layer].black;
-    int black=cell::movecount&1;
-
-    _retl( (black?b:w)>=PVALUE_EGY ); // kényszerítő lépés
-
-    // ha black==1
-    // akkor fekete lépett utoljára, tehát most fehér lép
-    // feketének PVALUE_EGY-nél erősebb fenyegetése van a mezőn
-    // ezért fehér kénytelen oda lépni
-
-    CCC_EPILOG();
-}
 
 //--------------------------------------------------------------------------
 void _clp_turn_x(int argno)

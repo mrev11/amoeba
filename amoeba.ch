@@ -49,6 +49,7 @@
 #define NEGASCOUT
 
 #define POSVALUE   10
+#define MAXENF     50
 
 
 

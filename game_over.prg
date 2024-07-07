@@ -175,7 +175,7 @@ local text
     dlg:signal_connect('response',{||dlg:destroy})
     dlg:set_position(GTK_WIN_POS_MOUSE)
     sleep(200)
-    dlg:run
+    //dlg:run
 
     return .t.
 

@@ -14,6 +14,8 @@ grep Nodes $LOG  | grep O | sort -t = -k 3 -n | tail
 echo
 grep TOTAL_NODES $LOG | tail -n 1
 echo
+grep TIME $LOG
+echo
 
 
 

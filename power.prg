@@ -58,8 +58,8 @@ local pw
         movflg_white:=.f.
     end
 
-    maxenf_white:=val(p::split("!")::asize(2)[2]|"0")::min(10)::max(0)
-    maxenf_black:=val(p::split("!")::asize(2)[2]|"0")::min(10)::max(0)
+    maxenf_white:=val(p::split("!")::asize(2)[2]|"0")::min(MAXENF)::max(0)
+    maxenf_black:=val(p::split("!")::asize(2)[2]|"0")::min(MAXENF)::max(0)
 
     width:=init_width()
 
