@@ -41,8 +41,10 @@
 #include "amoeba.ch"
 #include "pvalue.h"
 
+
 #define PRINT(x)    ? #x, any2str(x)
 #define INDENT      space(4*(depth-1))
+
 
 static node         // ennyi állást értékelt ki
 static usecache     // hasznája-e a transposition table-t
@@ -58,7 +60,7 @@ static width        // elemzőfa szélessége depth függvényében
 
 static start_time
 static time_limit:=120
-static time_reached:=.f.
+static time_limit_reached:=.f.
 
 static xresp
 static vresp
@@ -72,7 +74,6 @@ static asco:=asc("O")
 #define UPPERBOUND      1
 #define LOWERBOUND      2
 
-#define OPENING         4  // első néhány lépés
 
 ******************************************************************************************
 function node()
@@ -111,6 +112,7 @@ function minimax_config()
         time_limit:=120
     else
         time_limit::=val
+        time_limit::=max(5)
     end
     ? "time_limit="+time_limit::str::alltrim+"sec"
 
@@ -129,8 +131,14 @@ local mc,curlev
     fallback:=0
     xbest:=NIL
 
-    if( mc<=OPENING )
-        width:={4}
+    width:=width()
+    ilevel:=infolevel()
+    maxenf:=maxenf()
+    movflg:=movflg()
+    posflg:=NIL
+
+    if( mc<=5 )
+        width:={9}
         ilevel:=0
         maxenf:=0
         movflg:=.f.
@@ -139,13 +147,12 @@ local mc,curlev
         else
             posflg:=2 // fehér lép  (csak védekezik, nem számítja be a fehér alakzatokat)
         end
-    else
-        width:=width()
-        ilevel:=infolevel()
-        maxenf:=maxenf()
-        movflg:=movflg()
-        posflg:=NIL
+    elseif( mc<=10 )
+        addel(width,1)
     end
+
+    start_time:=process_utime()
+    time_limit_reached:=.f.
 
 #ifdef PRINT_PARAMS
     PRINT(curlev)
@@ -156,11 +163,11 @@ local mc,curlev
     PRINT(maxenf)
     PRINT(movflg)
     PRINT(width)
+    PRINT(time_limit)
     ?
 #endif
 
-    start_time:=process_utime()
-    time_reached:=.f.
+    ?? "power", {len(width),width,maxenf(),movflg()}::any2str
 
     return curlev
 
@@ -181,11 +188,14 @@ local cache_val
 local cache_flg
 local bestline1
 
-    node++
-    depth++
-    if( depth<=2 .or. maxdepth<depth )
+    //dbg("minimax",depth,alfa,beta)
+
+    if( depth<=1 .or. maxdepth<depth )
         maxdepth:=depth
     end
+
+    node++
+    depth++
     alfa_orig:=alfa
     beta_orig:=beta
     color:=if(turn_x(),1,-1)
@@ -230,18 +240,27 @@ local bestline1
     end
 #endif
 
-    if( process_utime()-start_time>time_limit )
+    if( process_utime()-start_time>=time_limit )
         //elfogyott az idő
-        if( depth<=2 )
-            if( time_reached==.f. )
-                time_reached:=.t.
-                ?? "TIME LIMIT ("+time_limit::str::alltrim+"sec) REACHED";?
-            end
-        elseif( color<0 )
-            return alfa
-        elseif( color>0 )
-            return beta
+        if( time_limit_reached==.f. )
+            time_limit_reached:=.t.
+            ?? "TIME LIMIT ("+time_limit::str::alltrim+"sec) REACHED";?
         end
+
+        // olyan értéket kell visszaadni
+        // ami mutatja, hogy az utolsó lépés rossz
+        // (ne legyen kiválasztva a félig kiértékelt lépés)
+        // turn_x()==.t. <=> color==1, ha az utolsó kő fehér
+        // (movecount()+1-depth) páros, ha fekete lépését keressük
+        if( numand(movecount()+1-depth,1)==0 )
+            // fekete lépését keressük
+            vopt:=-PVALUE_INFIN
+        else
+            // fehér lépését keressük
+            vopt:=PVALUE_INFIN
+        end
+        //dbg("RETURN-time",color*vopt)
+        return color*vopt
     end
 
     if( depth-forced_count>len(width) )
@@ -249,12 +268,16 @@ local bestline1
         if( hot_node() )
             // hosszabbítunk
             // print_map()
-            // ?? "HOTLEAF-"+topcell()::figure::chr, topcell()::pos2rc::padr(3), depth, fieldval_o(topcell()), fieldval_x(topcell());?
+            // ?? "HOTNODE-"+topcell()::figure::chr, topcell()::pos2rc::padr(3), depth, fieldval_o(topcell()), fieldval_x(topcell());?
             // inkey(0)
             forced_count++
         else
-            // leállunk, heurisztikus érték
+            // leállunk
+            // vopt:=patterns(turn)-patterns(oppo)
+            // pozitív érték a lépésen levő előnyét jelenti 
+            // print_map()
             vopt:=posvalue(POSVALUE,posflg)
+            //dbg("RETURN-heur",depth,color*vopt)
             return color*vopt
         end
     end
@@ -292,8 +315,10 @@ local bestline1
     end
 
     if( depth==1 )
+        xopt:=candidates[1] 
         show_candidates(depth,candidates)
     end
+
 
     //negamax/negascout
     vopt:=-PVALUE_INFIN
@@ -466,7 +491,7 @@ local dist
 ******************************************************************************************
 static function show_candidates(depth, candidates)
 local n
-    ?? candidates::len::str(3)+":"
+    ? "candidates("+ candidates::len::str::alltrim+"):"
     for n:=1 to len(candidates)
         ??  "",candidates[n]::pos2rc
         if( turn_x() .and. fieldval_x(candidates[n])::numand(1)==1 )
@@ -477,6 +502,13 @@ local n
         end
     next
     ?
+
+
+******************************************************************************************
+static function dbg(*)
+    ?? "DBG"+{*}::any2str
+    ?
+
 
 ******************************************************************************************
 

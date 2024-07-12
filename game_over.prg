@@ -110,6 +110,7 @@ local result
     end
 
     if( gamecount()+1<continuous_play()  )
+        animate()
         sleep(3000)
         c_cb_new()
         stabilize()
@@ -175,7 +176,7 @@ local text
     dlg:signal_connect('response',{||dlg:destroy})
     dlg:set_position(GTK_WIN_POS_MOUSE)
     sleep(200)
-    //dlg:run
+    dlg:run
 
     return .t.
 

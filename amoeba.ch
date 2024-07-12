@@ -29,40 +29,54 @@
 #define MAXCOL          TABLESIZE
 #define ROWCOL          TABLESIZE*TABLESIZE
 
-#define CELLSIZE        cellsize()
 
-#define CIRCLE_NORMAL   0
-#define CIRCLE_SMALL    1
+#define SCHEMA1
+
+#ifdef SCHEMA1
+  #define POW0  "auto"
+  #define POW1  "11,8,6,4"
+  #define POW2  "12,8,6,4,4"
+  #define POW3  "13,8,7,5,5,4"
+  #define POW4  "14,8,7,5,5,4,4"
+  #define POW5  "15,9,7,6,5,5,4,4"
+  #define POW6  "16,9,8,6,6,5,5,4,4"
+  #define POW7  "17,9,8,7,6,6,5,5,4,4"
+  #define POW8  "18,9,8,7,6,6,6,5,5,5,4"
+             //   1 2 3 4 5 6 7 8 9 0 1
+#endif
 
 
-#define POW0  "auto"
-#define POW1  "11,8,6,4"                         //  8-ig
-#define POW2  "12,8,6,4,4"                       // 16-ig
-#define POW3  "13,8,7,5,5,4"                     // 32-ig
-#define POW4  "14,8,7,5,5,4,4"                   // 32 fölött
-#define POW5  "15,9,7,6,5,5,4,4"                 // interaktívan beállítható
-#define POW6  "16,9,8,6,6,5,5,4,4"               // interaktívan beállítható
-#define POW7  "17,9,8,7,6,6,5,5,4,4"             // interaktívan beállítható
-#define POW8  "18,9,8,7,6,6,6,5,5,5,4"           // interaktívan beállítható
+#ifdef SCHEMA2
+  #define POW0  "auto"
+  #define POW1  "11,6,6,6,6,6"
+  #define POW2  "12,6,6,6,6,6,6"
+  #define POW3  "13,7,7,7,7,7,7"
+  #define POW4  "14,7,7,7,7,7,7,7"
+  #define POW5  "15,8,8,8,8,8,8,8"
+  #define POW6  "16,8,8,8,8,8,8,8,8"
+  #define POW7  "17,9,9,9,9,9,9,9,9"
+  #define POW8  "18,9,9,9,9,9,9,9,9,9"
+             //   1 2 3 4 5 6 7 8 9 0
+#endif
+
+
+#ifdef SCHEMA3
+  #define POW0  "auto"
+  #define POW1  "11,6,6"                      //  8-ig
+  #define POW2  "12,7,7,7"                    // 16-ig
+  #define POW3  "13,7,7,7,7"                  // 32 fölött
+  #define POW4  "14,7,7,7,7,7"                // interaktívan beállítható
+  #define POW5  "15,8,8,8,8,8,8"              // interaktívan beállítható
+  #define POW6  "16,8,8,8,8,8,8,8"            // interaktívan beállítható
+  #define POW7  "17,8,8,8,8,8,8,8,8"          // interaktívan beállítható
+  #define POW8  "18,9,9,9,9,9,9,9,9,9"
+             //   1 2 3 4 5 6 7 8 9 0
+#endif
+
 
 #define CACHE
 #define NEGASCOUT
 
 #define POSVALUE   10
 #define MAXENF     50
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

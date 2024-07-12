@@ -202,7 +202,7 @@ int cell::movegen(int total, int movflg) //kikeresi a megadott szamu "legfontosa
         qsort(cell::best,cnt,sizeof(BEST),cell::cmp_best);
     }
 
-    //print_movegen(cnt);
+    // print_movegen(cnt);
     return cell::bestcnt=cnt;
 }
 

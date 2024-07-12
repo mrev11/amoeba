@@ -40,7 +40,6 @@ local rts,pws
     if( continuous_play()>1 )
         ?  "Game="+(1+gamecount())::str::alltrim+"/"+continuous_play()::str::alltrim
         ?? " Move="+(1+movecount())::str::alltrim
-        ?? " Draw="+drawmeter()::str::alltrim
     end
     ?
 

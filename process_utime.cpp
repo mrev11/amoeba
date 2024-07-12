@@ -32,11 +32,11 @@ void _clp_process_utime(int argno)
     FILETIME cre,ext,ker,usr;
     if( GetProcessTimes(GetCurrentProcess(),&cre,&ext,&ker,&usr) )
     {
-    SYSTEMTIME st;
-    FileTimeToSystemTime(&usr,&st);
-    sec=st.wHour;
-    sec=sec*60+st.wMinute;
-    sec=sec*60+st.wSecond;
+        SYSTEMTIME st;
+        FileTimeToSystemTime(&usr,&st);
+        sec=st.wHour;
+        sec=sec*60+st.wMinute;
+        sec=sec*60+st.wSecond;
     }
     number(sec);
 }
@@ -58,3 +58,5 @@ void _clp_process_utime(int argno)
 }
 
 #endif
+
+

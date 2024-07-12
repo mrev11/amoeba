@@ -23,3 +23,9 @@
 #define DRAW_WHITE(cr)   cairo_set_source_rgb(cr,1,1,1)
 #define DRAW_EMPTY(cr)   cairo_set_source_rgb(cr,tabcolor(0),tabcolor(1),tabcolor(2))
 
+
+#define CELLSIZE        cellsize()
+
+#define CIRCLE_NORMAL   0
+#define CIRCLE_SMALL    1
+
