@@ -302,11 +302,11 @@ local bestline1
         return color*vopt
 
     elseif( len(candidates)==1 )
-        if( depth==1 )
+        if( depth==1 .and. usecache )
             // azonnal válaszol
             // nem értékeli az állást
             xbest:=candidates[1]
-            bestline:={xbest}
+            //bestline:={xbest}
             return NIL
         elseif( forced_count<maxenf )
             // hosszabbít
