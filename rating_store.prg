@@ -20,6 +20,7 @@
 
 
 #include "amoeba.ch"
+#include "pvalue.h"
 
 
 static rating:=array(ROWCOL)
@@ -136,9 +137,10 @@ local labtxt,sp,rc,n
             cx:=(cx+1)%2
         next
     
-        if( abs(val)>9000 )
+        if( abs(val)>PVALUE_INFIN-100 )
             labtxt::=strtran("green","red")
-            if( val>0 )
+            if( abs(val)+len(bestline)<PVALUE_INFIN )
+            elseif( val>0 )
                 labtxt+="<span color='black'>#</span>"
             else
                 labtxt+="<span color='white'>#</span>"
