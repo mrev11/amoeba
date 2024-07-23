@@ -26,11 +26,12 @@ static socket
 static blink:=init_blink()
 static wtime:=200 //msec
 static firstmove:=.t.
-static color:=getenv("AMOEBA_COLOR")
+static color:=getenv("AMOEBA_CLIENT")
 
 
 ******************************************************************************************
 #clang
+#include <stdint.h>
 #include <gtk/gtk.h>
 #undef TRUE
 #undef FALSE

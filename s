@@ -7,17 +7,16 @@
 # AMOEBA_CONTINUOUS_PLAY=n  : onmaga ellen jatszik  n darab partit
 
 # export AMOEBA_CONTINUOUS_PLAY=1
- export AMOEBA_POWER_BLACK=6.3+
- export AMOEBA_POWER_WHITE=1.2+
+# export AMOEBA_POWER_BLACK=6.10+
+# export AMOEBA_POWER_WHITE=6.10+
  export AMOEBA_TIME_LIMIT=60
 
-# export AMOEBA_TABLESIZE=19
+# export AMOEBA_TABLESIZE=22
 # export AMOEBA_CELLSIZE=40
 # export AMOEBA_COLOR=77,66,22
- export AMOEBA_BLINK=0
+ export AMOEBA_BLINK=1
 
 # GAME=amoeba16@
-# GAME=amoeba22@
 
-amoeba $@ -p 3.5+  $GAME   | tee -a  log-amoeba
+amoeba $@ -p 8.15+  $GAME   | tee -a  log-amoeba
 

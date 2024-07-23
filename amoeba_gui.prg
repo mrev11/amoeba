@@ -92,7 +92,7 @@ local mask
 
     // head
 
-    hbox_head:set_size_request(-1,32)
+    hbox_head:set_size_request(-1,56)
     hbox_head:pack_start(gtklabelNew(" Best line: "),.f.)
     hbox_best:=hbox(hbox_head)
 
@@ -167,7 +167,7 @@ local mask
 
     // foot
 
-    hbox_foot:set_size_request(-1,56)
+    hbox_foot:set_size_request(-1,64)
 
     vbox_move:=vbox(hbox_foot,.f.) // do not expand horizontally
     vbox_turn:=vbox(hbox_foot,.f.) // do not expand horizontally

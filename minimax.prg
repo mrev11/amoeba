@@ -137,7 +137,7 @@ local mc,curlev
     movflg:=movflg()
     posflg:=NIL
 
-    if( mc<=5 )
+    if( mc<4 )
         width:={9}
         ilevel:=0
         maxenf:=0
@@ -147,8 +147,6 @@ local mc,curlev
         else
             posflg:=2 // fehér lép  (csak védekezik, nem számítja be a fehér alakzatokat)
         end
-    elseif( mc<=10 )
-        addel(width,1)
     end
 
     start_time:=process_utime()
@@ -282,7 +280,8 @@ local bestline1
         end
     end
 
-    if( depth<=2 .and. 10<=width[1] )
+    if( .f. .and. depth<=2 .and. 10<=width[1] )
+        // ez nem annyira jo
         // kétszer nagyobb halmazból
         // sekély mélységű elemzéssel választ
         candidates:=precalc_movegen(width[depth])
