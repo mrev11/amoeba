@@ -14,12 +14,12 @@ export AMOEBA_PLAYDIR=~/amoeba-plays
 # export AMOEBA_CONTINUOUS_PLAY=2
 # export AMOEBA_POWER_BLACK=8.3+
 # export AMOEBA_POWER_WHITE=8.3+
-# export AMOEBA_TIME_LIMIT=60
+ export AMOEBA_TIME_LIMIT=30
 
 # export AMOEBA_TABLESIZE=16
 # export AMOEBA_CELLSIZE=36
  export AMOEBA_COLOR=60,60,50
  export AMOEBA_BLINK=2
 
-amoeba $@ -p 8.15+   | tee   log-amoeba
+amoeba $@ -p 6.10+   | tee   log-amoeba
 

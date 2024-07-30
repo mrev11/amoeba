@@ -179,6 +179,7 @@ static function game()
 local mc:=movecount()
 local gc:=gamecount()
 local play:=nextplay()
+static playprev
 
     if( socket!=NIL )
         socket:close
@@ -190,7 +191,10 @@ local play:=nextplay()
         // mc> 0 befejezett játék
 
         if( mc>5  )
-            savegame()
+            if( playprev!=NIL )
+                playprev+="-"+color::left(1)
+            end
+            savegame(basename(playprev))
             animate()
             total_nodes()
         end
@@ -219,6 +223,7 @@ local play:=nextplay()
         // black
         if( play!=NIL )
             loadfile(play)
+            playprev:=play
             socket:send( "?"+play )
             sleep(1000)
         end
@@ -228,6 +233,7 @@ local play:=nextplay()
         // white
         if( play!=NIL )
             loadfile(play)
+            playprev:=play
             socket:send( "!"+play )
         end
 
@@ -257,6 +263,11 @@ local plays,n
         continuous_play(plays::len)
     end
     return arev(plays)
+
+
+******************************************************************************************
+static function basename(fn)
+    return substr(fn,rat(dirsep(),fn)+1)
 
 
 ******************************************************************************************

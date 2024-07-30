@@ -55,8 +55,7 @@ local dlg,selected_file,name
 
 
 ******************************************************************************
-function savegame() // mentés dialog nélkül
-local filename:=uniquename()
+function savegame(filename:=uniquename()) // mentés dialog nélkül
     savefile(filename)
     return filename
 
