@@ -14,9 +14,9 @@
 # export AMOEBA_TABLESIZE=22
 # export AMOEBA_CELLSIZE=40
 # export AMOEBA_COLOR=77,66,22
- export AMOEBA_BLINK=1
+ export AMOEBA_BLINK=0
 
 # GAME=amoeba16@
 
-amoeba $@ -p 8.15+  $GAME   | tee -a  log-amoeba
+amoeba $@ -p 6.15+  $GAME   #| tee -a  log-amoeba
 

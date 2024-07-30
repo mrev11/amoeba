@@ -178,6 +178,7 @@ static function game()
 
 local mc:=movecount()
 local gc:=gamecount()
+local play:=nextplay()
 
     if( socket!=NIL )
         socket:close
@@ -185,14 +186,19 @@ local gc:=gamecount()
     end
 
     if( mc>0 )
-        // mc==0 elkezdett káték
-        // mc>=1 befejezett játék
+        // mc<=0 elkezdett játék
+        // mc> 0 befejezett játék
+
+        if( mc>5  )
+            savegame()
+            animate()
+            total_nodes()
+        end
         gamecount(++gc)
-        total_nodes()
         sleep(5000)
     end
 
-    if( gc>=continuous_play()  )
+    if( play==NIL .and. gc>=continuous_play()  )
         return .f.
     end
 
@@ -207,12 +213,50 @@ local gc:=gamecount()
     label_move()
     label_turn()
     label_rate()
-
-    if( color::left(1)=='b' )
+    
+    
+    if( color::left(1)$'bBxX' )
+        // black
+        if( play!=NIL )
+            loadfile(play)
+            socket:send( "?"+play )
+            sleep(1000)
+        end
         move()
+
+    elseif( color::left(1)$'wWoO') 
+        // white
+        if( play!=NIL )
+            loadfile(play)
+            socket:send( "!"+play )
+        end
+
+    else
+        break("invalid value of AMOEBA_CLIENT(xXbBoOwW)")    
     end
     return .t.
 
+
+
+******************************************************************************************
+static function nextplay()
+static plays:=initplays()
+    return apop(plays)
+
+
+static function initplays()
+local playdir:=getenv("AMOEBA_PLAYDIR")
+local tabsiz:=tablesize()::str::alltrim
+local plays,n
+    plays:=directory(playdir+"/amoeba"+tabsiz+"-*")
+    for n:=1 to len(plays)
+        plays[n]:=playdir+"/"+plays[n][1]
+    next
+    plays::asort
+    if( !plays::empty )
+        continuous_play(plays::len)
+    end
+    return arev(plays)
 
 
 ******************************************************************************************

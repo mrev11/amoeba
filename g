@@ -12,11 +12,8 @@ grep Nodes $LOG  | grep X | sort -t = -k 3 -n | tail
 echo
 grep Nodes $LOG  | grep O | sort -t = -k 3 -n | tail
 echo
-grep TOTAL_NODES $LOG | tail -n 1
+grep -E 'TOTAL_NODES|TIME' $LOG 
 echo
-grep TIME $LOG
-echo
-
 
 
 GAMES=$(grep -c TOTAL_NODES $LOG)

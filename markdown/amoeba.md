@@ -200,7 +200,7 @@ A minimax kombinálás akkor is értelem látszatát kölcsönzi a programnak,
 ha a másik két komponens viszonylag gyönge. A végállásokban mindig egyértelmű,
 ki a nyerő, ez már ad egy minimális támpontot, ami alapján a minimax jó
 irányba terel. Ettől élvezetes program az Amoeba. Olyan, mintha volna ott valaki,
-aki gondolkodik. Persze nincs, de mégis olyan. Pedig ez még csak nem is AI.
+aki gondolkodik. 
 
 
 ---------------------------------------------------------------------------------
@@ -310,7 +310,7 @@ a program működését.
 
   - `export AMOEBA_TIME_LIMIT=<sec>`
 
-    A lépések időkorlátja (default 120 másodperc). Ha a program
+    A lépések időkorlátja (default 60 másodperc). Ha a program
     egy lépésen gondolkodva eléri az időkorlátot, akkor megteszi az addig
     talált legjobb lépést.
 
@@ -398,13 +398,13 @@ mi az állás értékelése.
 
 #### Best line (Principal Variation)
 
-Érdemes külön szólni a *Best line* mezőről. A program itt kiírja azt a 
+Érdemes elidőzni a *Best line* mezőnél. A program itt kiírja azt a 
 lépéssorozatot, amiben fekete is, fehér is a maga szempontjából optimálisan játszik.
 Tudnunk kell, hogy ez nem feltétlenül jelenti az abszolút optimális lépéseket, 
 hiszen a program nem képes az összes lehetséges változat kiértékelésére.
 A program a változatoknak csak az elemzőfa által kijelölt részhalmazát
-vizsgálja. Még ezen belül is bizonytalanság van, mert a fa leveleinek megfelelő
-pozíciókhoz rendelt heurisztikus érték tökéletlenül méri a változat előnyös/hátrányos 
+vizsgálja. Még ezen belül is bizonytalanság van, mert a fa leveleihez
+rendelt heurisztikus érték tökéletlenül méri a változat előnyös/hátrányos 
 voltát. Ezért nem ritka, hogy a program kombinációja lyukasnak bizonyul, és hirtelen
 megfordul a játszma menete: A messzebbről nézve előnyösnek gondolt változatról
 kiderülhet, hogy veszít.
@@ -422,7 +422,7 @@ A felhasználót viszont érdekelheti, hogy milyen változattal számol a progra
 A Recalc gombbal megismételt számolás ezért szándékosan nem használja a *transposition table*-t,
 így a *Best line* mező tartalma teljes lesz. Sajnos ilyenkor a lépésre hosszabb ideig kell várnunk.
 
-A  táblán is meg tudjuk jeleníteni a *Best line* lépéseit. Nyomjuk le a Shift billentyűt,
+A  táblán is meg tudjuk jeleníteni a *Best line* lépéseit: Nyomjuk le a Shift billentyűt,
 majd a Shift-et lenyomva tartva a jobbnyíl/balnyíl billentyűkkel navigálhatunk
 az optimálisnak gondolt változatban.
 
@@ -497,7 +497,7 @@ Arch Linux. A szerény teljesítményű CPU-tól ne várjunk nagy sebességet.
 
 *(2024)*
 
-A 80-a évék második felétől  a számítógépek növekvő teljesítménye lehetővé tette
+A 80-a évek második felétől  a számítógépek növekvő teljesítménye lehetővé tette
 az alfa-béta algortitmus hatékonyabb változatainak felfedezését. A mostani program
 ezen későbbi eredmények némelyikét is alkalmazza:
 

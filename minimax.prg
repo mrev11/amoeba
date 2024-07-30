@@ -109,7 +109,7 @@ function minimax_config()
 
 
     if( empty(time_limit:=getenv("AMOEBA_TIME_LIMIT")) )
-        time_limit:=120
+        time_limit:=60
     else
         time_limit::=val
         time_limit::=max(5)
@@ -137,15 +137,27 @@ local mc,curlev
     movflg:=movflg()
     posflg:=NIL
 
-    if( mc<4 )
-        width:={9}
+    if( mc<10 )
+        // opening
+
         ilevel:=0
         maxenf:=0
         movflg:=.f.
-        if( numand(mc,1)==0 )
-            posflg:=4 // fekete lép (csak védekezik, nem számítja be a fekete alakzatokat)
+
+        if( mc==0 )
+            // az elso lepessel sietni kell
+            // hogy a szerverhez 5 masodpercen belul
+            // megerkezzen a lepes
+            width:={9}
+
+        elseif( numand(mc,1)==0 )
+            // fekete lép 
+            // posflg:=4 //csak védekezik, nem számítja be a fekete alakzatokat
+            width::=addel(1)
         else
-            posflg:=2 // fehér lép  (csak védekezik, nem számítja be a fehér alakzatokat)
+            // fehér lép  
+            posflg:=2  //csak védekezik, nem számítja be a fehér alakzatokat
+            width:={9}
         end
     end
 

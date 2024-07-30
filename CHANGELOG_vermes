@@ -1,3 +1,10 @@
+2024-07-30  
+  jatek elokeszitett allasokbol:
+    amoeba-srv/playgen.exe veletlenszeru allasokat general
+    az allasokat AMOEBA_PLAYDIR-ben kell elhelyezni
+    az allasokat a szerver es a kliens betolti es folytatja;
+  bokrosabb elemzofa; 
+
 2024-07-23 
   dokumentacio kiegeszitve;
   egyszerusitesek;
