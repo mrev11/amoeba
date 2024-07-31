@@ -193,6 +193,7 @@ static playprev
         if( mc>5  )
             if( playprev!=NIL )
                 playprev+="-"+color::left(1)
+                playprev+=if(winner()==32,"_",lower(chr(winner())))
             end
             savegame(basename(playprev))
             animate()

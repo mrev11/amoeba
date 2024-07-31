@@ -2,7 +2,7 @@
 
 LOG=$1
 if [ "$LOG" == ""  ]; then
-    LOG=log-amoeba
+    LOG=logo-amoeba
 fi
 
 
