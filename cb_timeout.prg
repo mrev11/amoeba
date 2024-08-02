@@ -149,12 +149,6 @@ local cx,buf,n
 static function move()
 local cx
 
-    if( movecount()==0 )
-        cell_randomize()
-    elseif( movecount()==1 )
-        cell_randomize(topcell())
-    end
-
     thinklabel():set_state(.f.)
     area():set_sensitive(.f.)
 
@@ -268,7 +262,9 @@ local plays,n
 
 ******************************************************************************************
 static function basename(fn)
-    return substr(fn,rat(dirsep(),fn)+1)
+    if( fn!=NIL )
+        return substr(fn,rat(dirsep(),fn)+1)
+    end
 
 
 ******************************************************************************************

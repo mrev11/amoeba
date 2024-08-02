@@ -67,7 +67,7 @@ Tűrhetetlen állapot, ha meggondoljuk.
 
 Egyszerűsége folytán az amőba játék kiváló alany a minimax
 algoritmus szemléltetésére. A program elvi váza ugyanaz, mint a minimax
-algoritmussal játszó &mdash; sokkal bonyolultabb &mdash; sakkprogramoké.
+algoritmussal játszó&mdash;sokkal bonyolultabb&mdash;sakkprogramoké.
 
 Ketten játszanak:
 
@@ -98,7 +98,7 @@ A hasonló fákban való optimum keresés kombinatorikus optimalizálási felada
 amit a minimax néven ismert algoritmussal oldunk meg. A minimax algoritmus leírását
 megnézhetjük például itt: [https://en.wikipedia.org/wiki/Minimax](https://en.wikipedia.org/wiki/Minimax).
 Nincs szükség az elemzőfa minden pontjának kiértékelésére.
-Egy ügyes módszer segítségével &mdash; az ún. *alfa-béta vágással* &mdash; nagy mértékben lehet csökkenteni
+Egy ügyes módszer segítségével&mdash;az ún. *alfa-béta vágással*&mdash;nagy mértékben lehet csökkenteni
 a számítások mennyiségét. Az alfa-béta vágásról olvashatunk itt:
 [https://en.wikipedia.org/wiki/Alpha-beta_pruning](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning).
 
@@ -305,7 +305,7 @@ a program működését.
   - `export AMOEBA_BLINK=<blink>`
 
     A letett kő `<blink>`-szer (default 3) pislog. A gyakorlott játékos
-    időpocsékolásnak &mdash; és így bosszantónak &mdash; tartja a hosszas hunyorgást,
+    időpocsékolásnak&mdash;és így bosszantónak&mdash;tartja a hosszas hunyorgást,
     és lejjebb veszi 1-re vagy 0-ra.
 
   - `export AMOEBA_TIME_LIMIT=<sec>`
@@ -410,8 +410,9 @@ megfordul a játszma menete: A messzebbről nézve előnyösnek gondolt változa
 kiderülhet, hogy veszít.
 
 Vannak esetek, amikor a *Best line* mező tartalma észrevehetően nem ér el az 
-elemzőfa leveléig, vagy akár teljesen üres. Ez azért van, mert a program &mdash; részben &mdash; 
-a *transposition table*-ből játszik. Ha az elemzés egy korábban kiértékelt állásban
+elemzőfa leveléig, vagy akár teljesen üres. 
+Ez azért van, mert a program&mdash;részben&mdash;a *transposition table*-ből játszik. 
+Ha az elemzés egy korábban kiértékelt állásban
 végződik, akkor a program a *transposition table*-ből kiolvassa az állás előnyös/hátrányos
 értékelését, de nincs információja arra nézve, hogy hogyan folytatódik a játék.
 Emellett a program bizonyos állásokat egyáltalán nem értékel. Például, ha az ellenfél
@@ -459,7 +460,7 @@ Linuxon [CCC3](http://comfirm.hu/ccc3/ccc-belulrol.html)
 környezetben vagy Windowson MSYS2+CCC3 környezetben tudjuk lefordítani.
 
 Windows 10-re lefordított, MSYS2 és CCC környezet nélkül futtatható zip csomag
-tölthető le innen: [https://comfirm.hu/pub/amoeba.zip](https://comfirm.hu/pub/amoeba.zip)
+tölthető le innen: [http://comfirm.hu/pub/amoeba.zip](http://comfirm.hu/pub/amoeba.zip)
 
 
 Hangsúlyozom, hogy a program elsősorban linuxos. A windowsos verzió halvány

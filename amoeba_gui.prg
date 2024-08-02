@@ -417,12 +417,6 @@ local cp
     cp:=(0<=continuous_play() .or. button!=NIL)
     while( cp .and. !game_over() )
 
-        if( movecount()==0 )
-            cell_randomize()
-        elseif( movecount()==1 )
-            cell_randomize(topcell())
-        end
-
         thinklabel:set_state(.f.)
         area:set_sensitive(.f.)
         go_move()
@@ -459,11 +453,6 @@ static demo:=.f.
     end
 
     while( demo .and. !game_over() )
-        if( movecount()==0 )
-            cell_randomize()
-        elseif( movecount()==1 )
-            cell_randomize(topcell())
-        end
 
         thinklabel:set_state(.f.)
         area:set_sensitive(.f.)

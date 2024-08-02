@@ -4,4 +4,5 @@ BUILD_LIBX=obj$(CCCBIN)/gtk-libs
 
 -bccc3_socket
 -bccc3_gtk
+-bccc3_crypto
 -bcrypto

@@ -52,7 +52,7 @@ Tűrhetetlen állapot, ha meggondoljuk.</p>
 <h4>1) Kombinatorikus optimalizálás minimax algoritmussal</h4>
 <p>Egyszerűsége folytán az amőba játék kiváló alany a minimax
 algoritmus szemléltetésére. A program elvi váza ugyanaz, mint a minimax
-algoritmussal játszó &mdash; sokkal bonyolultabb &mdash; sakkprogramoké.</p>
+algoritmussal játszó&mdash;sokkal bonyolultabb&mdash;sakkprogramoké.</p>
 <p>Ketten játszanak:</p>
 <ul>
 <li>a fekete (vagy X) játékos</li>
@@ -78,7 +78,7 @@ Fehér ezzel szemben a minimális rating felé vezető útra terel.</p>
 amit a minimax néven ismert algoritmussal oldunk meg. A minimax algoritmus leírását
 megnézhetjük például itt: <a href="https://en.wikipedia.org/wiki/Minimax">https://en.wikipedia.org/wiki/Minimax</a>.
 Nincs szükség az elemzőfa minden pontjának kiértékelésére.
-Egy ügyes módszer segítségével &mdash; az ún. <em>alfa-béta vágással</em> &mdash; nagy mértékben lehet csökkenteni
+Egy ügyes módszer segítségével&mdash;az ún. <em>alfa-béta vágással</em>&mdash;nagy mértékben lehet csökkenteni
 a számítások mennyiségét. Az alfa-béta vágásról olvashatunk itt:
 <a href="https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning">https://en.wikipedia.org/wiki/Alpha-beta_pruning</a>.</p>
 <p><small></p>
@@ -253,7 +253,7 @@ lehessen egymás ellen játszatni.</p>
 <li>
 <p><code>export AMOEBA_BLINK=&lt;blink&gt;</code></p>
 <p>A letett kő <code>&lt;blink&gt;</code>-szer (default 3) pislog. A gyakorlott játékos
-időpocsékolásnak &mdash; és így bosszantónak &mdash; tartja a hosszas hunyorgást,
+időpocsékolásnak&mdash;és így bosszantónak&mdash;tartja a hosszas hunyorgást,
 és lejjebb veszi 1-re vagy 0-ra.</p>
 </li>
 <li>
@@ -360,8 +360,9 @@ voltát. Ezért nem ritka, hogy a program kombinációja lyukasnak bizonyul, és
 megfordul a játszma menete: A messzebbről nézve előnyösnek gondolt változatról
 kiderülhet, hogy veszít.</p>
 <p>Vannak esetek, amikor a <em>Best line</em> mező tartalma észrevehetően nem ér el az 
-elemzőfa leveléig, vagy akár teljesen üres. Ez azért van, mert a program &mdash; részben &mdash; 
-a <em>transposition table</em>-ből játszik. Ha az elemzés egy korábban kiértékelt állásban
+elemzőfa leveléig, vagy akár teljesen üres. 
+Ez azért van, mert a program&mdash;részben&mdash;a <em>transposition table</em>-ből játszik. 
+Ha az elemzés egy korábban kiértékelt állásban
 végződik, akkor a program a <em>transposition table</em>-ből kiolvassa az állás előnyös/hátrányos
 értékelését, de nincs információja arra nézve, hogy hogyan folytatódik a játék.
 Emellett a program bizonyos állásokat egyáltalán nem értékel. Például, ha az ellenfél
@@ -397,7 +398,7 @@ az optimálisnak gondolt változatban.</p>
 <p>Linuxon <a href="http://comfirm.hu/ccc3/ccc-belulrol.html">CCC3</a>
 környezetben vagy Windowson MSYS2+CCC3 környezetben tudjuk lefordítani.</p>
 <p>Windows 10-re lefordított, MSYS2 és CCC környezet nélkül futtatható zip csomag
-tölthető le innen: <a href="https://comfirm.hu/pub/amoeba.zip">https://comfirm.hu/pub/amoeba.zip</a></p>
+tölthető le innen: <a href="http://comfirm.hu/pub/amoeba.zip">http://comfirm.hu/pub/amoeba.zip</a></p>
 <p>Hangsúlyozom, hogy a program elsősorban linuxos. A windowsos verzió halvány
 árnyéka a linuxosnak. Eleve Windowson minden ötször lassabb. Ez annak ellenére van így,
 hogy az <code>amoeba.exe</code> és a hozzá tartozó <code>dll</code>-ek natív Windows programok,

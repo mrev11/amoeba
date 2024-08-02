@@ -1,3 +1,7 @@
+2024-08-02
+  randomizalas atrakva minimax_init-be;
+  opening: random width feketenek is, fehernek is;   
+
 2024-07-30  
   jatek elokeszitett allasokbol:
     amoeba-srv/playgen.exe veletlenszeru allasokat general

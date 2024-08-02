@@ -1,5 +1,0 @@
-#!/bin/bash
-
-grep X amoeba*-x* | wc -l
-grep O amoeba*-x* | wc -l
-sleep 2

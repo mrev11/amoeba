@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if test -f log-client; then
+    echo log-client exists, is there a playing amoeba.exe?
+    exit 1
+fi
+
+export AMOEBA_IP=i3x
+export AMOEBA_PORT=4321
+export AMOEBA_CLIENT=x
+export AMOEBA_PLAYDIR=~/amoeba-plays     # vagy egyik
+#export AMOEBA_CONTINUOUS_PLAY=10          # vagy masik
+
+
+export AMOEBA_CELLSIZE=40
+export AMOEBA_COLOR=60,60,50
+export AMOEBA_TIME_LIMIT=100
+export AMOEBA_BLINK=2
+
+echo AMOEBA_CLIENT=${AMOEBA_CLIENT} >log-client
+echo AMOEBA_PLAYDIR=${AMOEBA_PLAYDIR} >>log-client
+
+amoeba $@ -p 5.15+  | tee  log${AMOEBA_CLIENT}-amoeba
+

@@ -1,11 +1,22 @@
 #!/bin/bash
+. log-client
 
-LOG=$1
-if [ "$LOG" == ""  ]; then
-    LOG=logo-amoeba
+if test -d "${AMOEBA_PLAYDIR}"; then
+    if [[ ${AMOEBA_CLIENT} == x ]];then
+        grep X amoeba*-${AMOEBA_CLIENT}* | wc -l
+        grep O amoeba*-${AMOEBA_CLIENT}* | wc -l
+    else
+        grep O amoeba*-${AMOEBA_CLIENT}* | wc -l
+        grep X amoeba*-${AMOEBA_CLIENT}* | wc -l
+    fi
+    sleep 2
 fi
 
 
+LOG=$1
+if [ "$LOG" == ""  ]; then
+    LOG=log${AMOEBA_CLIENT}-amoeba
+fi
 
 echo
 grep Nodes $LOG  | grep X | sort -t = -k 3 -n | tail
@@ -19,7 +30,7 @@ echo
 GAMES=$(grep -c TOTAL_NODES $LOG)
 BLACK=$(grep -c winner=X $LOG)
 WHITE=$(grep -c winner=O $LOG)
-DRAW=$(grep -c winner=D $LOG)
+DRAW=$(grep  -c winner=D $LOG)
 
 echo GAMES=$GAMES   $(( ($BLACK+$BLACK+$DRAW)*50/$GAMES ))% 
 echo BLACK=$BLACK   $(( $BLACK*100/$GAMES ))%

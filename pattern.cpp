@@ -244,7 +244,7 @@ void ponttab_init()
         table[i]=0;
     }
 
-    // a nagyob ertekek
+    // a nagyobb ertekek
     // felulirjak a kisebbeket
     
     ponttab_feltolt(negy1  , PVALUE_NEGY1);

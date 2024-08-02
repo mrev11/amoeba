@@ -45,7 +45,6 @@
 #define PRINT(x)    ? #x, any2str(x)
 #define INDENT      space(4*(depth-1))
 
-
 static node         // ennyi állást értékelt ki
 static usecache     // hasznája-e a transposition table-t
 static hit          // cache találatok száma
@@ -121,7 +120,7 @@ function minimax_config()
 ******************************************************************************************
 function minimax_init(recalcflg:=.f.)
 
-local mc,curlev
+local mc,curlev,n
 
     curlev:=setwidth(mc:=movecount(),recalcflg)
 
@@ -137,27 +136,45 @@ local mc,curlev
     movflg:=movflg()
     posflg:=NIL
 
-    if( mc<10 )
+    if( mc<8 )
         // opening
+
+        randomize()
+        cache_clean()
 
         ilevel:=0
         maxenf:=0
         movflg:=.f.
 
         if( mc==0 )
+            // fekete elso lepese
             // az elso lepessel sietni kell
             // hogy a szerverhez 5 masodpercen belul
-            // megerkezzen a lepes
+            // megerkezzen a lepes 
+            // (maskulonben a szerver lep)
+            width:={1}
+
+        elseif( mc==1 )
+            // feher elso lepese
             width:={9}
 
         elseif( numand(mc,1)==0 )
             // fekete lép 
+            // randomizalt kezdes, hogy kulonbozzenek a jatekok
             // posflg:=4 //csak védekezik, nem számítja be a fekete alakzatokat
-            width::=addel(1)
+            width:={10}
+            for n:=1 to irand(4,6)
+                width::aadd(irand(8,10))
+            next
+
         else
             // fehér lép  
+            // randomizalt kezdes, hogy kulonbozzenek a jatekok
             posflg:=2  //csak védekezik, nem számítja be a fehér alakzatokat
-            width:={9}
+            width:={6}
+            for n:=1 to irand(3,5)
+                width::aadd(irand(10,20))
+            next
         end
     end
 
@@ -213,7 +230,7 @@ local bestline1
 
 
 #ifdef CACHE // transposition table
-    if( usecache)
+    if( usecache )
         cache:=cache_search()
 
         if( cache==NIL )
@@ -519,6 +536,32 @@ local n
 static function dbg(*)
     ?? "DBG"+{*}::any2str
     ?
+
+
+******************************************************************************************
+static function randomize()
+local sr:=0,sc:=0,n,cx
+    if( movecount()==0 )
+        sr:=irand(tablesize()/3,2*tablesize()/3)
+        sc:=irand(tablesize()/3,2*tablesize()/3)
+    else
+        for n:=1 to movecount()
+            cx:=cell(n-1)
+            sr+=cx/tablesize()
+            sc+=cx%tablesize()
+        next
+        sr:=round(sr/movecount(),0)
+        sc:=round(sc/movecount(),0)
+    end
+    cell_randomize(sr,sc)    
+
+
+
+******************************************************************************************
+static function irand(a,b)  // random integer in [a,b]
+local r:=asc(crypto_rand_bytes(1))
+    r:=r*(b-a)/255
+    return round(a+r,0)
 
 
 ******************************************************************************************
