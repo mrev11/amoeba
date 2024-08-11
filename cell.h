@@ -35,7 +35,7 @@ typedef unsigned long long ZCODE;  // 64 bit zobrist code
 
 
 
-struct PATTERN
+struct XPATTERN
 {
     char white[4];          // feher alakzatok negy iranyban (1 alakzat==1 byte)
     char black[4];          // fekete alakzatok negy iranyban (1 alakzat==1 byte)
@@ -83,7 +83,7 @@ struct cell
 
     char wall[4];                       // tablarol lelogo resz maszkja negy iranyban
     FLDVAL fieldval[MAXLAYER+1];        // cella érték a két játékosra retegenkent
-    PATTERN pattern[MAXLAYER+1];        // alakzatok négy irányban: K,Ék,É,Dk, retegenkent
+    XPATTERN pattern[MAXLAYER+1];        // alakzatok négy irányban: K,Ék,É,Dk, retegenkent
     SIBLING siblings[MAXLAYER+1];       // szomszed cellak (max 32 lehet, az utolso utan cx=-1, mask==0)
 
 

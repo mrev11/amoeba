@@ -66,7 +66,7 @@ static char* ppatdir(cell *c, int dir)
 {
     static char buf[32];
 
-    PATTERN *p=c->pattern+c->layer;
+    XPATTERN *p=c->pattern+c->layer;
 
     int pos=0;
     int mask=1;
@@ -105,7 +105,7 @@ static char* ppatdir(cell *c, int dir)
 char *ppat(cell *c)
 {
     static char buf[256];
-    PATTERN *p=c->pattern+c->layer;
+    XPATTERN *p=c->pattern+c->layer;
 
     int offs=0;
     offs+=sprintf( buf+offs, "%lc(%s) ", arrow(0), ppatdir(c,0));
@@ -121,7 +121,7 @@ char *ppat(cell *c)
 static char *ppatx(cell *c)
 {
     static char buf[256];
-    PATTERN *p=c->pattern+c->layer;
+    XPATTERN *p=c->pattern+c->layer;
 
     int offs=0;
     offs+=sprintf( buf+offs, "%lc(%s) %02x %02x %02x ", arrow(0), ppatdir(c,0), p->white[0], p->black[0], c->wall[0]  );
@@ -142,7 +142,7 @@ void cell::print()
     
     if( figure==' ' )
     {
-        PATTERN *p=pattern+layer;
+        XPATTERN *p=pattern+layer;
         char *po=p->white;
         char *px=p->black;
         char *pw=wall;
