@@ -14,7 +14,7 @@
 # export AMOEBA_TABLESIZE=22
 # export AMOEBA_CELLSIZE=40
 # export AMOEBA_COLOR=77,66,22
- export AMOEBA_BLINK=0
+ export AMOEBA_BLINK=1
 
 # GAME=amoeba16@
 

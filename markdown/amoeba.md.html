@@ -208,6 +208,11 @@ eredetileg játszották (és mentették), akkor a táblaméretet a játékhoz ig
 a program működését.</p>
 <ul>
 <li>
+<p><code>export AMOEBA_TABLESIZE=&lt;size&gt;</code></p>
+<p>A -t opció helyett környezeti változóval is meg lehet adni a
+tábla méretét.</p>
+</li>
+<li>
 <p><code>export AMOEBA_POWER=&lt;power&gt;</code></p>
 <p>A -p opcióval azonos hatású környezeti változó.
 A <code>&lt;power&gt;</code> megadásakor a korábban leírt szintaktikát kell használni.</p>
@@ -215,12 +220,14 @@ A <code>&lt;power&gt;</code> megadásakor a korábban leírt szintaktikát kell 
 <li>
 <p><code>export AMOEBA_POWER_WHITE=&lt;power&gt;</code></p>
 <p>A program fehérrel az itt megadott erősséggel játszik
-függetlenül attól, hogy mit állítunk be interaktívan.</p>
+függetlenül attól, hogy mit állítunk be a -p opcióval vagy a listboxban
+(interaktívan).</p>
 </li>
 <li>
 <p><code>export AMOEBA_POWER_BLACK=&lt;power&gt;</code></p>
 <p>A program feketével az itt megadott erősséggel játszik
-függetlenül attól, hogy mit állítunk be interaktívan.</p>
+függetlenül attól, hogy mit állítunk be a -p opcióval vagy a listboxban
+(interaktívan).</p>
 </li>
 <li>
 <p><code>export AMOEBA_CONTINUOUS_PLAY=&lt;game&gt;</code></p>
@@ -236,19 +243,19 @@ hogy a program  két erősségi szintet játszasson egymás ellen.</p>
 </li>
 <li>
 <p><code>export AMOEBA_IP=&lt;ipaddr&gt;</code></p>
-<p>A program az <code>&lt;ipaddr&gt;:&lt;port&gt;</code> címen figyelő amoeba szerver ellen játszik.</p>
+<p>A program az <code>&lt;ipaddr&gt;:&lt;port&gt;</code> címen figyelő amőba  szerver ellen játszik.</p>
 </li>
 <li>
 <p><code>export AMOEBA_PORT=&lt;port&gt;</code></p>
-<p>A program az <code>&lt;ipaddr&gt;:&lt;port&gt;</code> címen figyelő amoeba szerver ellen játszik.</p>
+<p>A program az <code>&lt;ipaddr&gt;:&lt;port&gt;</code> címen figyelő amőba szerver ellen játszik.</p>
 </li>
 <li>
 <p><code>export AMOEBA_CLIENT=&lt;color&gt;</code></p>
 <p>A <code>&lt;color&gt;</code> értéke w (fehér) vagy b (fekete). Ezzel a színnel játszik 
-program az amoeba szerver ellen. A szerver elleni játékhoz be kell állítani 
+program az amőba szerver ellen. A szerver elleni játékhoz be kell állítani 
 0-nál nagyobbra az <code>AMOEBA_CONTINUOUS_PLAY</code> változót, ugyanis csak a folyamatos 
-játék  van támogatva. Ez a lehetőség tesztre való, hogy különböző algoritmusokat
-lehessen egymás ellen játszatni.</p>
+játék  van támogatva. Ez a lehetőség tesztre való, hogy különböző programokat
+és algoritmusokat lehessen egymás ellen játszatni.</p>
 </li>
 <li>
 <p><code>export AMOEBA_BLINK=&lt;blink&gt;</code></p>
@@ -422,6 +429,12 @@ vagy akár a jelen dokumentumban:</p>
 <p>A webes változat a szerveren játszik, a böngésző csak a megjelenítést végzi.
 E sorok írásakor a szerver egy Intel Celeron J1900 (4) @ 2.415GHz processzoron futó
 Arch Linux. A szerény teljesítményű CPU-tól ne várjunk nagy sebességet.</p>
+<p>Érdemel pár szót a webes keretrendszer. Saját fejlesztés 2017-ből, a CCC
+programozási környezet része. Otthoni bankolásra való alkalmazások készültek vele:
+átutalás, számlatörténet lekérdezés, effélék, az amőba játék csak melléktermék.
+A szerver program  websocket kapcsolaton keresztül vezérli a böngészőt. 
+A szürke négyzet jobb felső sarkában levő három vonalkán klikkelve láthatóvá 
+válik  a szerver és a böngésző közti XML szintaktikájú adatforgalom.</p>
 <hr />
 <h2>Kiegészítés</h2>
 <p><em>(2024)</em></p>

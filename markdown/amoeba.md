@@ -258,6 +258,12 @@ A fenti paramétereken kívül környezeti változók is befolyásolják
 a program működését.
 
 
+  -  `export AMOEBA_TABLESIZE=<size>`
+  
+    A -t opció helyett környezeti változóval is meg lehet adni a
+    tábla méretét.
+
+
   -  `export AMOEBA_POWER=<power>`
 
     A -p opcióval azonos hatású környezeti változó.
@@ -266,12 +272,14 @@ a program működését.
   -  `export AMOEBA_POWER_WHITE=<power>`
 
     A program fehérrel az itt megadott erősséggel játszik
-    függetlenül attól, hogy mit állítunk be interaktívan.
+    függetlenül attól, hogy mit állítunk be a -p opcióval vagy a listboxban
+    (interaktívan).
 
   -  `export AMOEBA_POWER_BLACK=<power>`
 
     A program feketével az itt megadott erősséggel játszik
-    függetlenül attól, hogy mit állítunk be interaktívan.
+    függetlenül attól, hogy mit állítunk be a -p opcióval vagy a listboxban
+    (interaktívan).
 
   -  `export AMOEBA_CONTINUOUS_PLAY=<game>`
 
@@ -287,19 +295,19 @@ a program működését.
 
   - `export AMOEBA_IP=<ipaddr>`
 
-    A program az `<ipaddr>:<port>` címen figyelő amoeba szerver ellen játszik.
+    A program az `<ipaddr>:<port>` címen figyelő amőba  szerver ellen játszik.
 
   - `export AMOEBA_PORT=<port>`
 
-    A program az `<ipaddr>:<port>` címen figyelő amoeba szerver ellen játszik.
+    A program az `<ipaddr>:<port>` címen figyelő amőba szerver ellen játszik.
 
   - `export AMOEBA_CLIENT=<color>`
   
     A `<color>` értéke w (fehér) vagy b (fekete). Ezzel a színnel játszik 
-    program az amoeba szerver ellen. A szerver elleni játékhoz be kell állítani 
+    program az amőba szerver ellen. A szerver elleni játékhoz be kell állítani 
     0-nál nagyobbra az `AMOEBA_CONTINUOUS_PLAY` változót, ugyanis csak a folyamatos 
-    játék  van támogatva. Ez a lehetőség tesztre való, hogy különböző algoritmusokat
-    lehessen egymás ellen játszatni.
+    játék  van támogatva. Ez a lehetőség tesztre való, hogy különböző programokat
+    és algoritmusokat lehessen egymás ellen játszatni.
  
 
   - `export AMOEBA_BLINK=<blink>`
@@ -487,10 +495,16 @@ vagy akár a jelen dokumentumban:
             border:2px solid"></iframe>
 </div>
 
-
 A webes változat a szerveren játszik, a böngésző csak a megjelenítést végzi.
 E sorok írásakor a szerver egy Intel Celeron J1900 (4) @ 2.415GHz processzoron futó
 Arch Linux. A szerény teljesítményű CPU-tól ne várjunk nagy sebességet.
+
+Érdemel pár szót a webes keretrendszer. Saját fejlesztés 2017-ből, a CCC
+programozási környezet része. Otthoni bankolásra való alkalmazások készültek vele:
+átutalás, számlatörténet lekérdezés, effélék, az amőba játék csak melléktermék.
+A szerver program  websocket kapcsolaton keresztül vezérli a böngészőt. 
+A szürke négyzet jobb felső sarkában levő három vonalkán klikkelve láthatóvá 
+válik  a szerver és a böngésző közti XML szintaktikájú adatforgalom.
 
 
 ---------------------------------------------------------------------------------
