@@ -19,6 +19,7 @@
  */
 
 
+#include "pvalue.h"
 
 #define MAXMOVE  128
 
@@ -82,7 +83,7 @@ local s,c,e
 ******************************************************************************************
 function cb_timeout()
 static locked:=.f.
-local cx,buf,n
+local buf,n,cx,v
 
     //? "CB_TIMEOUT"
 
@@ -128,12 +129,17 @@ local cx,buf,n
             //label_rate()
             bestline_store({})
 
-            if( winner()!=32 .or. movecount()>MAXMOVE   )
-                return game() // vesztett vagy döntetlen
+            if( winner()!=32 )
+                return game() // vesztett 
             else
-                move()
-                if( winner()!=32 .or. movecount()>MAXMOVE   )
-                    return game() // nyert vagy döntetlen
+                {cx,v}:=move()
+                if( winner()!=32 )
+                    return game()  // nyert
+                elseif( movecount()>MAXMOVE .and. abs(v|PVALUE_INFIN)<300 )
+                    return game() // döntetlen
+                else
+                    socket:send( str(cx) )
+                    ? "send", cx::pos2rc
                 end
             end
         end
@@ -147,12 +153,12 @@ local cx,buf,n
 
 ******************************************************************************************
 static function move()
-local cx
+local cx,v
 
     thinklabel():set_state(.f.)
     area():set_sensitive(.f.)
 
-    go_move()
+    v:=go_move()
 
     //area():set_sensitive(.t.)
     thinklabel():set_state(.t.)
@@ -162,8 +168,7 @@ local cx
     label_turn()
 
     cx:=topcell()
-    socket:send( str(cx) )
-    ? "send", cx::pos2rc
+    return {cx,v}
 
 
 
@@ -173,7 +178,9 @@ static function game()
 local mc:=movecount()
 local gc:=gamecount()
 local play:=nextplay()
+local cx,v
 static playprev
+
 
     if( socket!=NIL )
         socket:close
@@ -222,7 +229,9 @@ static playprev
             socket:send( "?"+play )
             sleep(1000)
         end
-        move()
+        {cx,v}:=move()
+        socket:send( str(cx) )
+        ? "send", cx::pos2rc
 
     elseif( color::left(1)$'wWoO') 
         // white

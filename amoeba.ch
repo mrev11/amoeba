@@ -30,48 +30,19 @@
 #define ROWCOL          TABLESIZE*TABLESIZE
 
 
-#define SCHEMA1
+#define POW0  "auto"
+#define POW1  "11,11,10,4"
+#define POW2  "12,11,10,5,4"
+#define POW3  "13,11,10,5,5,4"
+#define POW4  "14,12,10,6,5,5,4"
+#define POW5  "15,12,11,6,6,5,5,4"
+#define POW6  "16,12,11,6,6,6,5,5,4"
+#define POW7  "17,14,11,8,8,6,6,5,5,4"
+#define POW8  "18,17,16,9,8,7,7,6,6,5,4"
+//              1  2  3 4 5 6 7 8 9 0 1
+//
+// -p 8.10+ beallitassal a Bovo 'Impossible' idejenek kb. 2/3-at hasznalja
 
-#ifdef SCHEMA1
-  #define POW0  "auto"
-  #define POW1  "11,11,10,4"
-  #define POW2  "12,11,10,5,4"
-  #define POW3  "13,11,10,5,5,4"
-  #define POW4  "14,12,10,6,5,5,4"
-  #define POW5  "15,12,11,6,6,5,5,4"
-  #define POW6  "16,12,11,6,6,6,5,5,4"
-  #define POW7  "17,14,11,8,6,6,6,5,5,4"
-  #define POW8  "18,16,12,8,6,6,6,6,5,5,4"
-  //              1  2  3 4 5 6 7 8 9 0 1
-#endif
-
-
-#ifdef SCHEMA2
-  #define POW0  "auto"
-  #define POW1  "11,6,6,6,6,6"
-  #define POW2  "12,6,6,6,6,6,6"
-  #define POW3  "13,7,7,7,7,7,7"
-  #define POW4  "14,7,7,7,7,7,7,7"
-  #define POW5  "15,8,8,8,8,8,8,8"
-  #define POW6  "16,8,8,8,8,8,8,8,8"
-  #define POW7  "17,9,9,9,9,9,9,9,9"
-  #define POW8  "18,9,9,9,9,9,9,9,9,9"
-             //   1 2 3 4 5 6 7 8 9 0
-#endif
-
-
-#ifdef SCHEMA3
-  #define POW0  "auto"
-  #define POW1  "11,6,6"                      //  8-ig
-  #define POW2  "12,7,7,7"                    // 16-ig
-  #define POW3  "13,7,7,7,7"                  // 32 fölött
-  #define POW4  "14,7,7,7,7,7"                // interaktívan beállítható
-  #define POW5  "15,8,8,8,8,8,8"              // interaktívan beállítható
-  #define POW6  "16,8,8,8,8,8,8,8"            // interaktívan beállítható
-  #define POW7  "17,8,8,8,8,8,8,8,8"          // interaktívan beállítható
-  #define POW8  "18,9,9,9,9,9,9,9,9,9"
-             //   1 2 3 4 5 6 7 8 9 0
-#endif
 
 
 #define CACHE

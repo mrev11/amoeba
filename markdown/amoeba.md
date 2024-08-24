@@ -1,5 +1,9 @@
 <head>
 <META charset="UTF-8">
+<META NAME="Keywords" CONTENT="five in a row,amoeba,amőba,minimax,alpha-beta pruning,negascout,principal variation search,PVS,CCC,Clipper to C++ Compiler">
+<META NAME="Description" CONTENT="Amoeba (five in a row) experience report">
+<META NAME="Author" CONTENT="Matyas Vermes">
+<META NAME="Language" CONTENT="Hungarian">
 <style>body {width:850px; margin:50px}</style>
 </head>
 
