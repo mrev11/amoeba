@@ -1,8 +1,8 @@
 #!/bin/bash
 
-mkdir -p obj$CCCBIN
-pkg-config --cflags gtk+-2.0  >obj$CCCBIN/gtk-cflags
-pkg-config --libs   gtk+-2.0  >obj$CCCBIN/gtk-libs
-echo -Wno-deprecated-declarations >>obj$CCCBIN/gtk-cflags
+mkdir -p object
+pkg-config --cflags gtk+-2.0  >object/gtk-cflags
+pkg-config --libs   gtk+-2.0  >object/gtk-libs
+echo -Wno-deprecated-declarations >>object/gtk-cflags
 
-bapp_unix_.b  @parfile.bld  
+cccapp.sh  @parfile.bld  

@@ -146,7 +146,7 @@ alábbi elhelyezkedése
 olyan alakzat, amiben a fehér egylépéses nyerése lehetséges. Ez egy nagyon
 értékes alakzat. Vagy nézzük az alábbit:
 
-        _OO__
+        _OOO__
 
 Ha fehér van lépésen, akkor lehetősége van olyan alakzatot létrehozni,
 ami kétféle módon is egylépéses nyeréssel fenyeget. Ez is nagyon értékes

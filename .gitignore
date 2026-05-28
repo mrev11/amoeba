@@ -16,8 +16,7 @@ rsplink
 gccver.opt
 
 *.exe
-objlin/
-objmng/
+object/
 ppo/
 error
 error--*
