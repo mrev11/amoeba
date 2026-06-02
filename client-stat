@@ -32,10 +32,13 @@ echo
 
 xx=$(grep X amoeba*-x* 2>/dev/null | wc -l)
 xo=$(grep O amoeba*-x* 2>/dev/null | wc -l)
+x_=$(ls -l | grep -E amoeba.*-x_ 2>/dev/null | wc -l)
+
 oo=$(grep O amoeba*-o* 2>/dev/null | wc -l)
 ox=$(grep X amoeba*-o* 2>/dev/null | wc -l)
+o_=$(ls -l | grep -E amoeba.*-o_ 2>/dev/null | wc -l)
 
-echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLACK: ${xx}:${xo}
-echo OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO WHITE: ${oo}:${ox}
+echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLACK: ${xx}:${xo}:${x_}
+echo OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO WHITE: ${oo}:${ox}:${o_}
 
 

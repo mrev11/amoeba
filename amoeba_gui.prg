@@ -200,6 +200,7 @@ local mask
         loadfile(amoebafile)
     elseif( !empty(getenv("AMOEBA_PORT")) )
         install_cb_timeout()
+        infolevel(.f.)
     end
 
     gtk.main()

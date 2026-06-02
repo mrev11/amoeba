@@ -53,7 +53,7 @@ static gboolean itt_az_ido(gpointer data)
 ******************************************************************************************
 function install_cb_timeout()
 #clang
-    gtk_timeout_add(500,itt_az_ido,0);
+    gtk_timeout_add(200,itt_az_ido,0);
 #cend
 
 
@@ -81,7 +81,7 @@ local s,c,e
 
 
 ******************************************************************************************
-function cb_timeout()
+static function cb_timeout()
 static locked:=.f.
 local buf,n,cx,v
 
@@ -96,12 +96,16 @@ local buf,n,cx,v
         if( movecount()==0 .and. socket==NIL )
             return game()
         end
-      
+
         if( socket==NIL )
             return .f.
         end
 
         buf:=socket:recvall
+        if( buf==a"draw" )
+            ? "draw"
+            return game()
+        end
 
         if( !empty(buf) )
             cx:=buf::val
@@ -130,7 +134,7 @@ local buf,n,cx,v
             bestline_store({})
 
             if( winner()!=32 )
-                return game() // vesztett 
+                return game() // vesztett
             else
                 {cx,v}:=move()
                 if( winner()!=32 )
@@ -201,10 +205,12 @@ static playprev
             total_nodes()
         end
         gamecount(++gc)
-        sleep(5000)
+        sleep(2000)
     end
 
     if( play==NIL .and. gc>=continuous_play()  )
+        ?
+        quit
         return .f.
     end
 
@@ -219,8 +225,8 @@ static playprev
     label_move()
     label_turn()
     label_rate()
-    
-    
+
+
     if( color::left(1)$'bBxX' )
         // black
         if( play!=NIL )
@@ -233,7 +239,7 @@ static playprev
         socket:send( str(cx) )
         ? "send", cx::pos2rc
 
-    elseif( color::left(1)$'wWoO') 
+    elseif( color::left(1)$'wWoO')
         // white
         if( play!=NIL )
             loadfile(play)
@@ -242,7 +248,7 @@ static playprev
         end
 
     else
-        break("invalid value of AMOEBA_CLIENT(xXbBoOwW)")    
+        break("invalid value of AMOEBA_CLIENT(xXbBoOwW)")
     end
     return .t.
 
