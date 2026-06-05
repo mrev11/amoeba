@@ -27,7 +27,7 @@
 static ascx:=asc("X")
 static asco:=asc("O")
 
-static width:={32,8,6,4,3,2,1}
+static width:={60,40,30,20,10,10}
 
 
 ******************************************************************************************
@@ -60,7 +60,7 @@ local n,x,value
         //? n, result[n][1]::pos2rc::padr(3), result[n][2]
         result[n]:=result[n][1]
     next
-    //?
+    ?? "@"
 
     return result
 

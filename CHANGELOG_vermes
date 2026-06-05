@@ -1,3 +1,7 @@
+2026-06-05
+   depth==1-nel precalc bekapcsolva;
+   debug info: candidates hanyadik eleme bizonyult optimalisnak;
+
 2026-05-31 
     a szerver által megállapított döntetlen kezelése; 
     informatív client-play script;

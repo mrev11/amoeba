@@ -74,7 +74,7 @@ static function numstr(num)
 
 
 ******************************************************************************************
-static function timestr(sec)
+function timestr(sec)
 local s:=sec%60
 local m:=(sec-s)/60
     return m::str::alltrim+"m"+s::str::alltrim+"s"

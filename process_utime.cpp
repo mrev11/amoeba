@@ -57,6 +57,15 @@ void _clp_process_utime(int argno)
     number(usage.ru_utime.tv_sec);
 }
 
+void _clp_process_utime_children(int argno)
+{
+    stack-=argno;
+    struct rusage usage;
+    usage.ru_utime.tv_sec=0;
+    int r=getrusage(RUSAGE_CHILDREN,&usage); // success=0, error=-1 (errno)
+    number(usage.ru_utime.tv_sec);
+}
+
 #endif
 
 

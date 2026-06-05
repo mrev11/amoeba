@@ -309,8 +309,7 @@ local bestline1
         end
     end
 
-    if( .f. .and. depth<=2 .and. 10<=width[1] )
-        // ez nem annyira jo
+    if( depth<=1 .and. 16<=width[1] )
         // kétszer nagyobb halmazból
         // sekély mélységű elemzéssel választ
         candidates:=precalc_movegen(width[depth])
@@ -427,6 +426,7 @@ local bestline1
     if( depth==1 )
         arev(bestline)
         xbest:=xopt
+        ?? "##", ascan(candidates,{|c|c==xbest})::str(2)
         return color*vopt
     elseif( depth==2 )
         xresp:=xopt
