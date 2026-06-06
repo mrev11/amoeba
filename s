@@ -18,5 +18,5 @@
 
 # GAME=amoeba16@
 
-amoeba.exe $@ $GAME -p 8.99+  | tee -a  log-amoeba
+amoeba.exe $@ $GAME -p 6.99+  | tee -a  log-amoeba
 

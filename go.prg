@@ -61,8 +61,8 @@ local rts,pws
         rts:=ratestr(v,curlev) // forw elott
         pws:=powstr(curlev)    // forw elott
 
-        ? turn(), "["+valstr(v)+"]", pos2rc(x)::padr(3),;
-            " Move="+(1+movecount())::str(3),;
+        ? turn(), "["+valstr(v)+"]", (pos2rc(x)+enforced_sign(x))::padr(4),;
+            " Move="+(1+movecount())::str::alltrim,;
             " Nodes="+nodestr(),;
             " Power="+pws, bestline::line2str(v)
 
@@ -88,6 +88,18 @@ local rts,pws
     end
 
     return v // lehet NIL 
+
+
+******************************************************************************************
+static function enforced_sign(x)
+local sign:=""
+    if( turn_x() .and. fieldval_x(x)::numand(1)==1 )
+        sign:="+"
+    end
+    if( turn_o() .and. fieldval_o(x)::numand(1)==1 )
+        sign:="+"
+    end
+    return sign
 
 
 ******************************************************************************************
@@ -121,7 +133,7 @@ local rts,pws
         pws:=powstr(curlev)      // forw elott
 
         ? turn(), "["+valstr(v)+"]", pos2rc(x)::padr(3),;
-            " Move="+(1+movecount())::str(3),;
+            " Move="+(1+movecount())::str::alltrim,;
             " Nodes="+nodestr(),;
             " Power="+pws, bestline::line2str(v)
 
