@@ -27,25 +27,33 @@
 static ascx:=asc("X")
 static asco:=asc("O")
 
-static width:={60,40,30,20,10,10}
+static width:={60,40,30,20}
+static maxdepth
 
 
 ******************************************************************************************
 function precalc_movegen(cnt)
 
 local result:={}
-local candidates:=movegen(2*cnt)
+local candidates:=movegen(width[1])
 local color:=if(turn_o(),1,-1)
-local n,x,value
+local n,x,value,valopt
 
+    maxdepth:=0
     for n:=1 to len(candidates)
         forw(x:=candidates[n])
-        value:=color*precalc_minimax(1,-PVALUE_INFIN,PVALUE_INFIN)
+        value:=color*precalc_minimax(1,-PVALUE_INFIN,PVALUE_INFIN,0)
         back()
         result::aadd({x,value})
     next
    
     asortkey(result,{|e|color*e[2]})
+
+    if( !empty(result) )
+        valopt:=result[1][2]
+    else
+        valopt:=color*PVALUE_INFIN
+    end
 
     //for n:=1 to len(result)
     //    ? n, result[n], pos2rc(result[n][1])
@@ -55,30 +63,36 @@ local n,x,value
     if( len(result)>cnt )
         asize(result,cnt)
     end
+
     
     for n:=1 to len(result)
         //? n, result[n][1]::pos2rc::padr(3), result[n][2]
         result[n]:=result[n][1]
     next
-    ?? "@"
+    ?? " @"+maxdepth::str::alltrim+" ["+valopt::str::alltrim+"]"
 
     return result
 
 
 ******************************************************************************************
-static function precalc_minimax(depth,alfa,beta)
+static function precalc_minimax(depth,alfa,beta,forced_count)
 
 local candidates,n,x,vopt
 local color:=if(turn_x(),1,-1)
 
-    depth++
+    maxdepth::=max(depth)
 
-    if( depth>len(width) )
+    depth++
+    if( hot_node() )
+        forced_count++
+    end
+
+    if( (depth-forced_count)>len(width) )
         vopt:=posvalue(POSVALUE)
         return color*vopt
     end
 
-    candidates:=movegen(width[depth])
+    candidates:=movegen(width[depth-forced_count])
 
     if( len(candidates)==0 )
         if( winner()==32  )
@@ -96,7 +110,7 @@ local color:=if(turn_x(),1,-1)
     for n:=1 to len(candidates)
         x:=candidates[n]
         forw(x)
-        vopt::=max(-precalc_minimax(depth,-beta,-alfa))
+        vopt::=max(-precalc_minimax(depth,-beta,-alfa,forced_count))
         back()
         if( alfa<vopt )
             alfa:=vopt

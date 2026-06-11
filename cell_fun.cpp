@@ -447,12 +447,13 @@ void _clp_print_map(int argno)
     CCC_PROLOG("print_map",0);
     printf("\n");
 
-    char row[64];
-    memset(row,' ',64);
-    for( int i=1; i<=cell::tablesize; i++)
+    char row[128];
+    memset(row,' ',128);
+    for( int i=0; i<cell::tablesize; i++)
     {
-        row[1+i]='0'+i%10;
-        row[2+i]=0;
+        row[2*i+2]='0'+(i+1)%10;
+        row[2*i+3]=' ';
+        row[2*i+4]=0;
     }
     printf("%s\n",row);
     
@@ -477,20 +478,22 @@ void _clp_print_map(int argno)
             else if( fig==2 )
                 fig='X';
 
-            row[2+c]=fig;
+            row[2*c+2]=fig;
+            row[2*c+3]=' ';
         }
-        row[cell::tablesize+2]='|';
-        row[cell::tablesize+3]='a'+r;
-        row[cell::tablesize+4]=0;
+
+        row[(cell::tablesize-1)*2+3]='|';
+        row[(cell::tablesize-1)*2+4]='a'+r;
+        row[(cell::tablesize-1)*2+5]=0;
         printf("%s\n",row);
     }
 
-
-    memset(row,' ',64);
-    for( int i=1; i<=cell::tablesize; i++)
+    memset(row,' ',128);
+    for( int i=0; i<cell::tablesize; i++)
     {
-        row[1+i]='0'+i%10;
-        row[2+i]=0;
+        row[2*i+2]='0'+(i+1)%10;
+        row[2*i+3]=' ';
+        row[2*i+4]=0;
     }
     printf("%s\n",row);
     fflush(0);

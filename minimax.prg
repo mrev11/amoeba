@@ -309,8 +309,8 @@ local bestline1
         end
     end
 
-    if( depth<=1 .and. 16<=width[1] )
-        // kétszer nagyobb halmazból
+    if( depth<=1 .and. 14<=width[1] )
+        // nagyobb halmazból
         // sekély mélységű elemzéssel választ
         candidates:=precalc_movegen(width[depth])
     else
@@ -521,13 +521,7 @@ static function show_candidates(depth, candidates)
 local n
     ? "candidates("+ candidates::len::str::alltrim+"):"
     for n:=1 to len(candidates)
-        ??  "",candidates[n]::pos2rc
-        if( turn_x() .and. fieldval_x(candidates[n])::numand(1)==1 )
-            ?? "+"
-        end
-        if( turn_o() .and. fieldval_o(candidates[n])::numand(1)==1 )
-            ?? "+"
-        end
+        ??  "",candidates[n]::pos2rcx
     next
     ?
 

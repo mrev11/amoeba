@@ -13,7 +13,7 @@ export AMOEBA_PORT=4321
 # mindig automatikusan játszik, 2 lehetőség:
 
 # (1)  AMOEBA_CONTINUOUS_PLAY darab játékot játszik (előlről)
-export AMOEBA_CONTINUOUS_PLAY=3
+export AMOEBA_CONTINUOUS_PLAY=10
 
 # (2)  AMOEBA_PLAYDIR-ben levő játékokat sorban betölti és folytatja
 # export AMOEBA_PLAYDIR=../amoeba-plays
@@ -44,7 +44,7 @@ export AMOEBA_TIME_LIMIT=100
 export AMOEBA_BLINK=0
 
 if [ "$AMOEBA_POWER" == "" ];then
-    AMOEBA_POWER=1
+    AMOEBA_POWER=6.99+
 fi
 export AMOEBA_POWER
 

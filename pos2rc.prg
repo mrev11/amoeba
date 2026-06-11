@@ -43,3 +43,21 @@ local col:=rc[2..]::val-1
 
 
 ******************************************************************************
+function pos2rcx(pos)
+    return pos2rc(pos)+enforced_sign(pos)
+
+
+******************************************************************************
+static function enforced_sign(x)
+local sign:=""
+    if( turn_x() .and. fieldval_x(x)::numand(1)==1 )
+        sign:="+"
+    end
+    if( turn_o() .and. fieldval_o(x)::numand(1)==1 )
+        sign:="+"
+    end
+    return sign
+
+
+******************************************************************************
+

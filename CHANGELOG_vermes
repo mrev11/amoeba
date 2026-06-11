@@ -1,3 +1,11 @@
+2026-06-11
+   a tabla szelesebb megjelenitese xtermben;
+   kenyszerito lepesek jelolese;
+   kumulalt TIME megjelenites minden jatek utan;
+   precalc alkalmazas 4-es szinttol kezdve;
+   precalc koveti a kenyszerito lepeseket akarmilyen melysegig;
+   pos2rcx a koordinatak utan kiirja a sakkadas jelet;
+
 2026-06-06 enforced_sign();
 
 2026-06-05 README.md; 

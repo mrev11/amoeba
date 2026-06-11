@@ -138,6 +138,8 @@ local buf,n,cx,v
             else
                 {cx,v}:=move()
                 if( winner()!=32 )
+                    socket:send( str(cx) )
+                    ? "send", cx::pos2rc
                     return game()  // nyert
                 elseif( movecount()>MAXMOVE .and. abs(v|PVALUE_INFIN)<300 )
                     return game() // döntetlen
@@ -187,6 +189,7 @@ static playprev
 
 
     if( socket!=NIL )
+        sleep(500)
         socket:close
         socket:=NIL
     end
@@ -200,11 +203,13 @@ static playprev
                 playprev+="-"+color::left(1)
                 playprev+=if(winner()==32,"_",lower(chr(winner())))
             end
-            savegame(basename(playprev))
             animate()
             total_nodes()
+            savegame(basename(playprev))
         end
         gamecount(++gc)
+        ? "TIME:",timestr(process_utime())
+        ?
         sleep(2000)
     end
 
@@ -250,6 +255,7 @@ static playprev
     else
         break("invalid value of AMOEBA_CLIENT(xXbBoOwW)")
     end
+    sleep(2000)
     return .t.
 
 

@@ -128,9 +128,9 @@ static char *ppatx(cell *c)
     offs+=sprintf( buf+offs, "%lc(%s) %02x %02x %02x ", arrow(1), ppatdir(c,1), p->white[1], p->black[1], c->wall[1]  );
     offs+=sprintf( buf+offs, "%lc(%s) %02x %02x %02x ", arrow(2), ppatdir(c,2), p->white[2], p->black[2], c->wall[2]  );
     offs+=sprintf( buf+offs, "%lc(%s) %02x %02x %02x ", arrow(3), ppatdir(c,3), p->white[3], p->black[3], c->wall[3]  );
-    buf[offs]=0;                                                                                                               
-    return buf;                                                                                                                
-}                                                                                                                              
+    buf[offs]=0;
+    return buf;
+}
 
 //----------------------------------------------------------------------------------------
 void cell::print()
@@ -139,14 +139,14 @@ void cell::print()
 
     printf("\n----------------------------------------------------------------------------\n");
     printf("cell=%d[%c:%d] fig='%c'\n",count,row2r(row),col2c(col),figure);
-    
+
     if( figure==' ' )
     {
         XPATTERN *p=pattern+layer;
         char *po=p->white;
         char *px=p->black;
         char *pw=wall;
-        
+
 
         for( int d=0; d<4; d++)
         {
@@ -182,14 +182,6 @@ void cell::print_pattern(int cx)
 
     if( c->figure==' ' )
     {
-        printf(" %c",'a'+c->row);
-        printf("%-2d ",1+c->col);
-        printf("%s",ppat(c));
-
-        const char *vo=numformat("%4d",c->fieldval[c->layer].white);
-        const char *vx=numformat("%4d",c->fieldval[c->layer].black);
-        const char *vs=numformat("%3d",c->fieldval[c->layer].black+c->fieldval[c->layer].white);
-
         int force=' ';
         if( (cell::movecount&1)==1 && (1 & c->fieldval[c->layer].white) )
         {
@@ -200,7 +192,18 @@ void cell::print_pattern(int cx)
             force='+';
         }
 
-        printf(" %4s %4s [%3s]%c",vo,vx,vs,force);
+        char buf[32];
+        sprintf(buf," %c%d%c",'a'+c->row,1+c->col,force);
+        printf("%-6s",buf);
+        //printf(" %c",'a'+c->row);
+        //printf("%-2d ",1+c->col);
+        printf("%s",ppat(c));
+
+        const char *vo=numformat("%4d",c->fieldval[c->layer].white);
+        const char *vx=numformat("%4d",c->fieldval[c->layer].black);
+        const char *vs=numformat("%3d",c->fieldval[c->layer].black+c->fieldval[c->layer].white);
+
+        printf(" %4s %4s [%3s]",vo,vx,vs);
         fflush(0);
     }
 }

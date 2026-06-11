@@ -5,40 +5,25 @@
 LOG=log-amoeba
 if test -f log-amoeba; then
 
-  echo
-  grep Nodes $LOG  | grep X | sort -t = -k 3 -n | tail
-  echo
-  grep Nodes $LOG  | grep O | sort -t = -k 3 -n | tail
-  echo
-  grep -E 'TOTAL_NODES|TIME' $LOG 
-  echo
+  grep  TOTAL_NODES $LOG 
   
+  echo  
   
   GAMES=$(grep -c TOTAL_NODES $LOG)
   BLACK=$(grep -c winner=X $LOG)
   WHITE=$(grep -c winner=O $LOG)
   DRAW=$(grep  -c winner=D $LOG)
 
-  echo GAMES=$GAMES   #$(( ($BLACK+$BLACK+$DRAW)*50/$GAMES ))% 
-  echo BLACK=$BLACK   #$(( $BLACK*100/$GAMES ))%
-  echo WHITE=$WHITE   #$(( $WHITE*100/$GAMES ))%
-  echo DRAW=$DRAW     #$(( $DRAW*100/$GAMES ))%
-  echo MOVES=$(grep -c  Nodes $LOG)
+  echo "GAMES =" $GAMES   #$(( ($BLACK+$BLACK+$DRAW)*50/$GAMES ))% 
+  echo "BLACK =" $BLACK   #$(( $BLACK*100/$GAMES ))%
+  echo "WHITE =" $WHITE   #$(( $WHITE*100/$GAMES ))%
+  echo "DRAW  =" $DRAW    #$(( $DRAW*100/$GAMES ))%
+  echo "MOVES =" $(grep -c  Nodes $LOG)
+  echo
+
+  grep  TIME: $LOG #| tail -n 1
+
+
 fi
 
 echo
-echo
-
-
-xx=$(grep X amoeba*-x* 2>/dev/null | wc -l)
-xo=$(grep O amoeba*-x* 2>/dev/null | wc -l)
-x_=$(ls -l | grep -E amoeba.*-x_ 2>/dev/null | wc -l)
-
-oo=$(grep O amoeba*-o* 2>/dev/null | wc -l)
-ox=$(grep X amoeba*-o* 2>/dev/null | wc -l)
-o_=$(ls -l | grep -E amoeba.*-o_ 2>/dev/null | wc -l)
-
-echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLACK: ${xx}:${xo}:${x_}
-echo OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO WHITE: ${oo}:${ox}:${o_}
-
-
