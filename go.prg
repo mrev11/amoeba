@@ -61,7 +61,7 @@ local rts,pws
         rts:=ratestr(v,curlev) // forw elott
         pws:=powstr(curlev)    // forw elott
 
-        ? turn(), "["+valstr(v)+"]", (pos2rc(x)+enforced_sign(x))::padr(4),;
+        ? turn(), "["+valstr(v)+"]", pos2rcx(x)::padr(4),;
             " Move="+(1+movecount())::str::alltrim,;
             " Nodes="+nodestr(),;
             " Power="+pws, bestline::line2str(v)

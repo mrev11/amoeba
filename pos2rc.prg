@@ -19,7 +19,7 @@
  */
 
 #include "amoeba.ch"
-
+#include "pvalue.h"
 
 
 ******************************************************************************
@@ -43,19 +43,48 @@ local col:=rc[2..]::val-1
 
 
 ******************************************************************************
-function pos2rcx(pos)
-    return pos2rc(pos)+enforced_sign(pos)
+function pos2rcx(pos,settled:=.f.)
+    return pos2rc(pos)+enforced_sign(pos,settled)
 
 
 ******************************************************************************
-static function enforced_sign(x)
+static function enforced_sign(x,settled)
+
 local sign:=""
-    if( turn_x() .and. fieldval_x(x)::numand(1)==1 )
-        sign:="+"
+
+local tnx:=turn_x()
+local tno:=turn_o()
+local fvx:=fieldval_x(x)
+local fvo:=fieldval_o(x)
+
+    if( settled )
+        // send-nel a ko mar le van rakva
+        
+        if( winner()!=32)
+            sign:="#"
+        elseif( tnx .and. fvo::numand(1)==1 )
+             sign:="+"
+        elseif( tno .and. fvx::numand(1)==1 )
+             sign:="+"
+        end
+
+    else
+        // recv-nel a ko meg nincs lerakva
+        if( tnx )
+            if( fvx>=PVALUE_EGY )
+                sign:="#"
+            elseif( fvx::numand(1)==1 )
+                sign:="+"
+            end
+        elseif( tno )
+            if( fvo>=PVALUE_EGY )
+                sign:="#"
+            elseif( fvo::numand(1)==1 )
+                sign:="+"
+            end
+        end
     end
-    if( turn_o() .and. fieldval_o(x)::numand(1)==1 )
-        sign:="+"
-    end
+
     return sign
 
 

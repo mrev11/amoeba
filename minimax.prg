@@ -426,7 +426,7 @@ local bestline1
     if( depth==1 )
         arev(bestline)
         xbest:=xopt
-        ?? "##", ascan(candidates,{|c|c==xbest})::str::alltrim
+        ?? "@"+ascan(candidates,{|c|c==xbest})::str::alltrim
         return color*vopt
     elseif( depth==2 )
         xresp:=xopt

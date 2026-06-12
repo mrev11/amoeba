@@ -666,7 +666,7 @@ local x:=topcell()
         hbox_move:pack_start(label,.f.)
     end
     if( x!=NIL )
-        x:=pos2rc(x)
+        x:=pos2rcx(x,.t.)
         label:set_markup( " <b>"+m::str::alltrim+":"+x+"</b>" )
     else
         label:set_markup( "" )

@@ -6,7 +6,7 @@ m
 #################################################################################
 
 # az amoeba szerver IP címe
-export AMOEBA_IP=i3x
+export AMOEBA_IP=hp
 export AMOEBA_PORT=4321
 
 

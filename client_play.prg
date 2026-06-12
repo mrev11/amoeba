@@ -109,7 +109,7 @@ local buf,n,cx,v
 
         if( !empty(buf) )
             cx:=buf::val
-            ? "recv",cx::pos2rc
+            ? "recv",cx::pos2rcx
             forw(cx)
             markmovecount()
             rating_store() //delete
@@ -139,13 +139,13 @@ local buf,n,cx,v
                 {cx,v}:=move()
                 if( winner()!=32 )
                     socket:send( str(cx) )
-                    ? "send", cx::pos2rc
+                    ? "send", cx::pos2rcx(.t.)
                     return game()  // nyert
                 elseif( movecount()>MAXMOVE .and. abs(v|PVALUE_INFIN)<300 )
                     return game() // döntetlen
                 else
                     socket:send( str(cx) )
-                    ? "send", cx::pos2rc
+                    ? "send", cx::pos2rcx(.t.)
                 end
             end
         end
@@ -242,7 +242,7 @@ static playprev
         end
         {cx,v}:=move()
         socket:send( str(cx) )
-        ? "send", cx::pos2rc
+        ? "send", cx::pos2rcx(.t.)
 
     elseif( color::left(1)$'wWoO')
         // white
