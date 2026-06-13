@@ -91,18 +91,6 @@ local rts,pws
 
 
 ******************************************************************************************
-static function enforced_sign(x)
-local sign:=""
-    if( turn_x() .and. fieldval_x(x)::numand(1)==1 )
-        sign:="+"
-    end
-    if( turn_o() .and. fieldval_o(x)::numand(1)==1 )
-        sign:="+"
-    end
-    return sign
-
-
-******************************************************************************************
 function go_recalc()
 
 local cx,x,v,n
