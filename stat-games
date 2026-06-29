@@ -1,0 +1,26 @@
+#!/bin/bash
+#set -x
+
+LOG=log-amoeba
+
+grep power $LOG | tail  -n 1 | awk '{print( $1 $2 )}'
+echo 
+
+grep -A 2 TOTAL_NODES $LOG 
+echo  
+
+GAMES=$(grep -c TOTAL_NODES $LOG)
+BLACK=$(grep -c winner=X $LOG)
+WHITE=$(grep -c winner=O $LOG)
+DRAW=$(grep  -c winner=D $LOG)
+
+echo "GAMES =" $GAMES   #$(( ($BLACK+$BLACK+$DRAW)*50/$GAMES ))% 
+echo "BLACK =" $BLACK   #$(( $BLACK*100/$GAMES ))%
+echo "WHITE =" $WHITE   #$(( $WHITE*100/$GAMES ))%
+echo "DRAW  =" $DRAW    #$(( $DRAW*100/$GAMES ))%
+echo "MOVES =" $(grep -c  Nodes $LOG)
+echo
+
+
+echo
+sleep 3

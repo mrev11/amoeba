@@ -42,7 +42,7 @@ static bestline:=NIL
 static bestvalue:=NIL
 static bestturn:=NIL
 static besttop:=NIL
-
+static book:=.f.
 
 ******************************************************************************
 function amoeba_gui(amoebafile)
@@ -200,7 +200,7 @@ local mask
         loadfile(amoebafile)
     elseif( !empty(getenv("AMOEBA_PORT")) )
         install_cb_timeout()
-        infolevel(.f.)
+        //infolevel(.f.)
     end
 
     gtk.main()
@@ -234,6 +234,10 @@ local xb,xp
     
         if( keyval==GDK_KEY_Escape )
             quit()
+        elseif( keyval::chr=="b" )
+            book:=.t.
+            cb_recalc()
+            book:=.f.
         elseif( keyval==GDK_KEY_Left )
             cb_back()
         elseif( keyval==GDK_KEY_Right )
@@ -567,7 +571,7 @@ static function cb_recalc()
 
     thinklabel:set_state(.f.)
     area:set_sensitive(.f.)
-    go_recalc()
+    go_recalc(book)
     area:set_sensitive(.t.)
     thinklabel:set_state(.t.)
 
@@ -634,7 +638,9 @@ local v
         label:=gtklabelNew()
         hbox_best:pack_start(label,.f.)
     end
-    if( x==NIL )
+    if( time_limit_reached() )
+        x:="<span color='#d00000'><b>time limit overrun ("+time_limit()::str::alltrim+"sec)</b></span>"
+    elseif( x==NIL )
         if( !empty(v:=recalc_string()) )
             v::=val
         elseif( !empty(v:=rating_string()) )
@@ -712,7 +718,7 @@ local recalc:=recalc_string()
 
     if( !empty(recalc) )
         if( abs(val(recalc))>PVALUE_INFIN-100 )
-            recalc:="<span color='red'>"+recalc+"</span>"
+            recalc:="<span color='#d00000'>"+recalc+"</span>"
         else
             recalc:="<span color='green'>"+recalc+"</span>"
         end

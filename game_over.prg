@@ -111,7 +111,7 @@ local result
 
     if( gamecount()+1<continuous_play()  )
         animate()
-        sleep(3000)
+        sleep(1000)
         c_cb_new()
         stabilize()
         label_bestline()

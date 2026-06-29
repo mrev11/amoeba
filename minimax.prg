@@ -55,7 +55,7 @@ static maxenf       // ágak hosszabbításának maximuma
 static movflg       // movegen paramétere (bevegye-e a kényszerítő lépéseket)
 static posflg       // posvalue/movegen paramétere (milyen lépéseket vegyen be)
 static width        // elemzőfa szélessége depth függvényében
-
+static power        // beállított játékerő width[1]-ből meghatározva
 
 static start_time
 static time_limit:=120
@@ -89,6 +89,15 @@ function fallback_count()
 ******************************************************************************************
 function xbest()
     return xbest
+
+
+******************************************************************************************
+function time_limit()
+    return time_limit
+
+
+function time_limit_reached()
+    return time_limit_reached
 
 
 ******************************************************************************************
@@ -133,9 +142,11 @@ local mc,curlev,n
     width:=width()
     ilevel:=infolevel()
     maxenf:=maxenf()
-    movflg:=movflg()
-    posflg:=NIL
+    movflg:=0
+    posflg:=0
+    power:=width[1]%10  // 1..8
 
+    // VACAKOLAS A NYITASSAL-1
     if( mc<8 )
         // opening
 
@@ -144,39 +155,28 @@ local mc,curlev,n
 
         ilevel:=0
         maxenf:=0
-        movflg:=.f.
 
         if( mc==0 )
             // fekete elso lepese
-            // az elso lepessel sietni kell
-            // hogy a szerverhez 5 masodpercen belul
-            // megerkezzen a lepes 
-            // (maskulonben a szerver lep)
             width:={1}
 
         elseif( mc==1 )
             // feher elso lepese
-            width:={9}
+            width:={4}
+
+        elseif( mc==2 )
+            // fekete masodik lepese
+            width:={11,8,6,4}
 
         elseif( numand(mc,1)==0 )
-            // fekete lép 
-            // randomizalt kezdes, hogy kulonbozzenek a jatekok
-            // posflg:=4 //csak védekezik, nem számítja be a fekete alakzatokat
-            width:={10}
-            for n:=1 to irand(4,6)
-                width::aadd(irand(8,10))
-            next
-
+            // fekete lép
         else
-            // fehér lép  
-            // randomizalt kezdes, hogy kulonbozzenek a jatekok
-            posflg:=2  //csak védekezik, nem számítja be a fehér alakzatokat
-            width:={6}
-            for n:=1 to irand(3,5)
-                width::aadd(irand(10,20))
-            next
+            // fehér lép
+            movflg:=2
+            posflg:=2
         end
     end
+    // VACAKOLAS A NYITASSAL-2
 
     start_time:=process_utime()
     time_limit_reached:=.f.
@@ -214,8 +214,17 @@ local cache_dep
 local cache_val
 local cache_flg
 local bestline1
+local bkmove
+local movflg1
 
-    //dbg("minimax",depth,alfa,beta)
+    if( depth-beta>=PVALUE_INFIN )
+        // az alfa-beta vagastol fuggetlen optimalizacio:
+        // hogyha a program latja a vegallast,
+        // akkor vopt==-beta==PVALUE_INFIN-depth,
+        // ilyenkor nincs ertelme melyebbre menni
+        // dbg("minimax-1",depth,alfa,beta,if(movecount()%2==1,"X","O"),topcell()::pos2rc)
+        return beta
+    end
 
     if( depth<=1 .or. maxdepth<depth )
         maxdepth:=depth
@@ -301,7 +310,7 @@ local bestline1
         else
             // leállunk
             // vopt:=patterns(turn)-patterns(oppo)
-            // pozitív érték a lépésen levő előnyét jelenti 
+            // pozitív érték a lépésen levő előnyét jelenti
             // print_map()
             vopt:=posvalue(POSVALUE,posflg)
             //dbg("RETURN-heur",depth,color*vopt)
@@ -309,13 +318,19 @@ local bestline1
         end
     end
 
-    if( depth<=1 .and. 14<=width[1] )
+    if( depth<=1 .and. 5<=power .and. 5<=movecount() )
         // nagyobb halmazból
         // sekély mélységű elemzéssel választ
         candidates:=precalc_movegen(width[depth])
     else
-        // movflg: beveszi a kényszerítő lépéseket
-        candidates:=movegen(width[depth-forced_count], movflg.and.depth<5)
+        // movflg::numand(1)!=0 -> beveszi a kényszerítőket
+        // movflg::numand(2)!=0 -> fehér csak védekezik
+        // movflg::numand(4)!=0 -> fekete csak védekezik
+        movflg1:=movflg
+        if( depth<5.and.movflg() )
+            movflg1::=numor(1)
+        end
+        candidates:=movegen(width[depth-forced_count], movflg1 )
     end
 
     if( len(candidates)==0 )
@@ -342,7 +357,7 @@ local bestline1
     end
 
     if( depth==1 )
-        xopt:=candidates[1] 
+        xopt:=candidates[1]
         show_candidates(depth,candidates)
     end
 
@@ -386,6 +401,8 @@ local bestline1
             xresp:=NIL
             vresp:=NIL
         end
+
+        //dbg("minimax-2",depth,if(movecount()%2==0,"X","O"),x::pos2rc::padr(3),alfa,if(alfa<vopt,"    ->"+str(vopt),""))
 
         if( alfa<vopt )
             alfa:=vopt
@@ -547,7 +564,7 @@ local sr:=0,sc:=0,n,cx
         sr:=round(sr/movecount(),0)
         sc:=round(sc/movecount(),0)
     end
-    cell_randomize(sr,sc)    
+    cell_randomize(sr,sc)
 
 
 

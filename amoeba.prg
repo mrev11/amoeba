@@ -62,7 +62,7 @@ static function usage()
     ? "Usage: amoeba.exe [-t <tablesize>] [-p <power>] [<amoebafile>]  "
     ?
     ? "defaults:"
-    ? "     tablesize  - 12"
+    ? "     tablesize  - 16"
     ? "     power      - 0 (=auto)"
     ? "     amoebafile - empty"
     ?

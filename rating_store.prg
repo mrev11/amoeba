@@ -138,7 +138,7 @@ local labtxt,sp,rc,n
         next
     
         if( abs(val)>PVALUE_INFIN-100 )
-            labtxt::=strtran("green","red")
+            labtxt::=strtran("green","#d00000")
             if( abs(val)+len(bestline)<PVALUE_INFIN )
             elseif( val>0 )
                 labtxt+="<span color='black'>#</span>"

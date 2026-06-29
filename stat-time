@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo AMOEBA
+grep  TIME: log-amoeba
+echo
+
+
+echo BOVO
+grep TIME: log-bovosrv
+
+
+echo
+sleep 3

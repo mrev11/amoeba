@@ -1,52 +1,33 @@
 #!/bin/bash
-m
+
+export AMOEBA_CLIENT=o   
+export AMOEBA_POWER=7.30+
 
 #################################################################################
 # ezek kellenek a szerver elleni játékhoz
 #################################################################################
 
 # az amoeba szerver IP címe
-export AMOEBA_IP=hp
+export AMOEBA_IP=localhost
 export AMOEBA_PORT=4321
 
 
 # mindig automatikusan játszik, 2 lehetőség:
 
 # (1)  AMOEBA_CONTINUOUS_PLAY darab játékot játszik (előlről)
-export AMOEBA_CONTINUOUS_PLAY=10
+export AMOEBA_CONTINUOUS_PLAY=20
 
 # (2)  AMOEBA_PLAYDIR-ben levő játékokat sorban betölti és folytatja
 # export AMOEBA_PLAYDIR=../amoeba-plays
 
-
-# melyik színnel játsszon a program: x=fekete, o=fehér
-AMOEBA_CLIENT=$1
-if [ "$AMOEBA_CLIENT" == "" ]; then
-    AMOEBA_CLIENT=x
-elif [ "$AMOEBA_CLIENT" == "x" ]; then
-    :
-elif [ "$AMOEBA_CLIENT" == "o" ]; then
-    :
-else
-    echo usage: client_play 'x|o'
-    exit 1
-fi
-export AMOEBA_CLIENT
-
-echo AMOEBA_CLIENT=${AMOEBA_CLIENT} >log-client
-echo AMOEBA_PLAYDIR=${AMOEBA_PLAYDIR} >>log-client
 
 #################################################################################
 
 export AMOEBA_CELLSIZE=40
 export AMOEBA_COLOR=60,60,50
 export AMOEBA_TIME_LIMIT=100
-export AMOEBA_BLINK=0
+export AMOEBA_BLINK=1
 
-if [ "$AMOEBA_POWER" == "" ];then
-    AMOEBA_POWER=6.99+
-fi
-export AMOEBA_POWER
 
 amoeba.exe | tee -a  log-amoeba
 

@@ -80,9 +80,14 @@ local content,spiral,line,n,p
     drawmeter(0)
 
     spiral:=content[2]::split
-    for n:=1 to len(spiral)
-        spiral(n,val(spiral[n]))
-    next
+    if( spiral::len==(TABLESIZE*TABLESIZE) .and. spiral[2][1]::isdigit )
+        for n:=1 to len(spiral)
+            spiral(n,val(spiral[n]))
+        next
+    else
+        // nincs spiral
+        content::aiins(2,NIL)
+    end
 
     for n:=3 to len(content)-1  // utolso sor: 'X'/'O'/' '
         line:=content[n]::split

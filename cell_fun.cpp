@@ -34,8 +34,8 @@ void _clp_movegen(int argno)
 {
     CCC_PROLOG("movegen",2);
     int total=_parni(1);
-    int movflg=ISNIL(2)?0:_parl(2);
-    int cnt=cell::movegen(total,movflg?1:0);
+    int movflg=ISNIL(2)?0:_parni(2);
+    int cnt=cell::movegen(total,movflg);
     for(int i=0;i<cnt; i++)
     {
         number( cell::best[i].cx );

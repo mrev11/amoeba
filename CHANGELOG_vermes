@@ -1,3 +1,12 @@
+2026-06-29 kis javitasok:
+   ha latja a vegallast, a vegallasnal melyebben nem keres;
+   a time limit tullepeset kiirja a bestline labelbe;
+   sotetebb pirosat hasznal, mert az elenk piros szetfolyik a hatterben;
+   a load funkcio spiral nelkuli fajlt is be tud olvasni;
+   movegen() masodik parametere logical helyett number;
+   minimax_init()-ben a nyitassal valo vacakolas egyszerusitve (feher vesekezik);
+   game-over-ben kevesebbet var;
+
 2026-06-13 felesleges kod kiszedve;
 
 2026-06-12

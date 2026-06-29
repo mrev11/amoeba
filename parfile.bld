@@ -6,3 +6,5 @@ BUILD_LIBX=object/gtk-libs
 -bccc3_gtk
 -bccc3_crypto
 -bcrypto
+
+BUILD_SHR=static

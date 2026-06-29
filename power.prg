@@ -168,7 +168,7 @@ static function init_maxenf_black()
 local pw:=power_black()
 local enf:=pw::split("!")::asize(2)[2]
     if( enf!=NIL )
-        return enf::val
+        return enf::val::min(MAXENF)::max(0)
     end
     return maxenf_black // nem változik
     
@@ -177,7 +177,7 @@ static function init_maxenf_white()
 local pw:=power_white()
 local enf:=pw::split("!")::asize(2)[2]
     if( enf!=NIL )
-        return enf::val
+        return enf::val::min(MAXENF)::max(0)
     end
     return maxenf_white // nem változik
 
